@@ -1,0 +1,56 @@
+[
+    {
+        "id": 1,
+        "name": "Laptop",
+        "type": "Electronics",
+        "serialNumber": "SN12345",
+        "quantity": 10,
+        "status": "Available",
+        "image": "https://example.com/laptop.jpg"
+    },
+    {
+        "id": 2,
+        "name": "Phone",
+        "type": "Electronics",
+        "serialNumber": "SN67890",
+        "quantity": 15,
+        "status": "Available",
+        "image": "https://example.com/phone.jpg"
+    },
+    {
+        "id": 3,
+        "name": "Tablet",
+        "type": "Electronics",
+        "serialNumber": "SN11223",
+        "quantity": 7,
+        "status": "Available",
+        "image": "https://example.com/tablet.jpg"
+    },
+    {
+        "id": 4,
+        "name": "Monitor",
+        "type": "Electronics",
+        "serialNumber": "SN33445",
+        "quantity": 5,
+        "status": "In Use",
+        "image": "https://example.com/monitor.jpg"
+    },
+    {
+        "id": 5,
+        "name": "Keyboard",
+        "type": "Accessories",
+        "serialNumber": "SN55678",
+        "quantity": 12,
+        "status": "Available",
+        "image": "https://example.com/keyboard.jpg"
+    },
+    {
+        "id": 6,
+        "name": "Headset",
+        "type": "Accessories",
+        "serialNumber": "SN88900",
+        "quantity": 8,
+        "status": "In Use",
+        "image": "https://example.com/headset.jpg"
+    }
+]

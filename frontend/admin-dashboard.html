@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tableau de Bord - Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.js"></script>
+
+</head>
+<body class="bg-gray-100 font-sans antialiased">
+
+    <!-- Navbar -->
+    <nav class="bg-blue-600 p-4 flex justify-between items-center">
+        <h1 class="text-white text-2xl font-bold">Tableau de Bord - Admin</h1>
+        <button onclick="logout()" class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 focus:outline-none">Déconnexion</button>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="p-6 space-y-8">
+
+        <!-- Create Manager Section -->
+        <section class="bg-white p-6 rounded-lg shadow-md">
+            <h2 class="text-xl font-semibold text-gray-700">Créer un Manager</h2>
+            <form id="create-user-form" class="space-y-4 mt-4">
+                <input type="text" id="username" placeholder="Nom d'utilisateur" required class="w-full p-3 border rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                <input type="password" id="password" placeholder="Mot de passe" required class="w-full p-3 border rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                <button type="submit" class="w-full py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none">Créer</button>
+            </form>
+            <p id="user-message" class="text-green-500 mt-4"></p>
+        </section>
+
+        <!-- Manager List Section -->
+        <section class="bg-white p-6 rounded-lg shadow-md">
+            <h2 class="text-xl font-semibold text-gray-700">Liste des Managers</h2>
+            <div class="overflow-x-auto mt-4">
+                <table class="w-full table-auto border-collapse border border-gray-200">
+                    <thead>
+                        <tr class="bg-gray-100">
+                            <th class="p-3 text-left font-medium text-gray-700">Nom</th>
+                            <th class="p-3 text-left font-medium text-gray-700">Rôle</th>
+                        </tr>
+                    </thead>
+                    <tbody id="users-table">
+                        <!-- Data will be rendered here -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+
+    <script src="admin.js"></script>
+
+</body>
+</html>

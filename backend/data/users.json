@@ -1,0 +1,17 @@
+[
+  {
+    "username": "admin",
+    "password": "$2b$10$O44MvXZu.uhpMvcCrI8ofeNCdf4VkIXqWjfQPZYYHK1uHapOt.HOG",
+    "role": "admin"
+  },
+  {
+    "username": "manager",
+    "password": "$2b$10$O44MvXZu.uhpMvcCrI8ofeNCdf4VkIXqWjfQPZYYHK1uHapOt.HOG",
+    "role": "manager"
+  },
+  {
+    "username": "Ali",
+    "password": "$2b$10$O44MvXZu.uhpMvcCrI8ofeNCdf4VkIXqWjfQPZYYHK1uHapOt.HOG",
+    "role": "manager"
+  }
+]

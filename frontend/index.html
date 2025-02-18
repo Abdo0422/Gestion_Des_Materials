@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Manager</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100 text-gray-800">
+
+    <!-- Navigation -->
+    <nav class="bg-blue-600 text-white p-4">
+        <div class="flex justify-between items-center">
+            <h1 class="text-xl font-semibold">Tableau de Bord - Manager</h1>
+            <button onclick="logout()" class="bg-red-500 text-white p-2 rounded-md hover:bg-red-600">Déconnexion</button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="p-6">
+
+        <!-- Employees and Materials Section -->
+        <section class="mb-8">
+            <h2 class="text-2xl font-semibold mb-4">Employés et Matériaux</h2>
+            <table class="min-w-full bg-white rounded-lg shadow-md">
+                <thead>
+                    <tr class="bg-blue-100">
+                        <th class="p-3 text-left">Nom</th>
+                        <th class="p-3 text-left">Département</th>
+                        <th class="p-3 text-left">Matériaux</th>
+                    </tr>
+                </thead>
+                <tbody id="employees-table">
+                    <!-- Employee data will be populated here -->
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Available Materials Section -->
+        <section>
+            <h2 class="text-2xl font-semibold mb-4">Matériaux Disponibles</h2>
+            <table class="min-w-full bg-white rounded-lg shadow-md">
+                <thead>
+                    <tr class="bg-blue-100">
+                        <th class="p-3 text-left">Nom</th>
+                        <th class="p-3 text-left">Type</th>
+                        <th class="p-3 text-left">Numéro de Série</th>
+                        <th class="p-3 text-left">Quantité</th>
+                        <th class="p-3 text-left">État</th>
+                        <th class="p-3 text-left">Image</th>
+                    </tr>
+                </thead>
+                <tbody id="materials-table">
+                    <!-- Materials data will be populated here -->
+                </tbody>
+            </table>
+        </section>
+
+    </main>
+
+    <script src="app.js"></script>
+</body>
+
+</html>

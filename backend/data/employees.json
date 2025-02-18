@@ -1,0 +1,38 @@
+[
+    {
+        "id": 1,
+        "name": "John Doe",
+        "department": "Sales",
+        "materials": [
+            { "name": "Laptop", "serialNumber": "SN12345" },
+            { "name": "Phone", "serialNumber": "SN67890" }
+        ]
+    },
+    {
+        "id": 2,
+        "name": "Jane Smith",
+        "department": "Marketing",
+        "materials": [
+            { "name": "Tablet", "serialNumber": "SN11223" },
+            { "name": "Monitor", "serialNumber": "SN33445" }
+        ]
+    },
+    {
+        "id": 3,
+        "name": "Samuel Johnson",
+        "department": "Engineering",
+        "materials": [
+            { "name": "Laptop", "serialNumber": "SN22334" },
+            { "name": "Keyboard", "serialNumber": "SN55678" }
+        ]
+    },
+    {
+        "id": 4,
+        "name": "Emily Davis",
+        "department": "Human Resources",
+        "materials": [
+            { "name": "Phone", "serialNumber": "SN66789" },
+            { "name": "Headset", "serialNumber": "SN88900" }
+        ]
+    }
+]
