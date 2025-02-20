@@ -1,38 +1,58 @@
 [
-    {
-        "id": 1,
-        "name": "John Doe",
-        "department": "Sales",
-        "materials": [
-            { "name": "Laptop", "serialNumber": "SN12345" },
-            { "name": "Phone", "serialNumber": "SN67890" }
-        ]
-    },
-    {
-        "id": 2,
-        "name": "Jane Smith",
-        "department": "Marketing",
-        "materials": [
-            { "name": "Tablet", "serialNumber": "SN11223" },
-            { "name": "Monitor", "serialNumber": "SN33445" }
-        ]
-    },
-    {
-        "id": 3,
-        "name": "Samuel Johnson",
-        "department": "Engineering",
-        "materials": [
-            { "name": "Laptop", "serialNumber": "SN22334" },
-            { "name": "Keyboard", "serialNumber": "SN55678" }
-        ]
-    },
-    {
-        "id": 4,
-        "name": "Emily Davis",
-        "department": "Human Resources",
-        "materials": [
-            { "name": "Phone", "serialNumber": "SN66789" },
-            { "name": "Headset", "serialNumber": "SN88900" }
-        ]
-    }
+  {
+    "id": 1,
+    "name": "John",
+    "department": "Sales",
+    "materials": [
+      {
+        "name": "PC HP ProDesk",
+        "serialNumber": "SN123454",
+        "image": "images/1-430x430.webp"
+      }
+    ],
+    "createdAt": "2024-10-27",
+    "updatedAt": "2025-02-20T14:15:20.231Z"
+  },
+  {
+    "id": 2,
+    "name": "Jane Smith",
+    "department": "Marketing",
+    "materials": [
+      {
+        "name": "Imprimante Canon Pixma",
+        "serialNumber": "SN67890",
+        "image": "images/imprimante-multifonction-jet-d-encre-canon-pixma-ts3440-4463c007be.jpg"
+      }
+    ],
+    "createdAt": "2024-10-27",
+    "updatedAt": "2025-02-20T14:22:10.761Z"
+  },
+  {
+    "id": 3,
+    "name": "Samuel Johnson",
+    "department": "Engineering",
+    "materials": [
+      {
+        "name": "PC Lenovo ThinkCentre",
+        "serialNumber": "SN45678",
+        "image": "images/Lenovo-ThinkCentre-neo-50s-1-1.webp"
+      }
+    ],
+    "createdAt": "2024-10-27",
+    "updatedAt": "2025-02-20T14:22:04.819Z"
+  },
+  {
+    "id": 4,
+    "name": "Emily Davis",
+    "department": "Human Resources",
+    "materials": [
+      {
+        "name": "Imprimante HP LaserJet",
+        "serialNumber": "SN09876",
+        "image": "images/imprimante-laser-monochrome-hp-laserjet-pro-4003dn-2z609a.jpg"
+      }
+    ],
+    "createdAt": "2024-10-27",
+    "updatedAt": "2025-02-20T14:22:17.775Z"
+  }
 ]

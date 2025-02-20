@@ -2,16 +2,19 @@
   {
     "username": "admin",
     "password": "$2b$10$O44MvXZu.uhpMvcCrI8ofeNCdf4VkIXqWjfQPZYYHK1uHapOt.HOG",
-    "role": "admin"
+    "role": "admin",
+    "createdAt": "2024-10-27T10:00:00.000Z" 
   },
   {
     "username": "manager",
     "password": "$2b$10$O44MvXZu.uhpMvcCrI8ofeNCdf4VkIXqWjfQPZYYHK1uHapOt.HOG",
-    "role": "manager"
+    "role": "manager",
+    "createdAt": "2024-10-27T10:00:00.000Z" 
   },
   {
     "username": "Ali",
     "password": "$2b$10$O44MvXZu.uhpMvcCrI8ofeNCdf4VkIXqWjfQPZYYHK1uHapOt.HOG",
-    "role": "manager"
+    "role": "manager",
+    "createdAt": "2024-10-27T10:00:00.000Z" 
   }
 ]

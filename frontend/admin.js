@@ -1,11 +1,9 @@
-// Fetch and display users without authorization
 async function fetchUsers() {
     const response = await fetch('https://supreme-xylophone-j646jr764grc5j94-3000.app.github.dev/api/users');
     const users = await response.json();
     renderUsersTable(users);
 }
 
-// Handle manager creation without authorization
 document.getElementById('create-user-form').addEventListener('submit', async (e) => {
     e.preventDefault();
     
@@ -25,7 +23,6 @@ document.getElementById('create-user-form').addEventListener('submit', async (e)
     fetchUsers();
 });
 
-// Render users table
 function renderUsersTable(users) {
     const tableBody = document.getElementById('users-table');
     tableBody.innerHTML = '';
@@ -41,8 +38,10 @@ function renderUsersTable(users) {
     });
 }
 
-// Logout function (now no token storage)
+
 function logout() {
+    localStorage.removeItem('role');
+    localStorage.removeItem('username');
     window.location.href = 'login.html';
 }
 

@@ -1,0 +1,109 @@
+<div x-show="sidebarOpen" x-transition:enter="transition-opacity ease-linear duration-300"
+     x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
+     x-transition:leave="transition-opacity ease-linear duration-300" x-transition:leave-start="opacity-100"
+     x-transition:leave-end="opacity-0" class="fixed inset-0" @click="sidebarOpen = false">
+    <div class="absolute inset-0 bg-gray-600 opacity-75"></div>
+</div>
+
+<div x-show="sidebarOpen" x-transition:enter="transition ease-in-out duration-300 transform"
+     x-transition:enter-start="-translate-x-full" x-transition:enter-end="translate-x-0"
+     x-transition:leave="transition ease-in-out duration-300 transform" x-transition:leave-start="translate-x-0"
+     x-transition:leave-end="-translate-x-full" class="relative flex-1 flex flex-col max-w-xs w-full bg-white">
+    <div class="absolute top-0 right-0 -mr-12 pt-2">
+        <button @click="sidebarOpen = false"
+                class="ml-1 flex items-center justify-center h-10 w-10 rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
+            <span class="sr-only">Close sidebar</span>
+            <i class="fas fa-times text-white text-lg"></i>
+        </button>
+    </div>
+    <div class="flex-1 h-0 pt-5 pb-4 overflow-y-auto">
+        <div class="flex items-center justify-center h-16 bg-moroccan-blue mb-5 py-6">
+            <div class="text-white text-2xl font-bold">
+                <span class="text-moroccan-gold">M</span>anager<span class="text-moroccan-teal">Pro</span>
+            </div>
+        </div>
+        <nav class="px-4 space-y-2">
+            <a href="index.html" id="dashboard-link"
+               class="flex items-center px-4 py-3 text-sm rounded-lg text-white bg-gradient-to-r from-moroccan-blue to-moroccan-teal group">
+                <i class="fas fa-tachometer-alt mr-3"></i>
+                <span>Tableau de Bord</span>
+            </a>
+            <a href="employe.html" id="employee-link"
+               class="flex items-center px-4 py-3 text-sm rounded-lg text-gray-600 hover:bg-gray-50 hover:text-moroccan-teal transition-all duration-200 group">
+                <i class="fas fa-users mr-3 text-gray-500 group-hover:text-moroccan-teal"></i>
+                <span>Employés</span>
+            </a>
+            <a href="materiel.html" id="material-link"
+               class="flex items-center px-4 py-3 text-sm rounded-lg text-gray-600 hover:bg-gray-50 hover:text-moroccan-teal transition-all duration-200 group">
+                <i class="fas fa-laptop mr-3 text-gray-500 group-hover:text-moroccan-teal"></i>
+                <span>Matériels</span>
+            </a>
+            <a href="parametres.html" id="settings-link"
+               class="flex items-center px-4 py-3 text-sm rounded-lg text-gray-600 hover:bg-gray-50 hover:text-moroccan-teal transition-all duration-200 group">
+                <i class="fas fa-cog mr-3 text-gray-500 group-hover:text-moroccan-teal"></i>
+                <span>Paramètres</span>
+            </a>
+        </nav>
+    </div>
+    <div class="p-4 border-t border-gray-200">
+        <button @click="logout()"
+                class="flex items-center justify-center w-full py-2 px-4 rounded-lg btn-danger-gradient">
+            <i class="fas fa-sign-out-alt mr-2"></i>
+            <span>Déconnexion</span>
+        </button>
+    </div>
+</div>
+<div class="flex-shrink-0 w-14">
+    </div>
+
+<script>
+    const currentPath = window.location.pathname;
+    console.log("Current Path:", currentPath);
+
+    function resetActiveLinks() {
+        document.querySelectorAll('nav a').forEach(link => {
+            link.classList.remove('bg-gradient-to-r', 'from-moroccan-blue', 'to-moroccan-teal', 'text-white');
+            link.classList.add('text-gray-600');
+        });
+    }
+
+    try {
+        if (currentPath.includes("index.html")) {
+            resetActiveLinks();
+            const dashboardLink = document.getElementById('dashboard-link');
+             if (!dashboardLink) {
+                throw new Error("Dashboard link element not found!"); 
+            }
+            dashboardLink.classList.add('bg-gradient-to-r', 'from-moroccan-blue', 'to-moroccan-teal', 'text-white');
+            dashboardLink.classList.remove('text-gray-600');
+        } else if (currentPath.includes("employe.html")) {
+            resetActiveLinks();
+            const employeeLink = document.getElementById('employee-link');
+             if (!employeeLink) {
+                throw new Error("Employee link element not found!"); 
+            }
+            employeeLink.classList.add('bg-gradient-to-r', 'from-moroccan-blue', 'to-moroccan-teal', 'text-white');
+            employeeLink.classList.remove('text-gray-600');
+        } else if (currentPath.includes("materiel.html")) {
+            resetActiveLinks();
+            const materialLink = document.getElementById('material-link');
+             if (!materialLink) {
+                throw new Error("Material link element not found!"); 
+            }
+            materialLink.classList.add('bg-gradient-to-r', 'from-moroccan-blue', 'to-moroccan-teal', 'text-white');
+            materialLink.classList.remove('text-gray-600');
+        } else if (currentPath.includes("parametres.html")) {
+            resetActiveLinks();
+            const settingsLink = document.getElementById('settings-link');
+             if (!settingsLink) {
+                throw new Error("Settings link element not found!"); 
+            }
+            settingsLink.classList.add('bg-gradient-to-r', 'from-moroccan-blue', 'to-moroccan-teal', 'text-white');
+            settingsLink.classList.remove('text-gray-600');
+        } else {
+            console.warn("No matching route found for:", currentPath);
+        }
+    } catch (error) {
+        console.error("Error in active link highlighting:", error);
+    }
+</script>

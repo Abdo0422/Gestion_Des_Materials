@@ -4,63 +4,134 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Manager</title>
+    <title>Tableau de Bord - Manager</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+    <script src="tailwind.js"></script>
+    <link href="style.css" rel="stylesheet">
 </head>
 
-<body class="bg-gray-100 text-gray-800">
+<body x-data="dashboardData()" x-init="setTimeout(() => { init(); }, 100)" class="antialiased text-gray-800">
 
-    <!-- Navigation -->
-    <nav class="bg-blue-600 text-white p-4">
-        <div class="flex justify-between items-center">
-            <h1 class="text-xl font-semibold">Tableau de Bord - Manager</h1>
-            <button onclick="logout()" class="bg-red-500 text-white p-2 rounded-md hover:bg-red-600">Déconnexion</button>
+    <!-- Sidebar & Header Navigation -->
+    <div class="flex h-screen overflow-hidden">
+        <div class="hidden md:flex md:flex-shrink-0" id="sidebar"></div>
+        <!-- Main Content Area -->
+        <div class="flex flex-col flex-1 w-0 overflow-hidden">
+            <!-- Top Navigation -->
+            <div class="relative z-10 flex-shrink-0 flex h-16 bg-white shadow-sm" id="navbar-manager"></div>
+
+            <!-- Mobile sidebar -->
+            <div x-show="sidebarOpen" class="fixed inset-0 flex z-40 md:hidden" x-cloak id="sidebar-mobile"></div>
+
+            <!-- Main Content -->
+            <main class="flex-1 relative overflow-y-auto focus:outline-none">
+                <div class="py-6 px-4 sm:px-6 lg:px-8">
+
+                    <!-- Dashboard Stats -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-8" id="counts-container">
+                        <div
+                            class="bg-white rounded-xl card-shadow p-6 transform hover:scale-105 transition-all duration-300">
+                            <div class="flex items-center">
+                                <div class="p-3 rounded-lg bg-blue-50 mr-4">
+                                    <i class="fas fa-users text-moroccan-blue text-xl"></i>
+                                </div>
+                                <div>
+                                    <p class="text-sm text-gray-500 font-medium">Total Employés</p>
+                                    <h3 class="text-2xl font-bold text-gray-800" id="employee-count"></h3>
+                                </div>
+                            </div>
+                            <div class="mt-4 flex items-center text-sm font-medium text-green-600">
+                                <i class="fas fa-arrow-up mr-1"></i>
+                                <span>12%</span>
+                                <span class="text-gray-500 ml-2">vs dernier mois</span>
+                            </div>
+                        </div>
+
+                        <div
+                            class="bg-white rounded-xl card-shadow p-6 transform hover:scale-105 transition-all duration-300">
+                            <div class="flex items-center">
+                                <div class="p-3 rounded-lg bg-teal-50 mr-4">
+                                    <i class="fas fa-laptop text-moroccan-teal text-xl"></i>
+                                </div>
+                                <div>
+                                    <p class="text-sm text-gray-500 font-medium">Total PC</p>
+                                    <h3 class="text-2xl font-bold text-gray-800" id="pc-count"></h3>
+                                </div>
+                            </div>
+                            <div class="mt-4 flex items-center text-sm font-medium text-green-600">
+                                <i class="fas fa-arrow-up mr-1"></i>
+                                <span>8%</span>
+                                <span class="text-gray-500 ml-2">vs dernier mois</span>
+                            </div>
+                        </div>
+
+                        <div
+                            class="bg-white rounded-xl card-shadow p-6 transform hover:scale-105 transition-all duration-300">
+                            <div class="flex items-center">
+                                <div class="p-3 rounded-lg bg-red-50 mr-4">
+                                    <i class="fas fa-print text-moroccan-red text-xl"></i>
+                                </div>
+                                <div>
+                                    <p class="text-sm text-gray-500 font-medium">Total Imprimantes</p>
+                                    <h3 class="text-2xl font-bold text-gray-800" id="imprimante-count"></h3>
+                                </div>
+                            </div>
+                            <div class="mt-4 flex items-center text-sm font-medium text-red-600">
+                                <i class="fas fa-arrow-down mr-1"></i>
+                                <span>3%</span>
+                                <span class="text-gray-500 ml-2">vs dernier mois</span>
+                            </div>
+                        </div>
+
+                        <div
+                            class="bg-white rounded-xl card-shadow p-6 transform hover:scale-105 transition-all duration-300">
+                            <div class="flex items-center">
+                                <div class="p-3 rounded-lg bg-yellow-50 mr-4"> <i
+                                        class="fas fa-tv text-moroccan-gold text-xl"></i> </div>
+                                <div>
+                                    <p class="text-sm text-gray-500 font-medium">Total Ecrans</p>
+                                    <h3 class="text-2xl font-bold text-gray-800" id="ecran-count"></h3>
+                                </div>
+                            </div>
+                            <div class="mt-4 flex items-center text-sm font-medium text-yellow-600"> <i
+                                    class="fas fa-arrow-down mr-1"></i>
+                                <span>3%</span>
+                                <span class="text-gray-500 ml-2">vs dernier mois</span>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                </div>
+            </main>
         </div>
-    </nav>
+    </div>
 
-    <!-- Main Content -->
-    <main class="p-6">
-
-        <!-- Employees and Materials Section -->
-        <section class="mb-8">
-            <h2 class="text-2xl font-semibold mb-4">Employés et Matériaux</h2>
-            <table class="min-w-full bg-white rounded-lg shadow-md">
-                <thead>
-                    <tr class="bg-blue-100">
-                        <th class="p-3 text-left">Nom</th>
-                        <th class="p-3 text-left">Département</th>
-                        <th class="p-3 text-left">Matériaux</th>
-                    </tr>
-                </thead>
-                <tbody id="employees-table">
-                    <!-- Employee data will be populated here -->
-                </tbody>
-            </table>
-        </section>
-
-        <!-- Available Materials Section -->
-        <section>
-            <h2 class="text-2xl font-semibold mb-4">Matériaux Disponibles</h2>
-            <table class="min-w-full bg-white rounded-lg shadow-md">
-                <thead>
-                    <tr class="bg-blue-100">
-                        <th class="p-3 text-left">Nom</th>
-                        <th class="p-3 text-left">Type</th>
-                        <th class="p-3 text-left">Numéro de Série</th>
-                        <th class="p-3 text-left">Quantité</th>
-                        <th class="p-3 text-left">État</th>
-                        <th class="p-3 text-left">Image</th>
-                    </tr>
-                </thead>
-                <tbody id="materials-table">
-                    <!-- Materials data will be populated here -->
-                </tbody>
-            </table>
-        </section>
-
-    </main>
-
+    <!-- Alpine.js Data -->
     <script src="app.js"></script>
+    <script>
+        fetch('sidebar.html')
+            .then(response => response.text())
+            .then(html => {
+                document.getElementById('sidebar').innerHTML = html;
+            });
+        fetch('sidebar-mobile.html')
+            .then(response => response.text())
+            .then(html => {
+                document.getElementById('sidebar-mobile').innerHTML = html;
+            });
+        fetch('navbar-manager.html')
+            .then(response => response.text())
+            .then(html => {
+                document.getElementById('navbar-manager').innerHTML = html;
+            });
+
+    </script>
 </body>
 
 </html>
