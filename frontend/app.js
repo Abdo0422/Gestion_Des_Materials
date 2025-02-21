@@ -3,16 +3,20 @@ function dashboardData() {
         sidebarOpen: false,
         showMaterialForm: false,
         showEmployeeForm: false,
-        searchQuery: '',
+        searchQueryPC: '',
+        searchQueryPrinter: '',
         showMaterialModal: false,
         showMaterialModal2: false,
         editingMaterial: { name: '', serialNumber: '', marque: '', status: '', image: '' },
         editingEmployee: { name: '', department: '', materials: [], createdAt: '' },
         allMaterials: [],
         filteredMaterials: [],
+        filteredMaterialNames: [], 
+        filteredMaterialMarques: [], 
         employeeModalOpen: false,
         employeeModalOpen2: false,
         materials: [],
+        searchQueryMaterials: '',
         employeesPC: [],
         employeesPrinter: [],
         selectedFile: null,
@@ -304,6 +308,45 @@ function dashboardData() {
             });
         },
 
+        filterMaterials(searchTerm) {
+            const term = searchTerm.toLowerCase();
+            const filteredMaterials = this.materials.filter(mat =>
+                mat.name.toLowerCase().includes(term) ||
+                mat.marque.toLowerCase().includes(term) ||
+                mat.serialNumber.toLowerCase().includes(term) ||
+                mat.status.toLowerCase().includes(term)
+            );
+
+            this.renderMaterialsTable(filteredMaterials, 'materials-table');
+        },
+
+        filterEmployeesPC(searchTerm) {
+            const term = searchTerm.toLowerCase();
+            const filteredPC = this.employeesPC.filter(emp =>
+                emp.name.toLowerCase().includes(term) ||
+                emp.department.toLowerCase().includes(term) ||
+                (emp.materials && emp.materials.some(mat =>
+                    mat.name.toLowerCase().includes(term) ||
+                    mat.serialNumber.toLowerCase().includes(term)
+                ))
+            );
+            this.renderEmployeesTable(filteredPC, 'employees-pc-table');
+        },
+
+        filterEmployeesPrinter(searchTerm) {
+            const term = searchTerm.toLowerCase();
+            const filteredPrinter = this.employeesPrinter.filter(emp =>
+                emp.name.toLowerCase().includes(term) ||
+                emp.department.toLowerCase().includes(term) ||
+                (emp.materials && emp.materials.some(mat =>
+                    mat.name.toLowerCase().includes(term) ||
+                    mat.serialNumber.toLowerCase().includes(term)
+                ))
+            );
+            this.renderEmployeesTable(filteredPrinter, 'employees-printer-table');
+        },
+
+
         // Search and filter functionality
         filterEmployees(searchTerm) {
             this.searchQuery = searchTerm;
@@ -363,18 +406,18 @@ function dashboardData() {
 
 
         editMaterial(id) {
-            const material = this.allMaterials.find(m => m.id === id); // Use allMaterials for consistency
+            const material = this.allMaterials.find(m => m.id === id); 
             if (!material) return;
 
             this.editingMaterial = { ...material };
-            this.showMaterialModal = true; // Open the modal
+            this.showMaterialModal = true;
         },
 
         closeMaterialModal() {
             this.showMaterialModal = false;
             this.editingMaterial = { name: '', serialNumber: '', marque: '', status: '', image: '' }; // Reset the form
-            this.selectedFile = null; 
-            this.imagePreview = null; e
+            this.selectedFile = null;
+            this.imagePreview = null; 
         },
 
         closeMaterialDetailsModal() {
@@ -403,6 +446,50 @@ function dashboardData() {
             queueMicrotask(() => {
                 this.selectMaterialsInDropdown();
             });
+        },
+
+        openAddEmployeeModal(type) {
+            this.editingEmployee = { name: '', department: '', materials: [], createdAt: this.getCurrentDateForInput() };
+            this.employeeModalOpen = true;
+            this.filteredMaterials = this.materials.filter(mat => {
+                if (type === 'PC') {
+                    return mat.name.toLowerCase().includes("pc") ||
+                        mat.name.toLowerCase().includes("laptop") ||
+                        mat.name.toLowerCase().includes("macbook");
+                } else if (type === 'Printer') {
+                    return mat.name.toLowerCase().includes("imprimante") ||
+                        mat.name.toLowerCase().includes("printer");
+                }
+                return true;
+            });
+            this.selectMaterialsInDropdown();
+        },
+
+        openAddMaterialModal() {
+            this.editingMaterial = {
+                name: '',
+                marque: '',
+                serialNumber: '',
+                status: 'Disponible',
+                image: null,
+                createdAt: this.getCurrentDateForInput()
+            };
+            this.imagePreview = null;
+            this.showMaterialModal = true;
+            this.filteredMaterialNames = [];
+            this.filteredMaterialMarques = []; 
+        },
+
+        autocompleteMaterialName() {
+            this.filteredMaterialNames = this.materials.filter(material =>
+                material.name.toLowerCase().includes(this.editingMaterial.name.toLowerCase())
+            );
+        },
+
+        autocompleteMaterialMarque() {
+            this.filteredMaterialMarques = this.materials.filter(material =>
+                material.marque.toLowerCase().includes(this.editingMaterial.marque.toLowerCase())
+            );
         },
 
         selectMaterialsInDropdown() {
@@ -463,7 +550,6 @@ function dashboardData() {
                 if (this.selectedFile) {
                     formData.append('image', this.selectedFile);
                 } else if (this.editingMaterial.image && !this.imagePreview) {
-                    //If no new file is selected but an image exists, keep the image
                     formData.append('image', this.editingMaterial.image);
                 }
 
@@ -473,16 +559,14 @@ function dashboardData() {
                 });
 
                 if (!response.ok) {
-                    const errorText = await response.text(); // Get error details from the server
+                    const errorText = await response.text(); 
                     throw new Error(`HTTP error! status: ${response.status} ${response.statusText}. Details: ${errorText}`);
                 }
 
-                // Success message
                 alert(this.editingMaterial.id ? 'Matériel mis à jour avec succès!' : 'Nouveau matériel ajouté avec succès!');
 
-                // Reset form and refresh data
-                this.closeMaterialModal(); // Close the modal instead of showMaterialForm = false;
-                await this.fetchAllMaterials();// Refresh all the materials
+                this.closeMaterialModal(); 
+                await this.fetchAllMaterials();
 
             } catch (error) {
                 console.error("Error saving material:", error);
@@ -531,12 +615,12 @@ function dashboardData() {
                         const material = this.allMaterials.find(m => m.id === materialId);
                         if (!material) {
                             console.warn(`Material with ID ${materialId} not found. Skipping.`);
-                            return null; // or handle the missing material as needed
+                            return null; 
                         }
                         return {
                             name: material.name,
                             serialNumber: material.serialNumber,
-                            image: material.image // Include other properties as needed
+                            image: material.image 
                         };
                     })
                     .filter(material => material !== null);
@@ -584,11 +668,9 @@ function dashboardData() {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
 
-                // Success message
                 alert('Matériel supprimé avec succès!');
 
-                // Refresh data
-                await this.fetchMaterials();
+                await this.fetchAllMaterials();
             } catch (error) {
                 console.error("Error deleting material:", error);
                 alert("Une erreur s'est produite lors de la suppression du matériel.");
@@ -607,10 +689,8 @@ function dashboardData() {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
 
-                // Success message
                 alert('Employé supprimé avec succès!');
 
-                // Refresh data
                 await this.fetchEmployees();
             } catch (error) {
                 console.error("Error deleting employee:", error);
@@ -632,7 +712,6 @@ function dashboardData() {
             reader.readAsDataURL(file);
         },
 
-        // Helper methods
         getImageUrl(imagePath) {
             if (!imagePath) return '/api/placeholder/100/100';
 
@@ -660,37 +739,178 @@ function dashboardData() {
 
 
         async fetchCounts() {
-            const countsContainer = document.getElementById('counts-container');
-            const employeeCount = document.getElementById('employee-count');
-            const imprimanteCount = document.getElementById('imprimante-count');
-            const pcCount = document.getElementById('pc-count');
-            const ecranCount = document.getElementById('ecran-count');
-
-            if (!countsContainer || !employeeCount || !imprimanteCount || !pcCount || !ecranCount) {
-                console.error("One or more count elements are missing in the HTML.");
+            try {
+                const materials = await this.fetchAllMaterials();
+                this.materials = materials;
+                const employeeCount = await this.fetchEmployeeCount();
+        
+                const pcCount = this.materials.filter(mat => mat.name.toLowerCase().includes("pc") || mat.name.toLowerCase().includes("laptop") || mat.name.toLowerCase().includes("macbook")).length;
+                const imprimanteCount = this.materials.filter(mat => mat.name.toLowerCase().includes("imprimante") || mat.name.toLowerCase().includes("printer")).length;
+                const ecranCount = this.materials.filter(mat => mat.name.toLowerCase().includes("ecran")).length;
+        
+                const employeeCountElement = document.getElementById('employee-count');
+                if (employeeCountElement) {
+                    employeeCountElement.textContent = employeeCount;
+                } else {
+                    console.error("Element with ID 'employee-count' not found!");
+                }
+        
+                const pcCountElement = document.getElementById('pc-count');
+                if (pcCountElement) {
+                    pcCountElement.textContent = pcCount;
+                } else {
+                    console.error("Element with ID 'pc-count' not found!");
+                }
+        
+                const imprimanteCountElement = document.getElementById('imprimante-count');
+                if (imprimanteCountElement) {
+                    imprimanteCountElement.textContent = imprimanteCount;
+                } else {
+                    console.error("Element with ID 'imprimante-count' not found!");
+                }
+        
+                const ecranCountElement = document.getElementById('ecran-count');
+                if (ecranCountElement) {
+                    ecranCountElement.textContent = ecranCount;
+                } else {
+                    console.error("Element with ID 'ecran-count' not found!");
+                }
+        
+                this.createMaterialChart();
+        
+                const response = await fetch('https://supreme-xylophone-j646jr764grc5j94-3000.app.github.dev/api/counts');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+                console.log("Data from API:", data);
+        
+                this.updatePercentageDisplay('employee', data.employeeChange);
+                this.updatePercentageDisplay('pc', data.pcChange);
+                this.updatePercentageDisplay('imprimante', data.imprimanteChange);
+                this.updatePercentageDisplay('ecran', data.ecranChange);
+        
+            } catch (error) {
+                console.error("Error fetching counts or creating chart:", error);
+                const countsContainer = document.getElementById('counts-container');
+                if (countsContainer) {
+                    countsContainer.innerHTML = "<p>Error loading data. Please try again later.</p>";
+                }
+            }
+        },
+                
+        updatePercentageDisplay(item, change) {
+            console.log("updatePercentageDisplay called for:", item, "with change:", change);
+        
+            const container = document.getElementById(`${item}-change-container`);
+            console.log("container", container);
+        
+            if (!container) {
+                console.error(`Container not found for item: ${item}`);
                 return;
             }
-
-            try {
-                const response = await fetch('https://supreme-xylophone-j646jr764grc5j94-3000.app.github.dev/api/counts');
-
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    throw new Error(`HTTP error! status: ${response.status} ${response.statusText}. Details: ${errorText}`);
+        
+            const element = container.querySelector('p'); // Select the <p> element
+            const icon = container.querySelector('i'); // Select the <i> element (icon)
+        
+            if (change === Infinity || change === "N/A" || change === 0 || !change || change === null || typeof change === 'undefined') {
+                if (element) {
+                    element.textContent = "N/A";
+                } else {
+                    console.error(`Element (p) not found within container for item: ${item}`);
                 }
-
-                const counts = await response.json();
-
-                employeeCount.textContent = counts.numEmployees;
-                imprimanteCount.textContent = counts.numImprimantes;
-                pcCount.textContent = counts.numPCs;
-                ecranCount.textContent = counts.numEcrans;
-
-            } catch (error) {
-                console.error("Error fetching counts:", error);
-                countsContainer.innerHTML = `<p>Error loading counts: ${error.message}</p>`;
+        
+                if (icon) {
+                    icon.className = "fas fa-minus mr-1"; // Set the minus icon class
+                    icon.style.color = "gray";
+                } else {
+                    console.error(`Icon (i) not found within container for item: ${item}`);
+                }
+                console.log("Change is N/A or invalid, setting display to N/A");
+                return;
             }
+        
+            if (element) {
+                element.textContent = `${change}`;
+                const color = change.toString().includes('-') ? 'red' : 'green';
+                const arrowClass = change.toString().includes('-') ? 'fa-arrow-down' : 'fa-arrow-up'; // Correct class names
+        
+                console.log('arrowClass', arrowClass); // Log the arrow class
+        
+                element.style.color = color;
+        
+                if (icon) {
+                    icon.className = `fas ${arrowClass} mr-1`; 
+                    
+                    icon.style.color = color;
+                } else {
+                    console.error(`Icon (i) not found within container for item: ${item}`);
+                }
+        
+                console.log("Updated display for:", item, "with color:", color, "and arrowClass:", arrowClass);
+            } else {
+                console.error(`Element (p) not found within container for item: ${item}`);
+            }
+        },
+
+        async fetchEmployeeCount() {
+            try {
+                const response = await fetch('https://supreme-xylophone-j646jr764grc5j94-3000.app.github.dev/api/employees');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const employees = await response.json();
+                return employees.length;
+            } catch (error) {
+                console.error("Error fetching employee count:", error);
+                return 0; 
+            }
+        },
+
+        myChart: null, 
+        createMaterialChart() {
+            const pcCount = this.materials.filter(mat => mat.name.toLowerCase().includes("pc") || mat.name.toLowerCase().includes("laptop") || mat.name.toLowerCase().includes("macbook")).length;
+            const imprimanteCount = this.materials.filter(mat => mat.name.toLowerCase().includes("imprimante") || mat.name.toLowerCase().includes("printer")).length;
+            const ecranCount = this.materials.filter(mat => mat.name.toLowerCase().includes("ecran")).length;
+            const otherCount = this.materials.length - pcCount - imprimanteCount - ecranCount;
+        
+            const ctx = document.getElementById('material-chart').getContext('2d');
+        
+            Chart.getChart('material-chart')?.destroy(); 
+        
+            this.myChart = new Chart(ctx, { 
+                type: 'doughnut',
+                data: {
+                    labels: ['PC', 'Imprimante', 'Ecran', 'Autre'],
+                    datasets: [{
+                        data: [pcCount, imprimanteCount, ecranCount, otherCount],
+                        backgroundColor: [
+                            'rgba(54, 162, 235, 0.8)',
+                            'rgba(255, 99, 132, 0.8)',
+                            'rgba(255, 206, 86, 0.8)',
+                            'rgba(75, 192, 192, 0.8)'
+                        ],
+                        borderColor: [
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(75, 192, 192, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
         }
+
 
 
     };
@@ -700,4 +920,49 @@ function dashboardData() {
 document.addEventListener('DOMContentLoaded', function () {
     const app = dashboardData();
     app.init();
+
+    const stats = [
+        { id: "employee-count", percent: 75 },
+        { id: "pc-count", percent: 60 },
+        { id: "imprimante-count", percent: 40 },
+        { id: "ecran-count", percent: 50 }
+    ];
+
+    stats.forEach(stat => {
+        const circle = document.querySelector(`#${stat.id}`).parentNode.parentNode.querySelector("circle:last-of-type");
+        if (circle) {
+            let dashArray = 251.2;
+            circle.style.strokeDashoffset = `calc(${dashArray} - (${dashArray} * ${stat.percent} / 100))`;
+            circle.nextElementSibling.textContent = `${stat.percent}%`;
+        }
+    });
+
+
+    const links = document.querySelectorAll('nav a');
+    const currentPath = window.location.pathname;
+
+    links.forEach(link => {
+        const linkPath = new URL(link.href, window.location.origin).pathname;
+        console.log("Link Path:", linkPath, "Current Path:", currentPath); 
+
+        if (linkPath === currentPath) {
+            link.classList.add('text-white', 'bg-gradient-to-r', 'from-moroccan-blue', 'to-moroccan-teal');
+            console.log("Added active classes to:", link.href); 
+        } else {
+            link.classList.add('text-gray-600', 'hover:bg-gray-50', 'hover:text-moroccan-teal', 'transition-all', 'duration-200');
+            console.log("Added inactive and hover classes to:", link.href); 
+
+            link.addEventListener('mouseover', () => {
+                link.classList.add('hover:bg-gray-50', 'hover:text-moroccan-teal', 'transition-all', 'duration-200');
+                console.log("Mouseover on:", link.href);
+            });
+
+            link.addEventListener('mouseout', () => {
+                link.classList.remove('hover:bg-gray-50', 'hover:text-moroccan-teal', 'transition-all', 'duration-200');
+                console.log("Mouseout on:", link.href); 
+            });
+        }
+
+        console.log("Link classes after processing:", link.href, link.classList); 
+    });
 });

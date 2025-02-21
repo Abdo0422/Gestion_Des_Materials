@@ -40,12 +40,17 @@
                             <div class="flex space-x-2 mt-2 sm:mt-0">
                                 <div class="relative">
                                     <input type="text" placeholder="Rechercher..."
-                                        class="pl-10 pr-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-moroccan-teal focus:border-transparent">
+                                           x-model="searchQueryPC" 
+                                           @input="filterEmployeesPC(searchQueryPC)"
+                                           class="pl-10 pr-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-moroccan-teal focus:border-transparent">
                                     <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
                                 </div>
                                 <button
                                     class="p-2 rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors">
                                     <i class="fas fa-filter"></i>
+                                </button>
+                                <button @click="openAddEmployeeModal('PC')" class="p-2 rounded-lg bg-moroccan-teal text-white hover:bg-moroccan-teal-700 transition-colors">
+                                    <i class="fas fa-plus mr-2"></i> Ajouter
                                 </button>
                             </div>
                         </div>
@@ -80,12 +85,17 @@
                             <div class="flex space-x-2 mt-2 sm:mt-0">
                                 <div class="relative">
                                     <input type="text" placeholder="Rechercher..."
-                                        class="pl-10 pr-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-moroccan-teal focus:border-transparent">
+                                           x-model="searchQueryPrinter" 
+                                           @input="filterEmployeesPrinter(searchQueryPrinter)"  
+                                           class="pl-10 pr-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-moroccan-teal focus:border-transparent">
                                     <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
                                 </div>
                                 <button
                                     class="p-2 rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors">
                                     <i class="fas fa-filter"></i>
+                                </button>
+                                <button @click="openAddEmployeeModal('Printer')" class="p-2 rounded-lg bg-moroccan-teal text-white hover:bg-moroccan-teal-700 transition-colors">
+                                    <i class="fas fa-plus mr-2"></i> Ajouter
                                 </button>
                             </div>
                         </div>
@@ -115,42 +125,38 @@
                                 <div class="modal-content w-full max-w-md p-6 bg-white rounded-lg">
                                     <h2 class="text-2xl font-bold mb-4"
                                         x-text="editingEmployee.id ? 'Modifier l\'employé' : 'Ajouter un employé'"></h2>
-
+                    
                                     <form @submit.prevent="saveEmployee">
                                         <div class="mb-4">
-                                            <label for="employee-name"
-                                                class="block text-gray-700 font-bold mb-2">Nom:</label>
-                                            <input type="text" id="employee-name" x-model="editingEmployee.name"
-                                                required
-                                                class="w-full border border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500">
+                                            <label for="employee-name" class="block text-gray-700 font-bold mb-2">Nom:</label>
+                                            <input type="text" id="employee-name" x-model="editingEmployee.name" required
+                                                   class="w-full border border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500">
                                         </div>
-
+                    
                                         <div class="mb-4">
-                                            <label for="employee-department"
-                                                class="block text-gray-700 font-bold mb-2">Département:</label>
+                                            <label for="employee-department" class="block text-gray-700 font-bold mb-2">Département:</label>
                                             <input type="text" id="employee-department"
-                                                x-model="editingEmployee.department" required
-                                                class="w-full border border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500">
+                                                   x-model="editingEmployee.department" required
+                                                   class="w-full border border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500">
                                         </div>
-
+                    
                                         <div class="mb-4">
                                             <label class="block text-gray-700 font-bold mb-2">Matériels:</label>
-                                            <select id="employeeModalSelect"
-                                                x-init="setTimeout(() => { $el.value = editingEmployee.materials.map(mat => mat.id); }, 0)"
-                                                multiple>
+                                            <select id="employeeModalSelect" multiple
+                                                    x-init="setTimeout(() => { $el.value = editingEmployee.materials.map(mat => mat.id); }, 0)">
                                                 <template x-for="material in filteredMaterials" :key="material.id">
                                                     <option :value="material.id" x-text="material.name"></option>
                                                 </template>
                                             </select>
                                         </div>
-
+                    
                                         <div class="flex justify-end">
                                             <button type="button" @click="closeEmployeeEditModal"
-                                                class="px-4 py-2 mr-2 bg-gray-300 rounded-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500">
+                                                    class="px-4 py-2 mr-2 bg-gray-300 rounded-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500">
                                                 Annuler
                                             </button>
                                             <button type="submit"
-                                                class="px-4 py-2 bg-primary-500 text-white rounded-md hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-primary-700">
+                                                    class="px-4 py-2 bg-primary-500 text-white rounded-md hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-primary-700">
                                                 Enregistrer
                                             </button>
                                         </div>

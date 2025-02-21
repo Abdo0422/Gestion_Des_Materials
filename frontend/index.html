@@ -12,10 +12,15 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
     <script src="tailwind.js"></script>
     <link href="style.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 
 <body x-data="dashboardData()" x-init="setTimeout(() => { init(); }, 100)" class="antialiased text-gray-800">
 
+    <div id="loading-overlay" class="hidden">
+        <div class="loader"></div>
+    </div>
     <!-- Sidebar & Header Navigation -->
     <div class="flex h-screen overflow-hidden">
         <div class="hidden md:flex md:flex-shrink-0" id="sidebar"></div>
@@ -33,6 +38,7 @@
 
                     <!-- Dashboard Stats -->
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-8" id="counts-container">
+
                         <div
                             class="bg-white rounded-xl card-shadow p-6 transform hover:scale-105 transition-all duration-300">
                             <div class="flex items-center">
@@ -44,10 +50,9 @@
                                     <h3 class="text-2xl font-bold text-gray-800" id="employee-count"></h3>
                                 </div>
                             </div>
-                            <div class="mt-4 flex items-center text-sm font-medium text-green-600">
-                                <i class="fas fa-arrow-up mr-1"></i>
-                                <span>12%</span>
-                                <span class="text-gray-500 ml-2">vs dernier mois</span>
+                            <div class="mt-4 flex items-center text-sm font-medium" id="employee-change-container">
+                                <i></i>
+                                <p></p> <span class="text-gray-500 ml-2">vs dernier mois</span>
                             </div>
                         </div>
 
@@ -62,10 +67,10 @@
                                     <h3 class="text-2xl font-bold text-gray-800" id="pc-count"></h3>
                                 </div>
                             </div>
-                            <div class="mt-4 flex items-center text-sm font-medium text-green-600">
-                                <i class="fas fa-arrow-up mr-1"></i>
-                                <span>8%</span>
-                                <span class="text-gray-500 ml-2">vs dernier mois</span>
+                            <div class="mt-4 flex items-center text-sm font-medium" id="pc-change-container">
+                                <i></i>
+                                <p></p> <span class="text-gray-500 ml-2">vs
+                                    dernier mois</span>
                             </div>
                         </div>
 
@@ -80,32 +85,51 @@
                                     <h3 class="text-2xl font-bold text-gray-800" id="imprimante-count"></h3>
                                 </div>
                             </div>
-                            <div class="mt-4 flex items-center text-sm font-medium text-red-600">
-                                <i class="fas fa-arrow-down mr-1"></i>
-                                <span>3%</span>
-                                <span class="text-gray-500 ml-2">vs dernier mois</span>
+                            <div class="mt-4 flex items-center text-sm font-medium" id="imprimante-change-container">
+                                <i></i>
+                                <p></p> <span class="text-gray-500 ml-2">vs
+                                    dernier mois</span>
                             </div>
+
                         </div>
 
                         <div
                             class="bg-white rounded-xl card-shadow p-6 transform hover:scale-105 transition-all duration-300">
                             <div class="flex items-center">
-                                <div class="p-3 rounded-lg bg-yellow-50 mr-4"> <i
-                                        class="fas fa-tv text-moroccan-gold text-xl"></i> </div>
+                                <div class="p-3 rounded-lg bg-yellow-50 mr-4">
+                                    <i class="fas fa-tv text-moroccan-gold text-xl"></i>
+                                </div>
                                 <div>
                                     <p class="text-sm text-gray-500 font-medium">Total Ecrans</p>
                                     <h3 class="text-2xl font-bold text-gray-800" id="ecran-count"></h3>
                                 </div>
                             </div>
-                            <div class="mt-4 flex items-center text-sm font-medium text-yellow-600"> <i
-                                    class="fas fa-arrow-down mr-1"></i>
-                                <span>3%</span>
+                            <div class="mt-4 flex items-center text-sm font-medium" id="ecran-change-container">
+                                <i></i>
+                                <p></p>
                                 <span class="text-gray-500 ml-2">vs dernier mois</span>
                             </div>
                         </div>
+
                     </div>
 
 
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                        <div>
+                            <div class="bg-white rounded-xl card-shadow p-6">
+                                <h3 class="text-lg font-bold mb-4">Répartition des Matériels</h3>
+                                <div class="h-[400px] w-full"> <canvas id="material-chart" class="w-full"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="bg-white rounded-xl card-shadow p-6">
+                                <h3 class="text-lg font-bold mb-4">Notes</h3>
+                                <textarea id="notes"
+                                    class="w-full h-48 border rounded-md p-2 focus:outline-none focus:ring focus:ring-blue-300"></textarea>
+                            </div>
+                        </div>
+                    </div>
 
                 </div>
             </main>
@@ -114,6 +138,7 @@
 
     <!-- Alpine.js Data -->
     <script src="app.js"></script>
+    <script src="loading.js"></script>
     <script>
         fetch('sidebar.html')
             .then(response => response.text())
