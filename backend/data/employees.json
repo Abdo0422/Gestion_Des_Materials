@@ -54,5 +54,31 @@
     ],
     "createdAt": "2024-10-27T14:22:17.775Z",
     "updatedAt": "2025-02-20T14:22:17.775Z"
+  },
+  {
+    "name": "James",
+    "department": "Sales",
+    "materials": [
+      {
+        "name": "Ecran Dell UltraSharp",
+        "serialNumber": "SN11223",
+        "image": "images/images.jpg"
+      }
+    ],
+    "createdAt": "2025-02-21T12:07:19.146Z",
+    "id": 5
+  },
+  {
+    "name": "Lisa",
+    "department": "Engineering",
+    "materials": [
+      {
+        "name": "Ecran Samsung Odyssey",
+        "serialNumber": "SN77889",
+        "image": "images/68AEFF22-1923-6F36-3221-C220A56735C9-300.webp"
+      }
+    ],
+    "createdAt": "2025-02-21T12:07:37.745Z",
+    "id": 6
   }
 ]

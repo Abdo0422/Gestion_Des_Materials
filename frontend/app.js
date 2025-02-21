@@ -5,6 +5,7 @@ function dashboardData() {
         showEmployeeForm: false,
         searchQueryPC: '',
         searchQueryPrinter: '',
+        searchQueryScreen:'',
         showMaterialModal: false,
         showMaterialModal2: false,
         editingMaterial: { name: '', serialNumber: '', marque: '', status: '', image: '' },
@@ -19,13 +20,14 @@ function dashboardData() {
         searchQueryMaterials: '',
         employeesPC: [],
         employeesPrinter: [],
+        employeesScreen:[],
         selectedFile: null,
         imagePreview: null,
 
         async init() {
             try {
                 await Promise.all([
-                    this.fetchAllMaterials(), // Fetch all materials ONCE
+                    this.fetchAllMaterials(), 
                     this.fetchEmployees(),
                     this.fetchCounts()
                 ]);
@@ -80,11 +82,19 @@ function dashboardData() {
                 )
             );
 
+            this.employeesScreen = employees.filter(emp => 
+                emp.materials && emp.materials.some(mat =>
+                    mat.name.toLowerCase().includes("ecran") ||
+                    mat.name.toLowerCase().includes("screen") ||
+                    mat.name.toLowerCase().includes("monitor")
+                )
+            );
+
             this.renderEmployeesTable(this.employeesPC, 'employees-pc-table');
-            if (document.getElementById('employees-printer-table')) {
-                this.renderEmployeesTable(this.employeesPrinter, 'employees-printer-table');
-            }
+            this.renderEmployeesTable(this.employeesPrinter, 'employees-printer-table');
+            this.renderEmployeesTable(this.employeesScreen, 'employees-screen-table'); 
         },
+
 
         renderEmployeesTable(employees, tableId) {
             const tableBody = document.getElementById(tableId);
@@ -225,9 +235,11 @@ function dashboardData() {
                         switch (cellData.value.toLowerCase()) {
                             case 'actif':
                             case 'active':
+                            case 'disponible':  
                                 statusClass = 'bg-green-50 text-green-600';
                                 break;
                             case 'maintenance':
+                            case 'en utilisation':  
                                 statusClass = 'bg-yellow-50 text-yellow-600';
                                 break;
                             case 'défectueux':
@@ -238,7 +250,6 @@ function dashboardData() {
                             default:
                                 statusClass = 'bg-gray-50 text-gray-600';
                         }
-
                         statusSpan.className = `px-2 py-1 rounded-full ${statusClass} text-xs`;
                         statusSpan.textContent = cellData.value;
                         cell.appendChild(statusSpan);
@@ -346,21 +357,9 @@ function dashboardData() {
             this.renderEmployeesTable(filteredPrinter, 'employees-printer-table');
         },
 
-
-        // Search and filter functionality
-        filterEmployees(searchTerm) {
-            this.searchQuery = searchTerm;
-            if (!searchTerm) {
-                this.renderEmployeesTable(this.employeesPC, 'employees-pc-table');
-                if (document.getElementById('employees-printer-table')) {
-                    this.renderEmployeesTable(this.employeesPrinter, 'employees-printer-table');
-                }
-                return;
-            }
-
+        filterEmployeesScreen(searchTerm) {
             const term = searchTerm.toLowerCase();
-
-            const filteredPC = this.employeesPC.filter(emp =>
+            const filteredEcrans = this.employeesScreen.filter(emp =>
                 emp.name.toLowerCase().includes(term) ||
                 emp.department.toLowerCase().includes(term) ||
                 (emp.materials && emp.materials.some(mat =>
@@ -368,20 +367,7 @@ function dashboardData() {
                     mat.serialNumber.toLowerCase().includes(term)
                 ))
             );
-
-            this.renderEmployeesTable(filteredPC, 'employees-pc-table');
-
-            if (document.getElementById('employees-printer-table')) {
-                const filteredPrinter = this.employeesPrinter.filter(emp =>
-                    emp.name.toLowerCase().includes(term) ||
-                    emp.department.toLowerCase().includes(term) ||
-                    (emp.materials && emp.materials.some(mat =>
-                        mat.name.toLowerCase().includes(term) ||
-                        mat.serialNumber.toLowerCase().includes(term)
-                    ))
-                );
-                this.renderEmployeesTable(filteredPrinter, 'employees-printer-table');
-            }
+            this.renderEmployeesTable(filteredEcrans, 'employees-screen-table');
         },
 
         // CRUD operations
@@ -395,7 +381,7 @@ function dashboardData() {
         },
 
         viewEmployeeDetails(id) {
-            const employee = [...this.employeesPC, ...this.employeesPrinter].find(e => e.id === id);
+            const employee = [...this.employeesPC, ...this.employeesPrinter, ...this.employeesScreen].find(e => e.id === id);
             if (!employee) return;
 
             console.log("Viewing employee details:", employee);
@@ -426,7 +412,7 @@ function dashboardData() {
         },
 
         editEmployee(id) {
-            const employee = [...this.employeesPC, ...this.employeesPrinter].find(e => e.id === parseInt(id));
+            const employee = [...this.employeesPC, ...this.employeesPrinter, ...this.employeesScreen].find(e => e.id === parseInt(id));
             if (!employee) return;
 
             this.editingEmployee = { ...employee };
@@ -459,6 +445,11 @@ function dashboardData() {
                 } else if (type === 'Printer') {
                     return mat.name.toLowerCase().includes("imprimante") ||
                         mat.name.toLowerCase().includes("printer");
+                }
+                else if (type === 'Screen') {
+                    return mat.name.toLowerCase().includes("ecran") ||
+                        mat.name.toLowerCase().includes("screen")||
+                        mat.name.toLowerCase().includes("monitor");
                 }
                 return true;
             });
@@ -514,6 +505,12 @@ function dashboardData() {
                 return this.materials.filter(mat =>
                     mat.name.toLowerCase().includes("imprimante") ||
                     mat.name.toLowerCase().includes("printer")
+                );
+            } else if (this.employeesScreen.find(emp => emp.id === employee.id)) {
+                return this.materials.filter(mat =>
+                    mat.name.toLowerCase().includes("ecran") ||
+                    mat.name.toLowerCase().includes("screen") ||
+                    mat.name.toLowerCase().includes("monitor")
                 );
             } else {
                 return this.materials;

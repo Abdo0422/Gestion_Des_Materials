@@ -4,10 +4,10 @@
     "name": "PC HP ProDesk",
     "marque": "HP",
     "serialNumber": "SN123454",
-    "status": "Disponible",
+    "status": "En Utilisation",
     "image": "images/1-430x430.webp",
     "createdAt": "2024-10-27T10:00:00.000Z",
-    "updatedAt": "2025-02-20T14:14:57.378Z"
+    "updatedAt": "2025-02-21T11:52:34.814Z"
   },
   {
     "id": 2,
@@ -17,7 +17,7 @@
     "status": "Disponible",
     "image": "images/ordinateur-de-bureau-dell-optiplex-3000-dl-op3000-i5-sff_34b18721-be32-4ce5-b594-e536cc349ae8.webp",
     "createdAt": "2024-10-27T10:00:00.000Z",
-    "updatedAt": "2025-02-20T14:16:17.956Z"
+    "updatedAt": "2025-02-21T11:54:09.457Z"
   },
   {
     "id": 3,
@@ -34,20 +34,20 @@
     "name": "Imprimante Canon Pixma",
     "marque": "Canon",
     "serialNumber": "SN67890",
-    "status": "Disponible",
+    "status": "En Utilisation",
     "image": "images/imprimante-multifonction-jet-d-encre-canon-pixma-ts3440-4463c007be.jpg",
     "createdAt": "2024-10-27T10:00:00.000Z",
-    "updatedAt": "2025-02-20T14:17:52.835Z"
+    "updatedAt": "2025-02-21T11:49:49.214Z"
   },
   {
     "id": 5,
     "name": "Imprimante HP LaserJet",
     "marque": "HP",
     "serialNumber": "SN09876",
-    "status": "Disponible",
+    "status": "En Utilisation",
     "image": "images/imprimante-laser-monochrome-hp-laserjet-pro-4003dn-2z609a.jpg",
     "createdAt": "2024-10-27T10:00:00.000Z",
-    "updatedAt": "2025-02-20T14:18:54.290Z"
+    "updatedAt": "2025-02-21T11:49:55.861Z"
   },
   {
     "id": 6,
@@ -64,10 +64,10 @@
     "name": "Ecran HP EliteDisplay",
     "marque": "HP",
     "serialNumber": "SN33446",
-    "status": "En utilisation",
+    "status": "Disponible",
     "image": "images/C9V75AA-HP-EliteDisplay-E231-Ecran-23-Full-HD-VGA-DVI-DisplayPorts-USB-02.webp",
     "createdAt": "2024-10-27T10:00:00.000Z",
-    "updatedAt": "2025-02-20T14:20:58.461Z"
+    "updatedAt": "2025-02-21T11:49:29.561Z"
   },
   {
     "id": 8,
