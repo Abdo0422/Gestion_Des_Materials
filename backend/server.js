@@ -4,10 +4,10 @@ const multer = require('multer');
 const bcrypt = require('bcryptjs');
 const cors = require('cors');
 const path = require('path');
-
+const moment = require('moment');
 
 const app = express();
-app.use(express.json({ limit: '10mb' }));  
+app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ limit: '10mb', extended: true }));
 app.use(cors());
 
@@ -30,8 +30,12 @@ function addCreationDate(data) {
     return { ...data, createdAt: new Date() };
 }
 
-function generateId() { 
-    return Math.random().toString(36).substring(2, 15);
+function getNextId(data) {
+    if (!data || data.length === 0) {
+        return 1;
+    }
+    const lastId = data.reduce((max, item) => Math.max(max, parseInt(item.id)), 0);
+    return lastId + 1;
 }
 
 function countEmployees() {
@@ -40,7 +44,7 @@ function countEmployees() {
         return employees.length;
     } catch (error) {
         console.error("Error reading employees file:", error);
-        return 0; // Return 0 if there's an error
+        return 0;
     }
 }
 
@@ -51,8 +55,7 @@ function countMaterialsByName(searchTerm) {
 
         const count = materials.filter(material => {
             const lowerMaterialName = material.name.toLowerCase();
-            return lowerMaterialName.includes(lowerSearchTerm); // Fuzzy search
-            // Or use a more sophisticated fuzzy search library if needed.
+            return lowerMaterialName.includes(lowerSearchTerm);
         }).length;
 
         return count;
@@ -63,20 +66,115 @@ function countMaterialsByName(searchTerm) {
     }
 }
 
+function countEmployeesLastMonth() {
+    try {
+        const employees = JSON.parse(fs.readFileSync(employeesFile, 'utf8'));
+        const lastMonthStart = moment().subtract(1, 'month').startOf('month');
+        const lastMonthEnd = moment().subtract(1, 'month').endOf('month');
+
+        const count = employees.filter(employee => {
+            console.log("Employee Data:", employee); // Log the ENTIRE employee object HERE
+            if (!employee.createdAt) {
+                console.warn("Employee has no createdAt:", employee);
+                return false;
+            }
+            const createdAt = moment(employee.createdAt);
+            return createdAt.isBetween(lastMonthStart, lastMonthEnd, null, '[]');
+        }).length;
+    
+        console.log("Employees last month:", count); // Keep this log to see the count
+        return count;
+    } catch (error) {
+        console.error("Error reading employees file:", error);
+        return 0;
+    }
+}
+
+function countMaterialsByNameLastMonth(searchTerm) {
+    try {
+        const materials = JSON.parse(fs.readFileSync(materialsFile, 'utf8'));
+        const lowerSearchTerm = searchTerm.toLowerCase();
+        const lastMonthStart = moment().subtract(1, 'month').startOf('month');
+        const lastMonthEnd = moment().subtract(1, 'month').endOf('month');
+
+        const count = materials.filter(material => {
+            console.log("Material Data:", material); // Log the ENTIRE material object
+            const lowerMaterialName = material.name.toLowerCase();
+            if (!material.createdAt) {
+                console.warn("Material has no createdAt:", material);
+                return false;
+            }
+            const createdAt = moment(material.createdAt);  // Parse the date
+            return lowerMaterialName.includes(lowerSearchTerm) && createdAt.isBetween(lastMonthStart, lastMonthEnd, null, '[]');
+        }).length;
+
+        console.log(`Materials (${searchTerm}) last month:`, count);
+        return count;
+    } catch (error) {
+        console.error("Error reading materials file:", error);
+        return 0;
+    }
+}
+
+function calculatePercentageChange(previousValue, currentValue) {
+    if (previousValue === 0) {
+        return currentValue === 0 ? 0 : (currentValue * 100).toFixed(1) + "%"; // Direct multiplication
+    }
+    const change = ((currentValue - previousValue) / previousValue) * 100;
+    return change.toFixed(1) + "%";
+}
 
 app.get('/api/counts', (req, res) => {
     const numEmployees = countEmployees();
-    const numImprimantes = countMaterialsByName('imprimante'); 
-    const numPCs = countMaterialsByName('pc'); 
-    const numEcrans = countMaterialsByName('ecran'); 
+    const numImprimantes = countMaterialsByName('imprimante');
+    const numPCs = countMaterialsByName('pc');
+    const numEcrans = countMaterialsByName('ecran');
+
+    const numEmployeesLastMonth = countEmployeesLastMonth();
+    const numImprimantesLastMonth = countMaterialsByNameLastMonth('imprimante');
+    const numPCsLastMonth = countMaterialsByNameLastMonth('pc');
+    const numEcransLastMonth = countMaterialsByNameLastMonth('ecran');
+
+    console.log("Current Counts:", {
+        numEmployees,
+        numImprimantes,
+        numPCs,
+        numEcrans
+    });
+
+    console.log("Last Month Counts:", {
+        numEmployeesLastMonth,
+        numImprimantesLastMonth,
+        numPCsLastMonth,
+        numEcransLastMonth
+    });
+
+
+    const employeeChange = calculatePercentageChange(numEmployeesLastMonth, numEmployees);
+    const imprimanteChange = calculatePercentageChange(numImprimantesLastMonth, numImprimantes);
+    const pcChange = calculatePercentageChange(numPCsLastMonth, numPCs);
+    const ecranChange = calculatePercentageChange(numEcransLastMonth, numEcrans);
+
+    console.log("Percentage Changes:", {
+        employeeChange,
+        imprimanteChange,
+        pcChange,
+        ecranChange
+    });
+
 
     res.json({
-        numEmployees: numEmployees,
-        numImprimantes: numImprimantes,
-        numPCs: numPCs,
-        numEcrans: numEcrans
+        numEmployees,
+        numImprimantes,
+        numPCs,
+        numEcrans,
+        employeeChange,
+        imprimanteChange,
+        pcChange,
+        ecranChange,
     });
 });
+
 
 // ✅ Login Route (No token authentication)
 app.post('/api/login', (req, res) => {
@@ -125,9 +223,9 @@ app.post('/api/users', async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = { 
-        username, 
-        password: hashedPassword, 
+    const newUser = {
+        username,
+        password: hashedPassword,
         role: 'manager',
         createdAt: new Date() // Add creation date here
     };
@@ -151,11 +249,11 @@ app.get('/api/materials', (req, res) => {
     }
 });
 
-app.get('/api/materials/:id', (req, res) => {  
+app.get('/api/materials/:id', (req, res) => {
     try {
         const materialId = req.params.id;
         const materials = JSON.parse(fs.readFileSync(materialsFile, 'utf8'));
-        const material = materials.find(m => m.id === parseInt(materialId)); 
+        const material = materials.find(m => m.id === parseInt(materialId));
 
         if (!material) {
             return res.status(404).json({ error: "Material not found" });
@@ -185,7 +283,7 @@ app.post('/api/materials', upload.single('image'), (req, res) => {
             newMaterial.image = `images/${req.file.filename}`;
         }
 
-        newMaterial.id = generateId();
+        newMaterial.id = getNextId(materials);
         materials.push(newMaterial);
         fs.writeFileSync(materialsFile, JSON.stringify(materials, null, 2));
         console.log("Material created successfully:", newMaterial);
@@ -234,7 +332,7 @@ app.delete('/api/materials/:id', (req, res) => {
         console.log("Delete request received for material ID:", materialId);
 
         const materials = JSON.parse(fs.readFileSync(materialsFile, 'utf8'));
-        const index = materials.findIndex(m => m.id === materialId);
+        const index = materials.findIndex(m => String(m.id) === String(materialId));
 
         if (index === -1) {
             console.log("Material not found");
@@ -275,7 +373,7 @@ app.post('/api/employees', (req, res) => {
             return res.status(400).json({ error: "Name and department are required" });
         }
 
-        newEmployee.id = generateId();
+        newEmployee.id = getNextId(employees);
         employees.push(newEmployee);
         fs.writeFileSync(employeesFile, JSON.stringify(employees, null, 2));
         console.log("Employee created successfully:", newEmployee);
@@ -295,8 +393,8 @@ app.put('/api/employees/:id', (req, res) => {
         console.log("Updated employee:", updatedEmployee);
 
         const employees = JSON.parse(fs.readFileSync(employeesFile, 'utf8'));
-        const index = employees.findIndex(e => e.id === parseInt(employeeId));
-        console.log("Index found:", index); 
+        const index = employees.findIndex(e => String(e.id) === String(employeeId));
+        console.log("Index found:", index);
         if (index === -1) {
             console.log("Employee not found");
             return res.status(404).json({ error: "Employee not found" });
@@ -319,7 +417,7 @@ app.delete('/api/employees/:id', (req, res) => {
         console.log("Delete request received for employee ID:", employeeId);
 
         const employees = JSON.parse(fs.readFileSync(employeesFile, 'utf8'));
-        const index = employees.findIndex(e => e.id === employeeId);
+        const index = employees.findIndex(e => String(e.id) === String(employeeId));
 
         if (index === -1) {
             console.log("Employee not found");
