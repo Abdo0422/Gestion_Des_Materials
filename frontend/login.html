@@ -1,37 +1,44 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
-    <!-- Include Tailwind CSS from CDN -->
+    <title>Connexion</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="style.css">
 </head>
+
 <body class="bg-gray-100 flex items-center justify-center min-h-screen">
 
     <div class="w-full max-w-sm p-6 bg-white shadow-md rounded-lg">
-        <h1 class="text-3xl font-semibold text-center text-gray-800 mb-6">Login</h1>
+        <h1 class="text-3xl font-semibold text-center text-gray-800 mb-6">Connexion</h1>
 
-        <!-- Login Form -->
         <form id="login-form">
             <div class="mb-4">
-                <label for="username" class="block text-sm font-medium text-gray-700">Username</label>
-                <input type="text" id="username" class="w-full px-4 py-2 mt-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Enter your username" required>
+                <label for="username" class="block text-sm font-medium text-gray-700">Nom d'utilisateur</label>
+                <input type="text" id="username"
+                    class="w-full px-4 py-2 mt-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    placeholder="Entrez votre nom d'utilisateur" required>
             </div>
 
             <div class="mb-6">
-                <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
-                <input type="password" id="password" class="w-full px-4 py-2 mt-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Enter your password" required>
+                <label for="password" class="block text-sm font-medium text-gray-700">Mot de passe</label>
+                <input type="password" id="password"
+                    class="w-full px-4 py-2 mt-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    placeholder="Entrez votre mot de passe" required>
             </div>
 
-            <!-- Error Message -->
-            <p id="error-message" class="text-red-500 text-sm mb-4 hidden">Invalid username or password</p>
+            <p id="error-message" class="text-red-500 text-sm mb-4 hidden">Nom d'utilisateur ou mot de passe incorrect
+            </p>
 
-            <!-- Submit Button -->
-            <button type="submit" class="w-full py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">Login</button>
+            <button type="submit"
+                class="w-full py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">Se
+                connecter</button>
         </form>
     </div>
 
     <script src="login.js"></script>
 </body>
+
 </html>

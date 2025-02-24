@@ -1,0 +1,16 @@
+[
+  {
+    "id": 3,
+    "materialName": "PC Dell OptiPlex",
+    "marque": "Dell",
+    "serialNumber": "SN98765",
+    "ipAddress": "192.168.0.0.1"
+  },
+  {
+    "materialName": "PC Lenovo ThinkCentre",
+    "marque": "Lenovo",
+    "serialNumber": "SN45678",
+    "ipAddress": "192.168.0.0.3",
+    "id": 4
+  }
+]

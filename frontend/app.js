@@ -5,35 +5,60 @@ function dashboardData() {
         showEmployeeForm: false,
         searchQueryPC: '',
         searchQueryPrinter: '',
-        searchQueryScreen:'',
+        searchQueryScreen: '',
         showMaterialModal: false,
         showMaterialModal2: false,
         editingMaterial: { name: '', serialNumber: '', marque: '', status: '', image: '' },
         editingEmployee: { name: '', department: '', materials: [], createdAt: '' },
         allMaterials: [],
         filteredMaterials: [],
-        filteredMaterialNames: [], 
-        filteredMaterialMarques: [], 
+        filteredMaterialNames: [],
+        filteredMaterialMarques: [],
         employeeModalOpen: false,
         employeeModalOpen2: false,
         materials: [],
         searchQueryMaterials: '',
         employeesPC: [],
         employeesPrinter: [],
-        employeesScreen:[],
+        employeesScreen: [],
         selectedFile: null,
         imagePreview: null,
+        notifications: [],
+        notificationPopupOpen: false,
+        notes: [],
 
         async init() {
             try {
                 await Promise.all([
-                    this.fetchAllMaterials(), 
+                    this.fetchAllMaterials(),
                     this.fetchEmployees(),
-                    this.fetchCounts()
+                    this.fetchCounts(),
                 ]);
             } catch (error) {
                 console.error("Error during initialization:", error);
             }
+        },
+
+        addNotification(message, type = 'info') {
+            const notification = {
+                id: Date.now(),
+                message: message,
+                type: type, 
+                timestamp: new Date().toLocaleTimeString('fr-FR') 
+            };
+            this.notifications.push(notification);
+        
+            setTimeout(() => {
+                this.removeNotification(notification.id);
+            }, 5000);
+        },
+
+        toggleNotificationPopup() {
+            this.notificationPopupOpen = !this.notificationPopupOpen;
+        },
+        
+        removeNotification(id) {
+            this.notifications = this.notifications.filter(notification => notification.id !== id);
         },
 
         async fetchAllMaterials() {
@@ -67,32 +92,40 @@ function dashboardData() {
         },
 
         processEmployees(employees) {
+            if (!employees || !Array.isArray(employees)) {
+                console.error("Invalid employees data:", employees);
+                return;
+            }
+
             this.employeesPC = employees.filter(emp =>
                 emp.materials && emp.materials.some(mat =>
-                    mat.name.toLowerCase().includes("pc") ||
-                    mat.name.toLowerCase().includes("laptop") ||
-                    mat.name.toLowerCase().includes("macbook")
+                    mat.name &&
+                    (mat.name.toLowerCase().includes("pc") ||
+                        mat.name.toLowerCase().includes("laptop") ||
+                        mat.name.toLowerCase().includes("macbook"))
                 )
             );
 
             this.employeesPrinter = employees.filter(emp =>
                 emp.materials && emp.materials.some(mat =>
-                    mat.name.toLowerCase().includes("imprimante") ||
-                    mat.name.toLowerCase().includes("printer")
+                    mat.name &&
+                    (mat.name.toLowerCase().includes("imprimante") ||
+                        mat.name.toLowerCase().includes("printer"))
                 )
             );
 
-            this.employeesScreen = employees.filter(emp => 
+            this.employeesScreen = employees.filter(emp =>
                 emp.materials && emp.materials.some(mat =>
-                    mat.name.toLowerCase().includes("ecran") ||
-                    mat.name.toLowerCase().includes("screen") ||
-                    mat.name.toLowerCase().includes("monitor")
+                    mat.name &&
+                    (mat.name.toLowerCase().includes("ecran") ||
+                        mat.name.toLowerCase().includes("screen") ||
+                        mat.name.toLowerCase().includes("monitor"))
                 )
             );
 
             this.renderEmployeesTable(this.employeesPC, 'employees-pc-table');
             this.renderEmployeesTable(this.employeesPrinter, 'employees-printer-table');
-            this.renderEmployeesTable(this.employeesScreen, 'employees-screen-table'); 
+            this.renderEmployeesTable(this.employeesScreen, 'employees-screen-table');
         },
 
 
@@ -235,11 +268,11 @@ function dashboardData() {
                         switch (cellData.value.toLowerCase()) {
                             case 'actif':
                             case 'active':
-                            case 'disponible':  
+                            case 'disponible':
                                 statusClass = 'bg-green-50 text-green-600';
                                 break;
                             case 'maintenance':
-                            case 'en utilisation':  
+                            case 'en utilisation':
                                 statusClass = 'bg-yellow-50 text-yellow-600';
                                 break;
                             case 'défectueux':
@@ -392,7 +425,7 @@ function dashboardData() {
 
 
         editMaterial(id) {
-            const material = this.allMaterials.find(m => m.id === id); 
+            const material = this.allMaterials.find(m => m.id === id);
             if (!material) return;
 
             this.editingMaterial = { ...material };
@@ -403,7 +436,7 @@ function dashboardData() {
             this.showMaterialModal = false;
             this.editingMaterial = { name: '', serialNumber: '', marque: '', status: '', image: '' }; // Reset the form
             this.selectedFile = null;
-            this.imagePreview = null; 
+            this.imagePreview = null;
         },
 
         closeMaterialDetailsModal() {
@@ -437,7 +470,12 @@ function dashboardData() {
         openAddEmployeeModal(type) {
             this.editingEmployee = { name: '', department: '', materials: [], createdAt: this.getCurrentDateForInput() };
             this.employeeModalOpen = true;
+        
             this.filteredMaterials = this.materials.filter(mat => {
+                if (mat.status !== "Disponible") {
+                    return false; 
+                }
+        
                 if (type === 'PC') {
                     return mat.name.toLowerCase().includes("pc") ||
                         mat.name.toLowerCase().includes("laptop") ||
@@ -445,14 +483,20 @@ function dashboardData() {
                 } else if (type === 'Printer') {
                     return mat.name.toLowerCase().includes("imprimante") ||
                         mat.name.toLowerCase().includes("printer");
-                }
-                else if (type === 'Screen') {
+                } else if (type === 'Screen') {
                     return mat.name.toLowerCase().includes("ecran") ||
-                        mat.name.toLowerCase().includes("screen")||
+                        mat.name.toLowerCase().includes("screen") ||
                         mat.name.toLowerCase().includes("monitor");
                 }
                 return true;
             });
+        
+            if (this.filteredMaterials.length === 0) {
+                this.message = "Aucun matériel disponible trouvé pour ce type.";
+            } else {
+                this.message = '';  
+            }
+
             this.selectMaterialsInDropdown();
         },
 
@@ -468,7 +512,7 @@ function dashboardData() {
             this.imagePreview = null;
             this.showMaterialModal = true;
             this.filteredMaterialNames = [];
-            this.filteredMaterialMarques = []; 
+            this.filteredMaterialMarques = [];
         },
 
         autocompleteMaterialName() {
@@ -556,18 +600,18 @@ function dashboardData() {
                 });
 
                 if (!response.ok) {
-                    const errorText = await response.text(); 
+                    const errorText = await response.text();
                     throw new Error(`HTTP error! status: ${response.status} ${response.statusText}. Details: ${errorText}`);
                 }
 
-                alert(this.editingMaterial.id ? 'Matériel mis à jour avec succès!' : 'Nouveau matériel ajouté avec succès!');
+                this.addNotification(this.editingMaterial.id ? 'Matériel mis à jour avec succès!' : 'Nouveau matériel ajouté avec succès!', 'success');
 
-                this.closeMaterialModal(); 
+                this.closeMaterialModal();
                 await this.fetchAllMaterials();
 
             } catch (error) {
                 console.error("Error saving material:", error);
-                alert("Une erreur s'est produite lors de l'enregistrement du matériel. Vérifiez les détails dans la console."); // More informative message
+                this.addNotification("Une erreur s'est produite lors de l'enregistrement du matériel. Vérifiez les détails dans la console.", 'error'); // More informative message
             }
         },
 
@@ -599,56 +643,77 @@ function dashboardData() {
 
         async saveEmployee() {
             try {
+                // Determine the method and URL based on whether we're editing or creating a new employee
                 const method = this.editingEmployee.id ? 'PUT' : 'POST';
-                const url = parseInt(this.editingEmployee.id)
+                const url = this.editingEmployee.id
                     ? `https://supreme-xylophone-j646jr764grc5j94-3000.app.github.dev/api/employees/${this.editingEmployee.id}`
                     : 'https://supreme-xylophone-j646jr764grc5j94-3000.app.github.dev/api/employees';
 
+                // Format the creation date for the API
                 const formattedDate = this.formatDateForAPI(this.editingEmployee.createdAt);
 
+                // Get selected materials and map them to the required format
                 const selectedMaterialObjects = Array.from(document.querySelectorAll('#employeeModalSelect option:checked'))
                     .map(option => {
                         const materialId = parseInt(option.value);
                         const material = this.allMaterials.find(m => m.id === materialId);
                         if (!material) {
                             console.warn(`Material with ID ${materialId} not found. Skipping.`);
-                            return null; 
+                            return null;
                         }
                         return {
                             name: material.name,
                             serialNumber: material.serialNumber,
-                            image: material.image 
+                            image: material.image
                         };
                     })
                     .filter(material => material !== null);
 
+                // Validate that at least one material is selected (if required)
+                if (selectedMaterialObjects.length === 0) {
+                    throw new Error("Veuillez sélectionner au moins un matériel pour l'employé.");
+                }
 
+                // Prepare the employee data for the API
                 const employeeData = {
                     ...this.editingEmployee,
                     createdAt: formattedDate,
                     materials: selectedMaterialObjects
                 };
-                console.log("employee updated:", employeeData);
 
+                console.log("Employee data to be saved:", employeeData);
+
+                // Send the request to the backend
                 const response = await fetch(url, {
                     method: method,
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(employeeData)
                 });
 
+                // Handle non-OK responses
                 if (!response.ok) {
                     const errorText = await response.text();
-                    throw new Error(`HTTP error! status: ${response.status} ${response.statusText}. Details: ${errorText}`);
+                    throw new Error(`Erreur HTTP! Statut: ${response.status} ${response.statusText}. Détails: ${errorText}`);
                 }
 
-                alert(this.editingEmployee.id ? 'Employé mis à jour avec succès!' : 'Nouvel employé ajouté avec succès!');
+                // Show success message to the user
+                this.addNotification(this.editingEmployee.id ? 'Employé mis à jour avec succès!' : 'Nouvel employé ajouté avec succès!', 'success');
 
+                // Close the modal and refresh the employee list
                 this.closeEmployeeEditModal();
                 await this.fetchEmployees();
 
             } catch (error) {
                 console.error("Error saving employee:", error);
-                alert("Une erreur s'est produite lors de l'enregistrement de l'employé.");
+
+                // Provide specific error messages to the user
+                if (error.message.includes("Veuillez sélectionner au moins un matériel")) {
+                    this.addNotification(error.message, 'error');
+                } else if (error.message.includes("Erreur HTTP")) {
+                    this.addNotification("Une erreur s'est produite lors de la communication avec le serveur. Veuillez réessayer.", 'error');
+                } else {
+                    this.addNotification("Une erreur s'est produite lors de l'enregistrement de l'employé.", 'error');
+                }
             }
         },
 
@@ -665,12 +730,12 @@ function dashboardData() {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
 
-                alert('Matériel supprimé avec succès!');
+                this.addNotification('Matériel supprimé avec succès!', 'success');
 
                 await this.fetchAllMaterials();
             } catch (error) {
                 console.error("Error deleting material:", error);
-                alert("Une erreur s'est produite lors de la suppression du matériel.");
+                this.addNotification("Une erreur s'est produite lors de la suppression du matériel.", 'error');
             }
         },
 
@@ -686,12 +751,12 @@ function dashboardData() {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
 
-                alert('Employé supprimé avec succès!');
+                this.addNotification('Employé supprimé avec succès!', 'success');
 
                 await this.fetchEmployees();
             } catch (error) {
                 console.error("Error deleting employee:", error);
-                alert("Une erreur s'est produite lors de la suppression de l'employé.");
+                this.addNotification("Une erreur s'est produite lors de la suppression de l'employé.", 'error');
             }
         },
 
@@ -740,53 +805,53 @@ function dashboardData() {
                 const materials = await this.fetchAllMaterials();
                 this.materials = materials;
                 const employeeCount = await this.fetchEmployeeCount();
-        
+
                 const pcCount = this.materials.filter(mat => mat.name.toLowerCase().includes("pc") || mat.name.toLowerCase().includes("laptop") || mat.name.toLowerCase().includes("macbook")).length;
                 const imprimanteCount = this.materials.filter(mat => mat.name.toLowerCase().includes("imprimante") || mat.name.toLowerCase().includes("printer")).length;
                 const ecranCount = this.materials.filter(mat => mat.name.toLowerCase().includes("ecran")).length;
-        
+
                 const employeeCountElement = document.getElementById('employee-count');
                 if (employeeCountElement) {
                     employeeCountElement.textContent = employeeCount;
                 } else {
                     console.error("Element with ID 'employee-count' not found!");
                 }
-        
+
                 const pcCountElement = document.getElementById('pc-count');
                 if (pcCountElement) {
                     pcCountElement.textContent = pcCount;
                 } else {
                     console.error("Element with ID 'pc-count' not found!");
                 }
-        
+
                 const imprimanteCountElement = document.getElementById('imprimante-count');
                 if (imprimanteCountElement) {
                     imprimanteCountElement.textContent = imprimanteCount;
                 } else {
                     console.error("Element with ID 'imprimante-count' not found!");
                 }
-        
+
                 const ecranCountElement = document.getElementById('ecran-count');
                 if (ecranCountElement) {
                     ecranCountElement.textContent = ecranCount;
                 } else {
                     console.error("Element with ID 'ecran-count' not found!");
                 }
-        
+
                 this.createMaterialChart();
-        
+
                 const response = await fetch('https://supreme-xylophone-j646jr764grc5j94-3000.app.github.dev/api/counts');
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 const data = await response.json();
                 console.log("Data from API:", data);
-        
+
                 this.updatePercentageDisplay('employee', data.employeeChange);
                 this.updatePercentageDisplay('pc', data.pcChange);
                 this.updatePercentageDisplay('imprimante', data.imprimanteChange);
                 this.updatePercentageDisplay('ecran', data.ecranChange);
-        
+
             } catch (error) {
                 console.error("Error fetching counts or creating chart:", error);
                 const countsContainer = document.getElementById('counts-container');
@@ -795,28 +860,28 @@ function dashboardData() {
                 }
             }
         },
-                
+
         updatePercentageDisplay(item, change) {
             console.log("updatePercentageDisplay called for:", item, "with change:", change);
-        
+
             const container = document.getElementById(`${item}-change-container`);
             console.log("container", container);
-        
+
             if (!container) {
                 console.error(`Container not found for item: ${item}`);
                 return;
             }
-        
+
             const element = container.querySelector('p'); // Select the <p> element
             const icon = container.querySelector('i'); // Select the <i> element (icon)
-        
+
             if (change === Infinity || change === "N/A" || change === 0 || !change || change === null || typeof change === 'undefined') {
                 if (element) {
                     element.textContent = "N/A";
                 } else {
                     console.error(`Element (p) not found within container for item: ${item}`);
                 }
-        
+
                 if (icon) {
                     icon.className = "fas fa-minus mr-1"; // Set the minus icon class
                     icon.style.color = "gray";
@@ -826,24 +891,24 @@ function dashboardData() {
                 console.log("Change is N/A or invalid, setting display to N/A");
                 return;
             }
-        
+
             if (element) {
                 element.textContent = `${change}`;
                 const color = change.toString().includes('-') ? 'red' : 'green';
                 const arrowClass = change.toString().includes('-') ? 'fa-arrow-down' : 'fa-arrow-up'; // Correct class names
-        
+
                 console.log('arrowClass', arrowClass); // Log the arrow class
-        
+
                 element.style.color = color;
-        
+
                 if (icon) {
-                    icon.className = `fas ${arrowClass} mr-1`; 
-                    
+                    icon.className = `fas ${arrowClass} mr-1`;
+
                     icon.style.color = color;
                 } else {
                     console.error(`Icon (i) not found within container for item: ${item}`);
                 }
-        
+
                 console.log("Updated display for:", item, "with color:", color, "and arrowClass:", arrowClass);
             } else {
                 console.error(`Element (p) not found within container for item: ${item}`);
@@ -860,22 +925,22 @@ function dashboardData() {
                 return employees.length;
             } catch (error) {
                 console.error("Error fetching employee count:", error);
-                return 0; 
+                return 0;
             }
         },
 
-        myChart: null, 
+        myChart: null,
         createMaterialChart() {
             const pcCount = this.materials.filter(mat => mat.name.toLowerCase().includes("pc") || mat.name.toLowerCase().includes("laptop") || mat.name.toLowerCase().includes("macbook")).length;
             const imprimanteCount = this.materials.filter(mat => mat.name.toLowerCase().includes("imprimante") || mat.name.toLowerCase().includes("printer")).length;
             const ecranCount = this.materials.filter(mat => mat.name.toLowerCase().includes("ecran")).length;
             const otherCount = this.materials.length - pcCount - imprimanteCount - ecranCount;
-        
+
             const ctx = document.getElementById('material-chart').getContext('2d');
-        
-            Chart.getChart('material-chart')?.destroy(); 
-        
-            this.myChart = new Chart(ctx, { 
+
+            Chart.getChart('material-chart')?.destroy();
+
+            this.myChart = new Chart(ctx, {
                 type: 'doughnut',
                 data: {
                     labels: ['PC', 'Imprimante', 'Ecran', 'Autre'],
@@ -906,7 +971,139 @@ function dashboardData() {
                     }
                 }
             });
-        }
+        },
+        async exportToExcelMaterials() {
+            await this.exportToExcel("materials-table", "Matériels", "materials_export.xlsx", "#4CAF50", "#FFFFFF"); // Green theme
+        },
+
+        async exportToExcelEmployeesPC() {
+            await this.exportToExcel("employees-pc-table", "Employés PC", "employees_pc_export.xlsx", "#2196F3", "#FFFFFF"); // Blue theme
+        },
+
+        async exportToExcelEmployeesPrinter() {
+            await this.exportToExcel("employees-printer-table", "Employés Imprimantes", "employees_printer_export.xlsx", "#FF9800", "#FFFFFF"); // Orange theme
+        },
+
+        async exportToExcelEmployeesScreen() {
+            await this.exportToExcel("employees-screen-table", "Employés Écrans", "employees_screen_export.xlsx", "#9C27B0", "#FFFFFF"); // Purple theme
+        },
+
+        async exportToExcel(tableId, title, filename, headerColor, headerTextColor) {
+            const table = document.getElementById(tableId);
+            if (!table) {
+                console.error("Table not found:", tableId);
+                this.addNotification(`Tableau non trouvé: ${tableId}`, 'error');
+                return;
+            }
+        
+            const workbook = new ExcelJS.Workbook();
+            const worksheet = workbook.addWorksheet(title);
+        
+            const titleStyle = {
+                font: { name: 'Arial', size: 20, bold: true, color: { argb: '1D4E89' } },
+                alignment: { horizontal: 'center' }
+            };
+        
+            const dateStyle = {
+                font: { name: 'Arial', size: 14, color: { argb: '7B7B7B' } },
+                alignment: { horizontal: 'center' }
+            };
+        
+            const headerStyle = {
+                font: { name: 'Arial', size: 14, bold: true, color: { argb: headerTextColor } },
+                fill: { type: "pattern", pattern: "solid", fgColor: { argb: headerColor.replace("#", "") } },
+                alignment: { horizontal: "center", vertical: "middle" },
+                border: {
+                    top: { style: "thin" },
+                    left: { style: "thin" },
+                    bottom: { style: "thin" },
+                    right: { style: "thin" }
+                }
+            };
+        
+            const rowStyle = {
+                font: { name: "Arial", size: 12, color: { argb: '000000' } },
+                alignment: { horizontal: "left", vertical: "middle" },
+                border: {
+                    top: { style: "thin" },
+                    left: { style: "thin" },
+                    bottom: { style: "thin" },
+                    right: { style: "thin" }
+                }
+            };
+        
+        
+            const titleRow = worksheet.addRow([title]);
+            titleRow.getCell(1).style = titleStyle;
+            worksheet.mergeCells(`A1:D1`);
+        
+            const dateRow = worksheet.addRow([`Exporté le : ${new Date().toLocaleString("fr-FR")}`]);
+            dateRow.getCell(1).style = dateStyle;
+            worksheet.mergeCells(`A2:D2`);
+        
+        
+            const headers = [];
+            const headerRowElements = table.querySelectorAll("thead tr th");
+            if (headerRowElements.length > 0) {
+                for (let i = 0; i < headerRowElements.length - 2; i++) {  
+                    headers.push(headerRowElements[i].innerText);
+                }
+            } else {
+                const firstRowCells = table.querySelectorAll("tbody tr:first-child td");
+                for (let i = 0; i < firstRowCells.length - 2; i++) {
+                    headers.push(firstRowCells[i].getAttribute("data-label") || "");
+                }
+            }
+            const excelHeaderRow = worksheet.addRow(headers);
+            excelHeaderRow.eachCell(cell => cell.style = headerStyle);
+        
+        
+            const dataRows = [];
+            const rows = table.querySelectorAll("tbody tr");
+            rows.forEach(row => {
+                const rowData = [];
+                const cells = row.querySelectorAll("td");
+                for (let i = 0; i < cells.length -2; i++) { 
+                    rowData.push(cells[i].innerText);
+                }
+                dataRows.push(rowData);
+            });
+        
+            dataRows.forEach(rowData => {
+                const excelRow = worksheet.addRow(rowData);
+                excelRow.eachCell(cell => cell.style = rowStyle);
+        
+                if (worksheet.rowCount % 2 === 0) {
+                    excelRow.eachCell(cell => {
+                        cell.fill = {
+                            type: "pattern",
+                            pattern: "solid",
+                            fgColor: { argb: "F2F2F2" }
+                        };
+                    });
+                }
+            });
+        
+            worksheet.columns.forEach((column, index) => {
+                const widths = [];
+                for (let i = 0; i < worksheet.rowCount; i++) {
+                    const row = worksheet.getRow(i + 1);
+                    const cell = row.getCell(index + 1);
+                    const cellValue = cell.value ? cell.value.toString() : "";
+                    widths.push(cellValue.length);
+                }
+                const maxWidth = Math.max(...widths);
+                column.width = maxWidth + 5;
+            });
+        
+        
+            const buffer = await workbook.xlsx.writeBuffer();
+            const blob = new Blob([buffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+            saveAs(blob, filename);
+        
+            this.addNotification(`${title} exporté avec succès!`, 'success');
+        
+        },
 
 
 
@@ -940,14 +1137,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
     links.forEach(link => {
         const linkPath = new URL(link.href, window.location.origin).pathname;
-        console.log("Link Path:", linkPath, "Current Path:", currentPath); 
+        console.log("Link Path:", linkPath, "Current Path:", currentPath);
 
         if (linkPath === currentPath) {
             link.classList.add('text-white', 'bg-gradient-to-r', 'from-moroccan-blue', 'to-moroccan-teal');
-            console.log("Added active classes to:", link.href); 
+            console.log("Added active classes to:", link.href);
         } else {
             link.classList.add('text-gray-600', 'hover:bg-gray-50', 'hover:text-moroccan-teal', 'transition-all', 'duration-200');
-            console.log("Added inactive and hover classes to:", link.href); 
+            console.log("Added inactive and hover classes to:", link.href);
 
             link.addEventListener('mouseover', () => {
                 link.classList.add('hover:bg-gray-50', 'hover:text-moroccan-teal', 'transition-all', 'duration-200');
@@ -956,10 +1153,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
             link.addEventListener('mouseout', () => {
                 link.classList.remove('hover:bg-gray-50', 'hover:text-moroccan-teal', 'transition-all', 'duration-200');
-                console.log("Mouseout on:", link.href); 
+                console.log("Mouseout on:", link.href);
             });
         }
 
-        console.log("Link classes after processing:", link.href, link.classList); 
+        console.log("Link classes after processing:", link.href, link.classList);
     });
 });

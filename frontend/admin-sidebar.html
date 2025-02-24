@@ -1,0 +1,38 @@
+<div class="flex flex-col w-64 bg-white shadow-lg">
+    <!-- Sidebar Logo -->
+    <div class="flex items-center justify-center h-20 bg-moroccan-blue py-6">
+        <div class="text-white text-2xl font-bold">
+            <span class="text-moroccan-gold">A</span>dmin<span class="text-moroccan-teal">Pro</span>
+        </div>
+    </div>
+
+    <!-- Sidebar Menu -->
+    <div class="flex flex-col flex-grow py-5 overflow-y-auto bg-white">
+        <nav class="flex-1 px-4 space-y-2">
+            <a href="#" class="flex items-center px-4 py-3 text-sm rounded-lg text-white bg-gradient-to-r from-moroccan-blue to-moroccan-teal group">
+                <i class="fas fa-tachometer-alt mr-3"></i>
+                <span>Tableau de Bord</span>
+            </a>
+            <a href="#" class="flex items-center px-4 py-3 text-sm rounded-lg text-gray-600 hover:bg-gray-50 hover:text-moroccan-teal transition-all duration-200 group">
+                <i class="fas fa-user-shield mr-3 text-gray-500 group-hover:text-moroccan-teal"></i>
+                <span>Managers</span>
+            </a>
+            <a href="#" class="flex items-center px-4 py-3 text-sm rounded-lg text-gray-600 hover:bg-gray-50 hover:text-moroccan-teal transition-all duration-200 group">
+                <i class="fas fa-chart-bar mr-3 text-gray-500 group-hover:text-moroccan-teal"></i>
+                <span>Rapports</span>
+            </a>
+            <a href="#" class="flex items-center px-4 py-3 text-sm rounded-lg text-gray-600 hover:bg-gray-50 hover:text-moroccan-teal transition-all duration-200 group">
+                <i class="fas fa-cog mr-3 text-gray-500 group-hover:text-moroccan-teal"></i>
+                <span>Paramètres</span>
+            </a>
+        </nav>
+    </div>
+
+    <!-- Sidebar Footer -->
+    <div class="p-4 border-t border-gray-200">
+        <button onclick="logout()" class="flex items-center justify-center w-full py-2 px-4 rounded-lg btn-danger-gradient">
+            <i class="fas fa-sign-out-alt mr-2"></i>
+            <span>Déconnexion</span>
+        </button>
+    </div>
+</div>

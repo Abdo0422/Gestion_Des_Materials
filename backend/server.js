@@ -14,6 +14,9 @@ app.use(cors());
 const usersFile = './data/users.json';
 const employeesFile = './data/employees.json';
 const materialsFile = './data/materials.json';
+const notesFile = './data/notes.json';
+const ipAddressesFile = './data/ip_addresses.json';
+
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         cb(null, 'images');
@@ -43,7 +46,7 @@ function countEmployees() {
         const employees = JSON.parse(fs.readFileSync(employeesFile, 'utf8'));
         return employees.length;
     } catch (error) {
-        console.error("Error reading employees file:", error);
+        console.error("Erreur de lecture du fichier des employés:", error);
         return 0;
     }
 }
@@ -61,7 +64,7 @@ function countMaterialsByName(searchTerm) {
         return count;
 
     } catch (error) {
-        console.error("Error reading materials file:", error);
+        console.error("Erreur de lecture du fichier des matériaux:", error);
         return 0;
     }
 }
@@ -73,19 +76,19 @@ function countEmployeesLastMonth() {
         const lastMonthEnd = moment().subtract(1, 'month').endOf('month');
 
         const count = employees.filter(employee => {
-            console.log("Employee Data:", employee); // Log the ENTIRE employee object HERE
+            console.log("Données de l'employé:", employee);
             if (!employee.createdAt) {
-                console.warn("Employee has no createdAt:", employee);
+                console.warn("L'employé n'a pas de date de création:", employee);
                 return false;
             }
             const createdAt = moment(employee.createdAt);
             return createdAt.isBetween(lastMonthStart, lastMonthEnd, null, '[]');
         }).length;
-    
-        console.log("Employees last month:", count); // Keep this log to see the count
+
+        console.log("Employés du mois dernier:", count);
         return count;
     } catch (error) {
-        console.error("Error reading employees file:", error);
+        console.error("Erreur de lecture du fichier des employés:", error);
         return 0;
     }
 }
@@ -98,31 +101,134 @@ function countMaterialsByNameLastMonth(searchTerm) {
         const lastMonthEnd = moment().subtract(1, 'month').endOf('month');
 
         const count = materials.filter(material => {
-            console.log("Material Data:", material); // Log the ENTIRE material object
+            console.log("Données du matériel:", material);
             const lowerMaterialName = material.name.toLowerCase();
             if (!material.createdAt) {
-                console.warn("Material has no createdAt:", material);
+                console.warn("Le matériel n'a pas de date de création:", material);
                 return false;
             }
-            const createdAt = moment(material.createdAt);  // Parse the date
+            const createdAt = moment(material.createdAt);
             return lowerMaterialName.includes(lowerSearchTerm) && createdAt.isBetween(lastMonthStart, lastMonthEnd, null, '[]');
         }).length;
 
-        console.log(`Materials (${searchTerm}) last month:`, count);
+        console.log(`Matériels (${searchTerm}) du mois dernier:`, count);
         return count;
     } catch (error) {
-        console.error("Error reading materials file:", error);
+        console.error("Erreur de lecture du fichier des matériaux:", error);
         return 0;
     }
 }
 
 function calculatePercentageChange(previousValue, currentValue) {
     if (previousValue === 0) {
-        return currentValue === 0 ? 0 : (currentValue * 100).toFixed(1) + "%"; // Direct multiplication
+        return currentValue === 0 ? 0 : (currentValue * 100).toFixed(1) + "%";
     }
     const change = ((currentValue - previousValue) / previousValue) * 100;
     return change.toFixed(1) + "%";
 }
+
+function getIPAddresses() {
+    try {
+        const ipAddresses = JSON.parse(fs.readFileSync(ipAddressesFile, 'utf8'));
+        return ipAddresses;
+    } catch (error) {
+        console.error("Erreur de lecture des adresses IP:", error);
+        return [];
+    }
+}
+
+function isDuplicateIP(ipAddresses, newIPAddress) {
+    return ipAddresses.some(existingIP => existingIP.ipAddress === newIPAddress.ipAddress && existingIP.materialName !== newIPAddress.materialName);
+}
+
+function saveIPAddresses(ipAddresses) {
+    try {
+        fs.writeFileSync(ipAddressesFile, JSON.stringify(ipAddresses, null, 2));
+    } catch (error) {
+        console.error("Erreur d'écriture des adresses IP:", error);
+    }
+}
+
+app.get('/api/ip-addresses', (req, res) => {
+    try {
+        const ipAddresses = getIPAddresses();
+        res.json(ipAddresses);
+    } catch (error) {
+        console.error("Erreur lors de la récupération des adresses IP:", error);
+        res.status(500).json({ error: "Erreur lors de la récupération des adresses IP" });
+    }
+});
+
+app.post('/api/ip-addresses', (req, res) => {
+    try {
+        const newIPAddress = req.body;
+        const ipAddresses = getIPAddresses();
+
+        if (!newIPAddress.materialName || !newIPAddress.ipAddress) {
+            return res.status(400).json({ error: "Le nom du matériel et l'adresse IP sont requis" });
+        }
+
+        if (isDuplicateIP(ipAddresses, newIPAddress)) {
+            return res.status(400).json({ error: "Adresse IP en double" });
+        }
+
+        newIPAddress.id = getNextId(ipAddresses);
+        ipAddresses.push(newIPAddress);
+        saveIPAddresses(ipAddresses);
+        res.status(200).json({ message: "Adresse IP ajoutée avec succès", id: newIPAddress.id });
+
+    } catch (error) {
+        console.error("Erreur du backend:", error);
+        res.status(500).json({ error: error.message || "Une erreur s'est produite" });
+    }
+});
+
+app.put('/api/ip-addresses/:id', (req, res) => {
+    try {
+        const ipAddressId = req.params.id;
+        const updatedIPAddress = req.body;
+
+        const ipAddresses = getIPAddresses();
+        const index = ipAddresses.findIndex(ip => String(ip.id) === String(ipAddressId));
+
+        if (index === -1) {
+            return res.status(404).json({ error: "IP address not found" });
+        }
+
+        const otherIPs = ipAddresses.filter((ip, i) => i !== index);
+        if (updatedIPAddress.ipAddress && isDuplicateIP(otherIPs, updatedIPAddress)) {
+            return res.status(400).json({ error: "Duplicate IP address" });
+        }
+
+        ipAddresses[index] = { ...ipAddresses[index], ...updatedIPAddress };
+
+        saveIPAddresses(ipAddresses);
+        res.json(ipAddresses[index]);
+
+    } catch (error) {
+        console.error("Error updating IP address:", error);
+        res.status(500).json({ error: "Error updating IP address" });
+    }
+});
+
+app.delete('/api/ip-addresses/:id', (req, res) => {
+    try {
+        const ipAddressId = req.params.id;
+        const ipAddresses = getIPAddresses();
+        const index = ipAddresses.findIndex(ip => String(ip.id) === String(ipAddressId));
+
+        if (index === -1) {
+            return res.status(404).json({ error: "IP address not found" });
+        }
+
+        ipAddresses.splice(index, 1);
+        saveIPAddresses(ipAddresses);
+        res.status(204).end();
+    } catch (error) {
+        console.error("Error deleting IP address:", error);
+        res.status(500).json({ error: "Error deleting IP address" });
+    }
+});
 
 app.get('/api/counts', (req, res) => {
     const numEmployees = countEmployees();
@@ -237,6 +343,53 @@ app.post('/api/users', async (req, res) => {
     res.json({ message: 'Manager created successfully' });
 });
 
+app.get('/api/notes', (req, res) => {
+    try {
+        const notes = JSON.parse(fs.readFileSync(notesFile, 'utf8'));
+        res.json(notes);
+    } catch (error) {
+        console.error("Error reading notes file:", error);
+        res.status(500).json({ error: "Error retrieving notes" });
+    }
+});
+
+app.post('/api/notes', (req, res) => {
+    try {
+        const notes = JSON.parse(fs.readFileSync(notesFile, 'utf8'));
+        const newNote = {
+            id: getNextId(notes), // Use your getNextId function
+            title: req.body.title,
+            content: req.body.content,
+            createdAt: new Date(),
+            // Add manager username here if you have authentication
+            // manager: req.user.username // Example if you have authentication
+        };
+        notes.push(newNote);
+        fs.writeFileSync(notesFile, JSON.stringify(notes, null, 2));
+        res.status(201).json(newNote);
+    } catch (error) {
+        console.error("Error creating note:", error);
+        res.status(500).json({ error: "Error creating note" });
+    }
+});
+
+app.delete('/api/notes/:id', (req, res) => {
+    try {
+        const noteId = req.params.id;
+        const notes = JSON.parse(fs.readFileSync(notesFile, 'utf8'));
+        const index = notes.findIndex(note => note.id === parseInt(noteId));
+        if (index === -1) {
+            return res.status(404).json({ error: "Note not found" });
+        }
+        notes.splice(index, 1);
+        fs.writeFileSync(notesFile, JSON.stringify(notes, null, 2));
+        res.status(204).end();
+    } catch (error) {
+        console.error("Error deleting note:", error);
+        res.status(500).json({ error: "Error deleting note" });
+    }
+});
+
 // CRUD for Materials
 app.get('/api/materials', (req, res) => {
     try {
@@ -271,7 +424,7 @@ app.post('/api/materials', upload.single('image'), (req, res) => {
         console.log("Create material request received:", req.body);
 
         const materials = JSON.parse(fs.readFileSync(materialsFile, 'utf8'));
-        const newMaterial = addCreationDate(req.body); // Add creation date
+        const newMaterial = addCreationDate(req.body);
 
 
         if (!newMaterial.name) {
@@ -300,14 +453,12 @@ app.put('/api/materials/:id', upload.single('image'), (req, res) => {
         const materialId = req.params.id;
         const updatedMaterial = req.body;
 
-        console.log("Received update for material ID:", materialId);
-        console.log("Updated material:", updatedMaterial);
-
         const materials = JSON.parse(fs.readFileSync(materialsFile, 'utf8'));
-        const index = materials.findIndex(m => String(m.id) === String(materialId));
+        const employees = JSON.parse(fs.readFileSync(employeesFile, 'utf8'));
 
-        if (index === -1) {
-            console.log("Material not found");
+        const materialIndex = materials.findIndex(m => String(m.id) === String(materialId));
+
+        if (materialIndex === -1) {
             return res.status(404).json({ error: "Material not found" });
         }
 
@@ -315,11 +466,40 @@ app.put('/api/materials/:id', upload.single('image'), (req, res) => {
             updatedMaterial.image = `images/${req.file.filename}`;
         }
 
-        materials[index] = { ...materials[index], ...updatedMaterial, updatedAt: new Date() }; // Add/update date
-        fs.writeFileSync(materialsFile, JSON.stringify(materials, null, 2));
-        console.log("Material updated:", materials[index]);
+        materials[materialIndex] = { ...materials[materialIndex], ...updatedMaterial, updatedAt: new Date() };
 
-        res.json(materials[index]);
+        console.log("Updated Material:", materials[materialIndex]);
+
+        employees.forEach(employee => {
+            if (employee.materials) {
+                console.log("Employee Materials (Before Update):", employee.materials);
+
+                employee.materials = employee.materials.map(empMat => {
+                    if (empMat.serialNumber === materials[materialIndex].serialNumber) {
+                        const updatedEmpMat = {
+                            ...materials[materialIndex],
+                            name: materials[materialIndex].name,
+                            serialNumber: materials[materialIndex].serialNumber,
+                            image: materials[materialIndex].image,
+                        };
+                        console.log("Updated Employee Material:", updatedEmpMat);
+                        return updatedEmpMat;
+                    } else {
+                        return empMat;
+                    }
+                });
+
+                console.log("Employee Materials (After Update):", employee.materials);
+                employee.updatedAt = new Date();
+            }
+        });
+
+        fs.writeFileSync(materialsFile, JSON.stringify(materials, null, 2));
+        fs.writeFileSync(employeesFile, JSON.stringify(employees, null, 2));
+
+        console.log("Employees (After Material Update):", employees);
+
+        res.json(materials[materialIndex]);
     } catch (error) {
         console.error("Error updating material:", error);
         res.status(500).json({ error: "Error updating material" });
@@ -329,19 +509,31 @@ app.put('/api/materials/:id', upload.single('image'), (req, res) => {
 app.delete('/api/materials/:id', (req, res) => {
     try {
         const materialId = req.params.id;
-        console.log("Delete request received for material ID:", materialId);
-
         const materials = JSON.parse(fs.readFileSync(materialsFile, 'utf8'));
-        const index = materials.findIndex(m => String(m.id) === String(materialId));
+        const employees = JSON.parse(fs.readFileSync(employeesFile, 'utf8'));
+        const materialIndex = materials.findIndex(m => String(m.id) === String(materialId));
 
-        if (index === -1) {
-            console.log("Material not found");
+        if (materialIndex === -1) {
             return res.status(404).json({ error: "Material not found" });
         }
 
-        materials.splice(index, 1);
+
+        employees.forEach(employee => {
+            if (employee.materials) {
+                const employeeMaterialIndex = employee.materials.findIndex(
+                    empMat => empMat.serialNumber === materials[materialIndex].serialNumber
+                );
+                if (employeeMaterialIndex !== -1) {
+                    employee.materials.splice(employeeMaterialIndex, 1); 
+                    employee.updatedAt = new Date();
+                }
+            }
+        });
+
+        materials.splice(materialIndex, 1);
+
         fs.writeFileSync(materialsFile, JSON.stringify(materials, null, 2));
-        console.log("Material deleted successfully");
+        fs.writeFileSync(employeesFile, JSON.stringify(employees, null, 2));
 
         res.status(204).end();
     } catch (error) {
@@ -366,7 +558,9 @@ app.post('/api/employees', (req, res) => {
     try {
         console.log("Create employee request received:", req.body);
         const employees = JSON.parse(fs.readFileSync(employeesFile, 'utf8'));
-        const newEmployee = addCreationDate(req.body); // Add creation date
+        const materials = JSON.parse(fs.readFileSync(materialsFile, 'utf8'));
+
+        const newEmployee = addCreationDate(req.body);
 
         if (!newEmployee.name || !newEmployee.department) {
             console.log("Employee name and department are required");
@@ -374,8 +568,22 @@ app.post('/api/employees', (req, res) => {
         }
 
         newEmployee.id = getNextId(employees);
+
+        if (newEmployee.materials && newEmployee.materials.length > 0) {
+            newEmployee.materials.forEach(material => {
+                const materialIndex = materials.findIndex(m => m.serialNumber === material.serialNumber);
+                if (materialIndex !== -1) {
+                    materials[materialIndex].status = "En Utilisation";
+                    materials[materialIndex].updatedAt = new Date();
+                }
+            });
+        }
+
+        fs.writeFileSync(materialsFile, JSON.stringify(materials, null, 2));
+
         employees.push(newEmployee);
         fs.writeFileSync(employeesFile, JSON.stringify(employees, null, 2));
+
         console.log("Employee created successfully:", newEmployee);
         res.status(201).json(newEmployee);
     } catch (error) {
@@ -389,44 +597,73 @@ app.put('/api/employees/:id', (req, res) => {
         const employeeId = req.params.id;
         const updatedEmployee = req.body;
 
-        console.log("Received update for employee ID:", employeeId);
-        console.log("Updated employee:", updatedEmployee);
-
         const employees = JSON.parse(fs.readFileSync(employeesFile, 'utf8'));
-        const index = employees.findIndex(e => String(e.id) === String(employeeId));
-        console.log("Index found:", index);
-        if (index === -1) {
-            console.log("Employee not found");
+        const materials = JSON.parse(fs.readFileSync(materialsFile, 'utf8'));
+
+        const employeeIndex = employees.findIndex(e => String(e.id) === String(employeeId));
+        if (employeeIndex === -1) {
             return res.status(404).json({ error: "Employee not found" });
         }
 
-        employees[index] = { ...employees[index], ...updatedEmployee, updatedAt: new Date() }; // Add/Update date
-        fs.writeFileSync(employeesFile, JSON.stringify(employees, null, 2));
-        console.log("Employee updated:", employees[index]);
+        const currentMaterials = employees[employeeIndex].materials || [];
 
-        res.json(employees[index]);
+        currentMaterials.forEach(material => {
+            const materialIndex = materials.findIndex(m => m.serialNumber === material.serialNumber);
+            if (materialIndex !== -1) {
+                materials[materialIndex].status = "Disponible";
+                materials[materialIndex].updatedAt = new Date();
+            }
+        });
+
+        if (updatedEmployee.materials && updatedEmployee.materials.length > 0) {
+            updatedEmployee.materials.forEach(material => {
+                const materialIndex = materials.findIndex(m => m.serialNumber === material.serialNumber);
+                if (materialIndex !== -1) {
+                    materials[materialIndex].status = "En Utilisation";
+                    materials[materialIndex].updatedAt = new Date();
+                }
+            });
+        }
+
+        employees[employeeIndex] = { ...employees[employeeIndex], ...updatedEmployee, updatedAt: new Date() };
+
+        fs.writeFileSync(materialsFile, JSON.stringify(materials, null, 2));
+        fs.writeFileSync(employeesFile, JSON.stringify(employees, null, 2));
+
+        res.json(employees[employeeIndex]);
     } catch (error) {
         console.error("Error updating employee:", error);
         res.status(500).json({ error: "Error updating employee" });
     }
 });
 
+
 app.delete('/api/employees/:id', (req, res) => {
     try {
         const employeeId = req.params.id;
-        console.log("Delete request received for employee ID:", employeeId);
-
         const employees = JSON.parse(fs.readFileSync(employeesFile, 'utf8'));
-        const index = employees.findIndex(e => String(e.id) === String(employeeId));
+        const materials = JSON.parse(fs.readFileSync(materialsFile, 'utf8'));
 
-        if (index === -1) {
-            console.log("Employee not found");
+        const employeeIndex = employees.findIndex(e => String(e.id) === String(employeeId));
+
+        if (employeeIndex === -1) {
             return res.status(404).json({ error: "Employee not found" });
         }
 
-        employees.splice(index, 1);
+        const employeeMaterials = employees[employeeIndex].materials || [];
+
+        employeeMaterials.forEach(material => {
+            const materialIndex = materials.findIndex(m => m.serialNumber === material.serialNumber);
+            if (materialIndex !== -1) {
+                materials[materialIndex].status = "Disponible";
+                materials[materialIndex].updatedAt = new Date();
+            }
+        });
+
+        employees.splice(employeeIndex, 1);
+
+        fs.writeFileSync(materialsFile, JSON.stringify(materials, null, 2));
         fs.writeFileSync(employeesFile, JSON.stringify(employees, null, 2));
-        console.log("Employee deleted successfully");
 
         res.status(204).end();
     } catch (error) {
@@ -434,6 +671,5 @@ app.delete('/api/employees/:id', (req, res) => {
         res.status(500).json({ error: "Error deleting employee" });
     }
 });
-
 
 app.listen(3000, () => console.log('Server running on port 3000'));

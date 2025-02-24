@@ -13,9 +13,8 @@ document.getElementById('login-form').addEventListener('submit', async function(
     const data = await response.json();
 
     if (response.ok) {
-        // Save role to localStorage
         localStorage.setItem('role', data.role);
-        localStorage.setItem('username', username); // Optionally save username as well
+        localStorage.setItem('username', username);
         
         window.location.href = data.role === 'admin' ? 'admin-dashboard.html' : 'index.html';
     } else {

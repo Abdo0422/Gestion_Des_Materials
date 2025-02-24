@@ -9,6 +9,8 @@
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
     <script src="tailwind.js"></script>
     <link href="style.css" rel="stylesheet">
@@ -49,8 +51,12 @@
                                     <i class="fas fa-filter"></i>
                                 </button>
                                 <button @click="openAddEmployeeModal('PC')"
-                                    class="p-2 rounded-lg bg-moroccan-teal text-white hover:bg-moroccan-teal-700 transition-colors">
+                                    class="p-2 rounded-lg bg-moroccan-blue text-white hover:bg-moroccan-blue-700 transition-colors">
                                     <i class="fas fa-plus mr-2"></i> Ajouter
+                                </button>
+                                <button @click="exportToExcelEmployeesPC"
+                                    class="p-2 rounded-lg bg-moroccan-teal text-white hover:bg-moroccan-teal-700 transition-colors">
+                                    <i class="fas fa-file-excel mr-2"></i> Exporter
                                 </button>
                             </div>
                         </div>
@@ -94,8 +100,12 @@
                                     <i class="fas fa-filter"></i>
                                 </button>
                                 <button @click="openAddEmployeeModal('Printer')"
-                                    class="p-2 rounded-lg bg-moroccan-teal text-white hover:bg-moroccan-teal-700 transition-colors">
+                                    class="p-2 rounded-lg bg-moroccan-blue text-white hover:bg-moroccan-blue-700 transition-colors">
                                     <i class="fas fa-plus mr-2"></i> Ajouter
+                                </button>
+                                <button @click="exportToExcelEmployeesPrinter"
+                                    class="p-2 rounded-lg bg-moroccan-teal text-white hover:bg-moroccan-teal-700 transition-colors">
+                                    <i class="fas fa-file-excel mr-2"></i> Exporter
                                 </button>
                             </div>
                         </div>
@@ -139,8 +149,12 @@
                                     <i class="fas fa-filter"></i>
                                 </button>
                                 <button @click="openAddEmployeeModal('Screen')"
-                                    class="p-2 rounded-lg bg-moroccan-teal text-white hover:bg-moroccan-teal-700 transition-colors">
+                                    class="p-2 rounded-lg bg-moroccan-blue text-white hover:bg-moroccan-blue-700 transition-colors">
                                     <i class="fas fa-plus mr-2"></i> Ajouter
+                                </button>
+                                <button @click="exportToExcelEmployeesScreen"
+                                    class="p-2 rounded-lg bg-moroccan-teal text-white hover:bg-moroccan-teal-700 transition-colors">
+                                    <i class="fas fa-file-excel mr-2"></i> Exporter
                                 </button>
                             </div>
                         </div>
@@ -172,6 +186,13 @@
                                     <h2 class="text-2xl font-bold mb-4"
                                         x-text="editingEmployee.id ? 'Modifier l\'employé' : 'Ajouter un employé'"></h2>
 
+                                    <!-- Display the message if it exists -->
+                                    <template x-if="message">
+                                        <div class="mb-4 p-3 bg-yellow-100 text-yellow-800 rounded-md">
+                                            <span x-text="message"></span>
+                                        </div>
+                                    </template>
+
                                     <form @submit.prevent="saveEmployee">
                                         <div class="mb-4">
                                             <label for="employee-name"
@@ -192,6 +213,7 @@
                                         <div class="mb-4">
                                             <label class="block text-gray-700 font-bold mb-2">Matériels:</label>
                                             <select id="employeeModalSelect" multiple
+                                                class="w-full border border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                                                 x-init="setTimeout(() => { $el.value = editingEmployee.materials.map(mat => mat.id); }, 0)">
                                                 <template x-for="material in filteredMaterials" :key="material.id">
                                                     <option :value="material.id" x-text="material.name"></option>
@@ -259,7 +281,7 @@
     </div>
 
     <!-- Alpine.js Data -->
-    <script src="app.js"></script>
+    <script src="employee.js"></script>
     <script>
         fetch('sidebar.html')
             .then(response => response.text())
@@ -275,8 +297,18 @@
             .then(response => response.text())
             .then(html => {
                 document.getElementById('navbar-manager').innerHTML = html;
+                setUsername();
             });
 
+        function setUsername() {
+            const username = localStorage.getItem('username');
+            const usernameDisplay = document.getElementById('username-display');
+            if (usernameDisplay) {
+                usernameDisplay.textContent = username;
+            } else {
+                console.error("username-display element NOT FOUND!");
+            }
+        }
     </script>
 
 </body>

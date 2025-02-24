@@ -12,6 +12,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
     <script src="tailwind.js"></script>
     <link href="style.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
 </head>
 
 <body x-data="dashboardData()" x-init="setTimeout(() => { init(); }, 100)" class="antialiased text-gray-800">
@@ -51,6 +53,10 @@
                                 <button @click="openAddMaterialModal"
                                     class="p-2 rounded-lg bg-moroccan-blue text-white hover:bg-moroccan-blue-700 transition-colors">
                                     <i class="fas fa-plus mr-2"></i> Ajouter
+                                </button>
+                                <button @click="exportToExcelMaterials"
+                                    class="p-2 rounded-lg bg-moroccan-teal text-white hover:bg-moroccan-teal-700 transition-colors">
+                                    <i class="fas fa-file-excel mr-2"></i> Exporter
                                 </button>
                             </div>
                         </div>
@@ -126,6 +132,7 @@
                                                 class="block text-gray-700 font-bold mb-2">Statut:</label>
                                             <select id="material-status" x-model="editingMaterial.status" required
                                                 class="w-full border border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500">
+                                                <option selected>Choisir</option>
                                                 <option value="Disponible">Disponible</option>
                                                 <option value="En Utilisation">En Utilisation</option>
                                                 <option value="défectueux">Défectueux</option>
@@ -219,7 +226,8 @@
     </div>
 
     <!-- Alpine.js Data -->
-    <script src="app.js"></script>
+    <script src="materiel.js"></script>
+
     <script>
         fetch('sidebar.html')
             .then(response => response.text())
@@ -235,8 +243,18 @@
             .then(response => response.text())
             .then(html => {
                 document.getElementById('navbar-manager').innerHTML = html;
+                setUsername();
             });
 
+        function setUsername() { 
+            const username = localStorage.getItem('username');
+            const usernameDisplay = document.getElementById('username-display');
+            if (usernameDisplay) {
+                usernameDisplay.textContent = username;
+            } else {
+                console.error("username-display element NOT FOUND!"); 
+            }
+        }
     </script>
 
 </body>

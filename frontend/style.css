@@ -161,3 +161,13 @@ svg circle {
 #loading-overlay.hidden {
   display: none;
 }
+
+.bg-green-50 {
+  background-color: #f0fdf4; /* Light green for success */
+}
+.bg-red-50 {
+  background-color: #fef2f2; /* Light red for error */
+}
+.bg-blue-50 {
+  background-color: #eff6ff; /* Light blue for info */
+}

@@ -3,11 +3,11 @@
     "id": 1,
     "name": "PC HP ProDesk",
     "marque": "HP",
-    "serialNumber": "SN123454",
+    "serialNumber": "SN123453",
     "status": "En Utilisation",
     "image": "images/1-430x430.webp",
     "createdAt": "2024-10-27T10:00:00.000Z",
-    "updatedAt": "2025-02-21T11:52:34.814Z"
+    "updatedAt": "2025-02-24T15:43:20.278Z"
   },
   {
     "id": 2,
@@ -17,14 +17,14 @@
     "status": "Disponible",
     "image": "images/ordinateur-de-bureau-dell-optiplex-3000-dl-op3000-i5-sff_34b18721-be32-4ce5-b594-e536cc349ae8.webp",
     "createdAt": "2024-10-27T10:00:00.000Z",
-    "updatedAt": "2025-02-21T11:54:09.457Z"
+    "updatedAt": "2025-02-24T15:30:54.026Z"
   },
   {
     "id": 3,
     "name": "PC Lenovo ThinkCentre",
     "marque": "Lenovo",
     "serialNumber": "SN45678",
-    "status": "En utilisation",
+    "status": "En Utilisation",
     "image": "images/Lenovo-ThinkCentre-neo-50s-1-1.webp",
     "createdAt": "2024-10-27T10:00:00.000Z",
     "updatedAt": "2025-02-20T14:17:04.065Z"
@@ -54,10 +54,10 @@
     "name": "Ecran Dell UltraSharp",
     "marque": "Dell",
     "serialNumber": "SN11223",
-    "status": "Disponible",
+    "status": "En Utilisation",
     "image": "images/images.jpg",
     "createdAt": "2024-10-27T10:00:00.000Z",
-    "updatedAt": "2025-02-20T14:19:40.266Z"
+    "updatedAt": "2025-02-24T10:02:38.242Z"
   },
   {
     "id": 7,
@@ -74,9 +74,9 @@
     "name": "Ecran Samsung Odyssey",
     "marque": "Samsung",
     "serialNumber": "SN77889",
-    "status": "Disponible",
+    "status": "En Utilisation",
     "image": "images/68AEFF22-1923-6F36-3221-C220A56735C9-300.webp",
     "createdAt": "2024-10-27T10:00:00.000Z",
-    "updatedAt": "2025-02-20T14:21:49.467Z"
+    "updatedAt": "2025-02-24T10:02:49.235Z"
   }
 ]

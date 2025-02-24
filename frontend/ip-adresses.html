@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <title>Adresses IP - Manager</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+    <script src="tailwind.js"></script>
+    <link href="style.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+        integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script>
+        fetch('sidebar.html')
+            .then(response => response.text())
+            .then(html => {
+                document.getElementById('sidebar').innerHTML = html;
+            });
+        fetch('sidebar-mobile.html')
+            .then(response => response.text())
+            .then(html => {
+                document.getElementById('sidebar-mobile').innerHTML = html;
+            });
+        fetch('navbar-manager.html')
+            .then(response => response.text())
+            .then(html => {
+                document.getElementById('navbar-manager').innerHTML = html;
+                setUsername();
+            });
+
+        function setUsername() {
+            const username = localStorage.getItem('username');
+            const usernameDisplay = document.getElementById('username-display');
+            if (usernameDisplay) {
+                usernameDisplay.textContent = username;
+            } else {
+                console.error("username-display element NOT FOUND!");
+            }
+        }
+    </script>
+</head>
+
+<body class="antialiased text-gray-800" x-data="ipAddressesData()">
+
+    <div class="flex h-screen overflow-hidden">
+        <div class="hidden md:flex md:flex-shrink-0" id="sidebar"></div>
+
+        <div class="flex flex-col flex-1 w-0 overflow-hidden">
+            <div class="relative z-10 flex-shrink-0 flex h-16 bg-white shadow-sm" id="navbar-manager"></div>
+
+            <div x-show="sidebarOpen" class="fixed inset-0 flex z-40 md:hidden" x-cloak id="sidebar-mobile"></div>
+
+            <main class="flex-1 relative overflow-y-auto focus:outline-none">
+                <div class="py-6 px-4 sm:px-6 lg:px-8">
+
+                    <section class="mb-8">
+                        <div class="flex flex-wrap items-center justify-between mb-5">
+                            <h2 class="text-xl font-bold text-moroccan-blue flex items-center">
+                                <i class="fas fa-network-wired mr-2 text-moroccan-teal"></i>
+                                Adresses IP des Matériels
+                            </h2>
+                            <div class="flex space-x-2 mt-2 sm:mt-0">
+                                <div class="relative">
+                                    <input type="text" placeholder="Rechercher..." x-model="recherche"
+                                        @input="filtrerAdressesIP"
+                                        class="pl-10 pr-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-moroccan-teal focus:border-transparent">
+                                    <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                                </div>
+                                <button @click="ouvrirModalModifier"
+                                    class="p-2 rounded-lg bg-moroccan-blue text-white hover:bg-moroccan-blue-700 transition-colors">
+                                    <i class="fas fa-plus mr-2"></i> Ajouter
+                                </button>
+                                <button @click="exportToExcel()"
+                                    class="p-2 rounded-lg bg-moroccan-teal text-white hover:bg-moroccan-teal-700 transition-colors">
+                                    <i class="fas fa-file-excel mr-2"></i> Exporter
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-xl card-shadow overflow-hidden">
+                            <div class="overflow-x-auto table-scroll responsive-table">
+                                <table class="w-full text-sm" id="ipTable">
+                                    <thead>
+                                        <tr
+                                            class="bg-gradient-to-r from-moroccan-blue/10 to-moroccan-teal/10 text-gray-700">
+                                            <th class="p-4 text-left">Nom du matériel</th>
+                                            <th class="p-4 text-left">Marque</th>
+                                            <th class="p-4 text-left">Numéro de Série</th>
+                                            <th class="p-4 text-left">Adresse IP</th>
+                                            <th class="p-4 text-right">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="ip-addresses-table">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </section>
+
+                    <template x-if="afficherModal">
+                        <div class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+                            <div class="modal-content w-full max-w-md p-6 bg-white rounded-lg">
+                                <h2 class="text-2xl font-bold mb-4"
+                                    x-text="adresseIPEnCoursEdition.id ? 'Modifier l\'adresse IP' : 'Ajouter une adresse IP'">
+                                </h2>
+                                <form @submit.prevent="enregistrerAdresseIP">
+                                    <div class="mb-4">
+                                        <label class="block text-gray-700 font-bold mb-2">Nom du matériel:</label>
+                                        <select x-model="adresseIPEnCoursEdition.materialName"
+                                            @change="gererChangementMateriel($event)"
+                                            class="w-full border border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500">
+                                            <template x-if="!adresseIPEnCoursEdition.id">
+                                                <option selected>Sélectionner un matériel</option>
+                                            </template>
+                                            <template x-for="materiel in materielsDisponibles" :key="materiel.id">
+                                                <option :value="materiel.name"
+                                                    :selected="materielSelectionne && materielSelectionne.name === materiel.name"
+                                                    x-text="materiel.name"></option>
+                                            </template>
+                                        </select>
+                                        <p class="text-red-500 text-sm mt-1" x-text="$store.errorMessages.materialName">
+                                        </p>
+                                    </div>
+                                    <div class="mb-4">
+                                        <label class="block text-gray-700 font-bold mb-2">Marque:</label>
+                                        <input type="text" x-model="adresseIPEnCoursEdition.marque"
+                                            class="w-full border border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                                            :disabled="materielSelectionne">
+                                    </div>
+                                    <div class="mb-4">
+                                        <label class="block text-gray-700 font-bold mb-2">Numéro de Série:</label>
+                                        <input type="text" x-model="adresseIPEnCoursEdition.serialNumber"
+                                            class="w-full border border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                                            :disabled="materielSelectionne">
+                                    </div>
+                                    <div class="mb-4">
+                                        <label class="block text-gray-700 font-bold mb-2">Adresse IP:</label>
+                                        <input type="text" x-model="adresseIPEnCoursEdition.ipAddress"
+                                            class="w-full border border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500">
+                                        <p class="text-red-500 text-sm mt-1" x-text="$store.errorMessages.ipAddress">
+                                        </p>
+                                    </div>
+                                    <div class="flex justify-end">
+                                        <button type="button" @click="fermerModal"
+                                            class="px-4 py-2 mr-2 bg-gray-300 rounded-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500">
+                                            Annuler
+                                        </button>
+                                        <button type="submit"
+                                            class="px-4 py-2 bg-moroccan-blue text-white rounded-md hover:bg-moroccan-blue-700 focus:outline-none focus:ring-2 focus:ring-moroccan-blue-500">
+                                            Enregistrer
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </template>
+
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script src="ip-addresses.js"></script>
+</body>
+
+</html>

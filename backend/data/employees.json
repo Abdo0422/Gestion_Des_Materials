@@ -1,17 +1,17 @@
 [
   {
     "id": 1,
-    "name": "John",
+    "name": "Jojo",
     "department": "Sales",
     "materials": [
       {
         "name": "PC HP ProDesk",
-        "serialNumber": "SN123454",
+        "serialNumber": "SN123452",
         "image": "images/1-430x430.webp"
       }
     ],
-    "createdAt": "2024-10-27T14:22:17.775Z",
-    "updatedAt": "2025-02-20T14:15:20.231Z"
+    "createdAt": "2024-10-27",
+    "updatedAt": "2025-02-24T15:43:20.279Z"
   },
   {
     "id": 2,
@@ -25,7 +25,7 @@
       }
     ],
     "createdAt": "2024-10-27T14:22:17.775Z",
-    "updatedAt": "2025-02-20T14:22:10.761Z"
+    "updatedAt": "2025-02-24T15:43:20.279Z"
   },
   {
     "id": 3,
@@ -39,7 +39,7 @@
       }
     ],
     "createdAt": "2024-10-27T14:22:17.775Z",
-    "updatedAt": "2025-02-20T14:22:04.819Z"
+    "updatedAt": "2025-02-24T15:43:20.279Z"
   },
   {
     "id": 4,
@@ -53,7 +53,7 @@
       }
     ],
     "createdAt": "2024-10-27T14:22:17.775Z",
-    "updatedAt": "2025-02-20T14:22:17.775Z"
+    "updatedAt": "2025-02-24T15:43:20.279Z"
   },
   {
     "name": "James",
@@ -66,7 +66,8 @@
       }
     ],
     "createdAt": "2025-02-21T12:07:19.146Z",
-    "id": 5
+    "id": 5,
+    "updatedAt": "2025-02-24T15:43:20.279Z"
   },
   {
     "name": "Lisa",
@@ -79,6 +80,17 @@
       }
     ],
     "createdAt": "2025-02-21T12:07:37.745Z",
-    "id": 6
+    "id": 6,
+    "updatedAt": "2025-02-24T15:43:20.279Z"
+  },
+  {
+    "name": "John",
+    "department": "Sales",
+    "materials": [
+      2
+    ],
+    "createdAt": "2025-02-24T09:29:24.534Z",
+    "id": 7,
+    "updatedAt": "2025-02-24T15:43:20.279Z"
   }
 ]
