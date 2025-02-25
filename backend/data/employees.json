@@ -5,13 +5,18 @@
     "department": "Sales",
     "materials": [
       {
+        "id": 1,
         "name": "PC HP ProDesk",
-        "serialNumber": "SN123452",
-        "image": "images/1-430x430.webp"
+        "marque": "HP",
+        "serialNumber": "SN123453",
+        "status": "En Utilisation",
+        "image": "images/1-430x430.webp",
+        "createdAt": "2024-10-27T10:00:00.000Z",
+        "updatedAt": "2025-02-25T09:16:23.263Z"
       }
     ],
     "createdAt": "2024-10-27",
-    "updatedAt": "2025-02-24T15:43:20.279Z"
+    "updatedAt": "2025-02-25T09:16:23.266Z"
   },
   {
     "id": 2,
@@ -25,7 +30,7 @@
       }
     ],
     "createdAt": "2024-10-27T14:22:17.775Z",
-    "updatedAt": "2025-02-24T15:43:20.279Z"
+    "updatedAt": "2025-02-25T09:16:23.267Z"
   },
   {
     "id": 3,
@@ -39,7 +44,7 @@
       }
     ],
     "createdAt": "2024-10-27T14:22:17.775Z",
-    "updatedAt": "2025-02-24T15:43:20.279Z"
+    "updatedAt": "2025-02-25T09:16:23.276Z"
   },
   {
     "id": 4,
@@ -53,7 +58,7 @@
       }
     ],
     "createdAt": "2024-10-27T14:22:17.775Z",
-    "updatedAt": "2025-02-24T15:43:20.279Z"
+    "updatedAt": "2025-02-25T09:16:23.277Z"
   },
   {
     "name": "James",
@@ -67,7 +72,7 @@
     ],
     "createdAt": "2025-02-21T12:07:19.146Z",
     "id": 5,
-    "updatedAt": "2025-02-24T15:43:20.279Z"
+    "updatedAt": "2025-02-25T09:16:23.277Z"
   },
   {
     "name": "Lisa",
@@ -81,7 +86,7 @@
     ],
     "createdAt": "2025-02-21T12:07:37.745Z",
     "id": 6,
-    "updatedAt": "2025-02-24T15:43:20.279Z"
+    "updatedAt": "2025-02-25T09:16:23.277Z"
   },
   {
     "name": "John",
@@ -91,6 +96,6 @@
     ],
     "createdAt": "2025-02-24T09:29:24.534Z",
     "id": 7,
-    "updatedAt": "2025-02-24T15:43:20.279Z"
+    "updatedAt": "2025-02-25T09:16:23.277Z"
   }
 ]

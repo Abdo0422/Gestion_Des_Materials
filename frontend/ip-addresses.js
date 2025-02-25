@@ -8,11 +8,36 @@ function ipAddressesData() {
         adresseIPEnCoursEdition: {},
         materielSelectionne: null,
         materielsDisponibles: [],
+        notifications: [],
+        notificationPopupOpen: false,
+
         async init() {
             await this.chargerAdressesIP();
             await this.chargerMateriels();
             this.adressesIPFiltrees = [...this.adressesIP];
             this.renderTable();
+        },
+
+        addNotification(message, type = 'info') {
+            const notification = {
+                id: Date.now(),
+                message: message,
+                type: type,
+                timestamp: new Date().toLocaleTimeString('fr-FR')
+            };
+            this.notifications.push(notification);
+
+            setTimeout(() => {
+                this.removeNotification(notification.id);
+            }, 5000);
+        },
+
+        toggleNotificationPopup() {
+            this.notificationPopupOpen = !this.notificationPopupOpen;
+        },
+
+        removeNotification(id) {
+            this.notifications = this.notifications.filter(notification => notification.id !== id);
         },
 
         async exportToExcel() {
@@ -184,6 +209,16 @@ function ipAddressesData() {
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(this.adresseIPEnCoursEdition)
                 });
+
+                if (reponse.ok) { 
+                    this.fermerModal();
+                    await this.chargerAdressesIP();
+                    await this.chargerMateriels();
+                    this.adressesIPFiltrees = [...this.adressesIP];
+                    this.renderTable();
+                    this.addNotification("Adresse IP enregistrée avec succès !",'success');
+                }
+
                 if (!reponse.ok) {
                     const donneesErreur = await reponse.json();
 
@@ -199,16 +234,11 @@ function ipAddressesData() {
                         throw new Error(donneesErreur.message || 'Échec de l\'enregistrement de l\'adresse IP');
                     }
                     return; 
-
                 }
-                this.fermerModal();
-                await this.chargerAdressesIP();
-                await this.chargerMateriels();
-                this.adressesIPFiltrees = [...this.adressesIP];
-                this.renderTable();
+
             } catch (erreur) {
                 console.error("Erreur lors de l'enregistrement de l'adresse IP :", erreur);
-                alert(erreur.message);  
+                this.addNotification(erreur.message, 'error');  
             }
         },
         async supprimerAdresseIP(id) {
@@ -219,9 +249,10 @@ function ipAddressesData() {
                     await this.chargerAdressesIP();
                     this.adressesIPFiltrees = [...this.adressesIP];
                     this.renderTable();
+                    this.addNotification("Adresse IP supprimée avec succès !",'success');
                 } catch (erreur) {
                     console.error("Erreur lors de la suppression de l'adresse IP :", erreur);
-                    alert(erreur.message);
+                    this.addNotification(erreur.message || "Erreur lors de la suppression", 'error'); 
                 }
             }
         },

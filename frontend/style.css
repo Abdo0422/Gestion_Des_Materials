@@ -171,3 +171,55 @@ svg circle {
 .bg-blue-50 {
   background-color: #eff6ff; /* Light blue for info */
 }
+.report-container {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  margin-top: 10px;
+}
+
+.report-section {
+  margin-bottom: 2rem;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 1rem;
+}
+
+.report-section h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: #1D4E89;
+}
+
+.report-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+
+.report-table th,
+.report-table td {
+  padding: 0.75rem 1rem;
+  border: 1px solid #eee;
+  text-align: left;
+}
+
+.report-table th {
+  font-weight: 500;
+  background-color: #f5f5f5;
+  color: #333;
+}
+
+.change {
+  font-weight: 500;
+  margin-left: 0.5rem;
+}
+
+.positive-change {
+  color: green;
+}
+
+.negative-change {
+  color: red;
+}

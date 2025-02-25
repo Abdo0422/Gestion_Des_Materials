@@ -205,9 +205,13 @@
                                         <div class="mb-4">
                                             <label for="employee-department"
                                                 class="block text-gray-700 font-bold mb-2">Département:</label>
-                                            <input type="text" id="employee-department"
-                                                x-model="editingEmployee.department" required
+                                                <select id="employee-department" x-model="editingEmployee.department" required
                                                 class="w-full border border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500">
+                                                <option selected>Sélectionner un département</option>
+                                                <template x-for="department in departments" :key="department.id">
+                                                    <option :value="department.nomdepart" x-text="department.nomdepart"></option>
+                                                </template>
+                                            </select>
                                         </div>
 
                                         <div class="mb-4">

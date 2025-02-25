@@ -1,4 +1,5 @@
-<button @click="sidebarOpen = !sidebarOpen" class="md:hidden px-4 text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-moroccan-teal">
+<button @click="sidebarOpen = !sidebarOpen"
+    class="md:hidden px-4 text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-moroccan-teal">
     <span class="sr-only">Open sidebar</span>
     <i class="fas fa-bars text-lg"></i>
 </button>
@@ -13,20 +14,58 @@
             </h1>
         </div>
     </div>
-    <div class="ml-4 flex items-center md:ml-6">
-        <button class="p-1 rounded-full text-gray-400 hover:text-moroccan-teal focus:outline-none">
+    <!-- Notification Icon in Navbar -->
+    <div x-show="notificationPopupOpen" @click.away="notificationPopupOpen = false"
+        class="absolute right-0 top-full mt-2 w-64 bg-white rounded-lg shadow-lg z-50">
+        <div class="p-4 border-b border-gray-200">
+            <h3 class="text-lg font-semibold">Notifications</h3>
+        </div>
+        <div class="max-h-64 overflow-y-auto">
+            <template x-for="notification in notifications" :key="notification.id">
+                <div class="p-4 border-b border-gray-200 last:border-b-0" :class="{
+                    'bg-green-50': notification.type === 'success',
+                    'bg-red-50': notification.type === 'error',
+                    'bg-blue-50': notification.type === 'info'
+                }">
+                    <div class="flex items-center justify-between">
+                        <p x-text="notification.message" class="text-sm"></p>
+                        <button @click="removeNotification(notification.id)" class="text-gray-400 hover:text-gray-600">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-1" x-text="notification.timestamp"></p>
+                </div>
+            </template>
+            <template x-if="notifications.length === 0">
+                <div class="p-4 text-center text-gray-500">
+                    Aucune nouvelle notification.
+                </div>
+            </template>
+        </div>
+    </div>
+
+    <!-- Notification Bell Icon -->
+    <div class="ml-4 flex items-center md:ml-6 relative">
+        <button @click="toggleNotificationPopup"
+            class="p-1 rounded-full text-gray-400 hover:text-moroccan-teal focus:outline-none relative">
             <span class="sr-only">Notifications</span>
             <i class="fas fa-bell text-lg"></i>
+            <span x-show="notifications.length > 0"
+                class="absolute top-3 left-3 bg-red-500 text-white text-xs rounded-full px-1.5 py-0.5">
+                <span x-text="notifications.length"></span>
+            </span>
         </button>
-        <div class="ml-3 relative">
-            <div class="flex items-center">
-                <div class="h-8 w-8 rounded-full bg-gradient-to-r from-moroccan-blue to-moroccan-teal flex items-center justify-center text-white">
-                    <i class="fas fa-user-shield"></i>
-                </div>
-                <div class="ml-2 hidden md:block">
-                    <div class="text-sm font-medium text-gray-700" id="username-display"></div>
-                </div>
+    </div>
+    <div class="ml-3 relative">
+        <div class="flex items-center">
+            <div
+                class="h-8 w-8 rounded-full bg-gradient-to-r from-moroccan-blue to-moroccan-teal flex items-center justify-center text-white">
+                <i class="fas fa-user-shield"></i>
+            </div>
+            <div class="ml-2 hidden md:block">
+                <div class="text-sm font-medium text-gray-700" id="username-display"></div>
             </div>
         </div>
     </div>
+</div>
 </div>

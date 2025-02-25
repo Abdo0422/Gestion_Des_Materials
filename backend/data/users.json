@@ -1,20 +1,23 @@
 [
   {
+    "id": 1,
     "username": "admin",
-    "password": "$2b$10$O44MvXZu.uhpMvcCrI8ofeNCdf4VkIXqWjfQPZYYHK1uHapOt.HOG",
+    "password": "$2b$10$nq4v.b.1UcGDWclQWE9rHe4p1lMCSavgqgbm59dJflyTUTr0eFKgW",
     "role": "admin",
-    "createdAt": "2024-10-27T10:00:00.000Z" 
+    "createdAt": "2024-10-27T10:00:00.000Z"
   },
   {
+    "id": 2,
     "username": "manager",
     "password": "$2b$10$O44MvXZu.uhpMvcCrI8ofeNCdf4VkIXqWjfQPZYYHK1uHapOt.HOG",
     "role": "manager",
-    "createdAt": "2024-10-27T10:00:00.000Z" 
+    "createdAt": "2024-10-27T10:00:00.000Z"
   },
   {
+    "id": 3,
     "username": "Ali",
     "password": "$2b$10$O44MvXZu.uhpMvcCrI8ofeNCdf4VkIXqWjfQPZYYHK1uHapOt.HOG",
     "role": "manager",
-    "createdAt": "2024-10-27T10:00:00.000Z" 
+    "createdAt": "2024-10-27T10:00:00.000Z"
   }
 ]

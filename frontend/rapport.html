@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tableau de Bord - Admin</title>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="tailwind.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+    <link href="style.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+        integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script>
+        fetch('admin-sidebar.html')
+            .then(response => response.text())
+            .then(html => {
+                document.getElementById('sidebar').innerHTML = html;
+            });
+        fetch('admin-sidebar-mobile.html')
+            .then(response => response.text())
+            .then(html => {
+                document.getElementById('sidebar-mobile').innerHTML = html;
+            });
+        fetch('navbar-admin.html')
+            .then(response => response.text())
+            .then(html => {
+                document.getElementById('navbar').innerHTML = html;
+                setUsername();
+            });
+
+        function setUsername() {
+            const username = localStorage.getItem('username');
+            const usernameDisplay = document.getElementById('username-display');
+            if (usernameDisplay) {
+                usernameDisplay.textContent = username;
+            } else {
+                console.error("username-display element NOT FOUND!");
+            }
+        }
+    </script>
+    <script>
+        function dashboardData() {
+            return {
+                reportData: null,
+                numEmployees: 0,
+                numManagers: 0,
+                totalMaterials: 0,
+                numImprimantes: 0,
+                numPCs: 0,
+                numEcrans: 0,
+                employeeChange: 0,
+                managerChange: 0,
+                totalMaterialsChange: 0,
+                imprimanteChange: 0,
+                pcChange: 0,
+                ecranChange: 0,
+
+                init() {
+                    this.fetchReportData();
+                },
+
+                fetchReportData() {
+                    fetch('https://supreme-xylophone-j646jr764grc5j94-3000.app.github.dev/api/counts')
+                        .then(response => response.json())
+                        .then(data => {
+                            this.reportData = data;
+                            for (const key in data) {
+                                if (key.endsWith('Change')) {
+                                    const percentageString = data[key];
+                                    const numericValue = parseFloat(percentageString);
+                                    this[key] = numericValue;
+                                } else {
+                                    this[key] = data[key];
+                                }
+                            }
+                            this.generateReportHTML();
+                        })
+                        .catch(error => console.error("Error fetching report data:", error));
+                },
+                generatePDF() {
+                    const { jsPDF } = window.jspdf;
+                    const doc = new jsPDF();
+
+                    const today = new Date();
+                    const formattedDate = today.toLocaleDateString('fr-FR', { year: 'numeric', month: 'long', day: 'numeric' });
+
+                    // Set default font (you can experiment with other fonts if needed)
+                    doc.setFont('helvetica', 'normal');  // Or 'times', 'courier', etc.  You might need to include font files for more exotic fonts.
+
+                    doc.setFillColor(240, 240, 240);
+                    doc.rect(0, 0, 210, 297, 'F');
+
+                    doc.setFont("helvetica", "bold");
+                    doc.setFontSize(24);
+                    doc.setTextColor(34, 57, 91);
+                    doc.text("Rapport Mensuel", 20, 25);
+
+                    doc.setFont("helvetica", "normal");
+                    doc.setFontSize(14);
+                    doc.setTextColor(100, 100, 100);
+                    doc.text(`Date: ${formattedDate}`, 20, 40);
+
+                    doc.setLineWidth(1);
+                    doc.setDrawColor(34, 57, 91);
+                    doc.line(20, 50, 190, 50);
+
+                    // More Detailed Introduction
+                    doc.setFontSize(12);
+                    const introText = `Ce rapport mensuel fournit une analyse détaillée des statistiques relatives aux employés et aux équipements de l'entreprise. Il met en lumière les évolutions clés, les tendances observées et les indicateurs de performance importants pour le suivi de l'activité. Les données présentées incluent le nombre d'employés et de managers, ainsi que l'inventaire des différents types de matériels, avec une comparaison par rapport au mois précédent pour identifier les changements significatifs.`;
+                    const introLines = doc.splitTextToSize(introText, 170);
+                    let introY = 60;
+                    introLines.forEach(line => {
+                        doc.text(line, 20, introY);
+                        introY += 7;
+                    });
+                    introY += 10;
+
+                    const generalData = [
+                        ["Nombre d'Employés", this.numEmployees, this.employeeChange],
+                        ["Nombre de Managers", this.numManagers, this.managerChange],
+                        ["Nombre Total de Matériels", this.totalMaterials, this.totalMaterialsChange]
+                    ];
+
+                    const materialsData = [
+                        ["Imprimantes", this.numImprimantes, this.imprimanteChange],
+                        ["PCs", this.numPCs, this.pcChange],
+                        ["Écrans", this.numEcrans, this.ecranChange]
+                    ];
+
+
+
+                    function addTable(doc, data, title, yPos) {
+                        doc.setFont("helvetica", "bold");
+                        doc.setFontSize(16);
+                        doc.setTextColor(50, 50, 50);
+
+                        const titleWidth = doc.getTextWidth(title);
+                        const centerX = doc.internal.pageSize.getWidth() / 2;
+                        doc.text(title, centerX - titleWidth / 2, yPos - 10);
+
+                        const headers = ["Type", "Nombre", "Changement (%)"]; // Table headers
+                        const columnWidths = [60, 40, 40]; // Adjust as needed
+                        let xPos = 20;
+
+                        // Draw table headers
+                        doc.setFontSize(12);
+                        doc.setFont("helvetica", "bold");
+                        headers.forEach((header, index) => {
+                            doc.text(header, xPos, yPos);
+                            xPos += columnWidths[index];
+                        });
+                        yPos += 7; //Spacing between header and data
+                        doc.line(20, yPos, 190, yPos); //Line under header
+                        yPos += 7; //Spacing between header and data
+
+                        // Draw table rows
+                        doc.setFont("helvetica", "normal");
+                        data.forEach(row => {
+                            xPos = 20;
+                            row.forEach((cell, index) => {
+                                let text = cell.toString();
+                                if (index === 2) { // Format change percentage
+                                    const change = parseFloat(cell);
+                                    text = (change === 0 ? "0" : change.toFixed(1)) + "%";
+                                }
+                                const cellWidth = doc.getTextWidth(text);
+                                if (index === 1) {
+                                    xPos = centerX - cellWidth / 2;
+                                }
+                                doc.text(text, xPos, yPos);
+                                xPos += columnWidths[index];
+
+                            });
+                            yPos += 10;
+                        });
+
+                        return yPos;
+                    }
+
+
+                    let currentY = introY;
+                    currentY = addTable(doc, generalData, "Statistiques Générales", currentY + 10);
+                    currentY = addTable(doc, materialsData, "Statistiques des Matériels", currentY + 20);
+
+
+                    const conclusionText = `Ce rapport a été généré automatiquement.  Les données sont sujettes à changement et peuvent être mises à jour périodiquement. Pour toute question ou demande d'informations complémentaires, veuillez contacter l'administrateur du système.`;
+                    const conclusionLines = doc.splitTextToSize(conclusionText, 170);
+                    conclusionLines.forEach(line => {
+                        doc.text(line, 20, currentY + 10);
+                        currentY += 7;
+                    });
+
+                    doc.save("rapport_mensuel.pdf");
+                },
+                generateReportHTML() {
+                    if (!this.reportData) return;
+
+                    let reportHTML = `<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8"><title>Rapport Mensuel</title></head><body><div class="container mx-auto px-4 py-8"><h1>Rapport Mensuel</h1>`;
+
+                    reportHTML += `<div class="report-section"><h2>Statistiques Générales</h2><table class="report-table">`;
+                    reportHTML += `<tr><th>Nombre d'Employés</th><td>${this.numEmployees}<span class="change" :class="{'positive-change': ${this.employeeChange} > 0, 'negative-change': ${this.employeeChange} < 0}">${this.employeeChange === 0 ? '(0)' : '(' + this.employeeChange + '%)'}</span></td></tr>`;
+                    reportHTML += `<tr><th>Nombre de Managers</th><td>${this.numManagers}<span class="change" :class="{'positive-change': ${this.managerChange} > 0, 'negative-change': ${this.managerChange} < 0}">${this.managerChange === 0 ? '(0)' : '(' + this.managerChange + '%)'}</span></td></tr>`;
+                    reportHTML += `<tr><th>Nombre Total de Matériels</th><td>${this.totalMaterials}<span class="change" :class="{'positive-change': ${this.totalMaterialsChange} > 0, 'negative-change': ${this.totalMaterialsChange} < 0}">${this.totalMaterialsChange === 0 ? '(0)' : '(' + this.totalMaterialsChange + '%)'}</span></td></tr>`;
+                    reportHTML += `</table></div>`;
+
+                    reportHTML += `<div class="report-section"><h2>Statistiques des Matériels</h2><table class="report-table"><thead><tr><th>Type de Matériel</th><th>Nombre</th><th>Changement</th></tr></thead><tbody>`;
+                    reportHTML += `<tr><td>Imprimantes</td><td>${this.numImprimantes}</td><td><span class="change" :class="{'positive-change': ${this.imprimanteChange} > 0, 'negative-change': ${this.imprimanteChange} < 0}">${this.imprimanteChange === 0 ? '(0)' : '(' + this.imprimanteChange + '%)'}</span></td></tr>`;  // Added <td>
+                    reportHTML += `<tr><td>PCs</td><td>${this.numPCs}</td><td><span class="change" :class="{'positive-change': ${this.pcChange} > 0, 'negative-change': ${this.pcChange} < 0}">${this.pcChange === 0 ? '(0)' : '(' + this.pcChange + '%)'}</span></td></tr>`;      // Added <td>
+                    reportHTML += `<tr><td>Écrans</td><td>${this.numEcrans}</td><td><span class="change" :class="{'positive-change': ${this.ecranChange} > 0, 'negative-change': ${this.ecranChange} < 0}">${this.ecranChange === 0 ? '(0)' : '(' + this.ecranChange + '%)'}</span></td></tr>`;    // Added <td>
+                    reportHTML += `</tbody></table></div>`;
+
+                    reportHTML += `</div></body></html>`;
+
+                    document.getElementById('report-content').innerHTML = reportHTML;
+                }
+            };
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const app = dashboardData();
+            app.init();
+
+
+        });
+    </script>
+</head>
+
+<body x-data="dashboardData()" x-init="init()" class="antialiased text-gray-800 bg-gray-100">
+
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+        <div class="hidden md:flex w-64 bg-white shadow-md" id="sidebar"></div>
+
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col">
+            <!-- Navbar -->
+            <div class="h-16 bg-white shadow flex items-center px-6" id="navbar">
+                <h1 class="text-xl font-semibold">Tableau de Bord</h1>
+            </div>
+
+            <main class="p-6">
+                <div id="report-content"></div>
+
+                <div class="mt-8">
+                    <button @click="generatePDF"
+                        class="px-6 py-3 bg-blue-500 hover:bg-blue-700 text-white font-bold rounded flex items-center">
+                        <i class="fas fa-file-pdf mr-2"></i> Télécharger le rapport PDF
+                    </button>
+                </div>
+            </main>
+        </div>
+    </div>
+
+</body>
+
+</html>

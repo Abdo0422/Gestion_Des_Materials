@@ -51,6 +51,26 @@ function countEmployees() {
     }
 }
 
+function countManagers() {
+    try {
+        const users = JSON.parse(fs.readFileSync(usersFile, 'utf8'));
+        return users.filter(user => user.role === 'manager').length;
+    } catch (error) {
+        console.error("Error reading users file:", error);
+        return 0;
+    }
+}
+
+function countTotalMaterials() {
+    try {
+        const materials = JSON.parse(fs.readFileSync(materialsFile, 'utf8'));
+        return materials.length;
+    } catch (error) {
+        console.error("Error reading materials file:", error);
+        return 0;
+    }
+}
+
 function countMaterialsByName(searchTerm) {
     try {
         const materials = JSON.parse(fs.readFileSync(materialsFile, 'utf8'));
@@ -115,6 +135,45 @@ function countMaterialsByNameLastMonth(searchTerm) {
         return count;
     } catch (error) {
         console.error("Erreur de lecture du fichier des matériaux:", error);
+        return 0;
+    }
+}
+
+function countManagersLastMonth() {
+    try {
+        const users = JSON.parse(fs.readFileSync(usersFile, 'utf8'));
+        const lastMonthStart = moment().subtract(1, 'month').startOf('month');
+        const lastMonthEnd = moment().subtract(1, 'month').endOf('month');
+
+        const count = users.filter(user => {
+            if (user.role !== 'manager' || !user.createdAt) return false; // Check role and createdAt
+            const createdAt = moment(user.createdAt);
+            return createdAt.isBetween(lastMonthStart, lastMonthEnd, null, '[]');
+        }).length;
+
+        return count;
+    } catch (error) {
+        console.error("Error reading users file:", error);
+        return 0;
+    }
+}
+
+
+function countTotalMaterialsLastMonth() {
+    try {
+        const materials = JSON.parse(fs.readFileSync(materialsFile, 'utf8'));
+        const lastMonthStart = moment().subtract(1, 'month').startOf('month');
+        const lastMonthEnd = moment().subtract(1, 'month').endOf('month');
+
+        const count = materials.filter(material => {
+            if (!material.createdAt) return false;
+            const createdAt = moment(material.createdAt);
+            return createdAt.isBetween(lastMonthStart, lastMonthEnd, null, '[]');
+        }).length;
+
+        return count;
+    } catch (error) {
+        console.error("Error reading materials file:", error);
         return 0;
     }
 }
@@ -235,24 +294,32 @@ app.get('/api/counts', (req, res) => {
     const numImprimantes = countMaterialsByName('imprimante');
     const numPCs = countMaterialsByName('pc');
     const numEcrans = countMaterialsByName('ecran');
+    const numManagers = countManagers();
+    const totalMaterials = countTotalMaterials();
 
     const numEmployeesLastMonth = countEmployeesLastMonth();
     const numImprimantesLastMonth = countMaterialsByNameLastMonth('imprimante');
     const numPCsLastMonth = countMaterialsByNameLastMonth('pc');
     const numEcransLastMonth = countMaterialsByNameLastMonth('ecran');
+    const numManagersLastMonth = countManagersLastMonth();
+    const totalMaterialsLastMonth = countTotalMaterialsLastMonth(); 
 
     console.log("Current Counts:", {
         numEmployees,
         numImprimantes,
         numPCs,
-        numEcrans
+        numEcrans,
+        numManagers,
+        totalMaterials
     });
 
     console.log("Last Month Counts:", {
         numEmployeesLastMonth,
         numImprimantesLastMonth,
         numPCsLastMonth,
-        numEcransLastMonth
+        numEcransLastMonth,
+        numManagersLastMonth,
+        totalMaterialsLastMonth
     });
 
 
@@ -260,15 +327,18 @@ app.get('/api/counts', (req, res) => {
     const imprimanteChange = calculatePercentageChange(numImprimantesLastMonth, numImprimantes);
     const pcChange = calculatePercentageChange(numPCsLastMonth, numPCs);
     const ecranChange = calculatePercentageChange(numEcransLastMonth, numEcrans);
+    const managerChange = calculatePercentageChange(numManagersLastMonth, numManagers);
+    const totalMaterialsChange = calculatePercentageChange(totalMaterialsLastMonth, totalMaterials);
 
     console.log("Percentage Changes:", {
         employeeChange,
         imprimanteChange,
         pcChange,
-        ecranChange
+        ecranChange,
+        managerChange,
+        totalMaterialsChange
     });
-
-
+    
     res.json({
         numEmployees,
         numImprimantes,
@@ -278,6 +348,10 @@ app.get('/api/counts', (req, res) => {
         imprimanteChange,
         pcChange,
         ecranChange,
+        numManagers,
+        totalMaterials,
+        managerChange,
+        totalMaterialsChange,
     });
 });
 
@@ -329,11 +403,15 @@ app.post('/api/users', async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
+
+    const newId = getNextId(users); 
+
     const newUser = {
+        id: newId,  
         username,
         password: hashedPassword,
         role: 'manager',
-        createdAt: new Date() // Add creation date here
+        createdAt: new Date()
     };
 
     users.push(newUser);
@@ -341,6 +419,61 @@ app.post('/api/users', async (req, res) => {
 
     console.log("Manager created successfully for username:", username);
     res.json({ message: 'Manager created successfully' });
+});
+
+// ✅ Update User (No authentication)
+app.put('/api/users/:id', async (req, res) => {
+    const userId = parseInt(req.params.id); 
+    const { username, password, role } = req.body; 
+
+    try {
+        const users = JSON.parse(fs.readFileSync(usersFile, 'utf8'));
+        const userIndex = users.findIndex(user => user.id === userId);
+
+        if (userIndex === -1) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        const updatedUser = { ...users[userIndex] }; 
+
+        if (username) updatedUser.username = username;
+        if (password) {
+            const hashedPassword = await bcrypt.hash(password, 10);
+            updatedUser.password = hashedPassword;
+        }
+        if (role) updatedUser.role = role; 
+
+
+        users[userIndex] = updatedUser; 
+        fs.writeFileSync(usersFile, JSON.stringify(users, null, 2));
+
+        res.json({ message: 'User updated successfully' });
+
+    } catch (error) {
+        console.error("Error updating user:", error);
+        res.status(500).json({ error: 'Failed to update user' });
+    }
+});
+
+
+// ✅ Delete User (No authentication)
+app.delete('/api/users/:id', (req, res) => {
+    const userId = parseInt(req.params.id);
+
+    try {
+        const users = JSON.parse(fs.readFileSync(usersFile, 'utf8'));
+        const updatedUsers = users.filter(user => user.id !== userId); 
+
+        if (updatedUsers.length === users.length) { 
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        fs.writeFileSync(usersFile, JSON.stringify(updatedUsers, null, 2));
+        res.json({ message: 'User deleted successfully' });
+    } catch (error) {
+        console.error("Error deleting user:", error);
+        res.status(500).json({ error: 'Failed to delete user' });
+    }
 });
 
 app.get('/api/notes', (req, res) => {
@@ -357,12 +490,11 @@ app.post('/api/notes', (req, res) => {
     try {
         const notes = JSON.parse(fs.readFileSync(notesFile, 'utf8'));
         const newNote = {
-            id: getNextId(notes), // Use your getNextId function
+            id: getNextId(notes),
             title: req.body.title,
             content: req.body.content,
             createdAt: new Date(),
-            // Add manager username here if you have authentication
-            // manager: req.user.username // Example if you have authentication
+            manager: req.body.manager
         };
         notes.push(newNote);
         fs.writeFileSync(notesFile, JSON.stringify(notes, null, 2));

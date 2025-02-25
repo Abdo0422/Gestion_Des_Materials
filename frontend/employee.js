@@ -1,6 +1,16 @@
+const departments = [
+    { "id": 1, "nomdepart": "Section de l'Immobilier (قسم العقار)" },
+    { "id": 2, "nomdepart": "Section des Difficultés des Entreprises (قسم صعوبة المقاولة)" },
+    { "id": 3, "nomdepart": "Section des Référés (قسم الاستعجال)" },
+    { "id": 4, "nomdepart": "Section de la Saisie-arrêt (قسم الحجز لدى الغير)" },
+    { "id": 5, "nomdepart": "Section du Fond (قسم الموضوع)" },
+    { "id": 6, "nomdepart": "Section des Litiges Maritimes (قسم المنازعات البحرية)" },
+    { "id": 7, "nomdepart": "Section de la Propriété Intellectuelle (قسم الملكية الفكرية)" }
+];
 function dashboardData() {
     return {
         sidebarOpen: false,
+        departments: departments,
         searchQueryPC: '',
         searchQueryPrinter: '',
         searchQueryScreen: '',
