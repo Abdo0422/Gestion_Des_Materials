@@ -1,101 +1,129 @@
 [
   {
-    "id": 2,
-    "name": "Jane Smith",
-    "department": "Marketing",
+    "name": "Hamza",
+    "department": "Section de l'Immobilier (قسم العقار)",
     "materials": [
       {
-        "name": "Imprimante Canon Pixma",
-        "serialNumber": "SN67890",
-        "image": "images/imprimante-multifonction-jet-d-encre-canon-pixma-ts3440-4463c007be.jpg"
+        "id": 1,
+        "name": "PC HP ProDesk",
+        "serialNumber": "SN123453",
+        "image": "images/1-430x430.webp"
       }
     ],
-    "createdAt": "2024-10-27T14:22:17.775Z",
-    "updatedAt": "2025-02-25T16:03:43.244Z"
+    "createdAt": "2025-02-26T11:09:57.733Z",
+    "id": 1
   },
   {
-    "id": 3,
-    "name": "Samuel Johnson",
-    "department": "Engineering",
+    "name": "Hamid",
+    "department": "Section du Fond (قسم الموضوع)",
     "materials": [
       {
-        "name": "PC Lenovo ThinkCentre",
-        "serialNumber": "SN45678",
-        "image": "images/Lenovo-ThinkCentre-neo-50s-1-1.webp"
-      }
-    ],
-    "createdAt": "2024-10-27T14:22:17.775Z",
-    "updatedAt": "2025-02-25T16:03:43.244Z"
-  },
-  {
-    "id": 4,
-    "name": "Emily Davis",
-    "department": "Human Resources",
-    "materials": [
-      {
-        "id": 5,
-        "name": "Imprimante HP LaserJet",
-        "marque": "HP compaq",
-        "serialNumber": "SN09876",
-        "status": "En Utilisation",
-        "image": "images/imprimante-laser-monochrome-hp-laserjet-pro-4003dn-2z609a.jpg",
-        "createdAt": "2024-10-27T10:00:00.000Z",
-        "updatedAt": "2025-02-25T16:03:08.885Z"
-      }
-    ],
-    "createdAt": "2024-10-27T14:22:17.775Z",
-    "updatedAt": "2025-02-25T16:03:43.244Z"
-  },
-  {
-    "name": "James",
-    "department": "Sales",
-    "materials": [
-      {
-        "name": "Ecran Dell UltraSharp",
-        "serialNumber": "SN11223",
-        "image": "images/images.jpg"
-      }
-    ],
-    "createdAt": "2025-02-21T12:07:19.146Z",
-    "id": 5,
-    "updatedAt": "2025-02-25T16:03:43.244Z"
-  },
-  {
-    "name": "Lisa",
-    "department": "Engineering",
-    "materials": [
-      {
-        "name": "Ecran Samsung Odyssey",
-        "serialNumber": "SN77889",
-        "image": "images/68AEFF22-1923-6F36-3221-C220A56735C9-300.webp"
-      }
-    ],
-    "createdAt": "2025-02-21T12:07:37.745Z",
-    "id": 6,
-    "updatedAt": "2025-02-25T16:03:43.245Z"
-  },
-  {
-    "name": "John",
-    "department": "Sales",
-    "materials": [
-      2
-    ],
-    "createdAt": "2025-02-24T09:29:24.534Z",
-    "id": 7,
-    "updatedAt": "2025-02-25T16:03:43.245Z"
-  },
-  {
-    "name": "yassine",
-    "department": "Section des Difficultés des Entreprises (قسم صعوبة المقاولة)",
-    "materials": [
-      {
+        "id": 2,
         "name": "PC Dell OptiPlex",
         "serialNumber": "SN98765",
         "image": "images/ordinateur-de-bureau-dell-optiplex-3000-dl-op3000-i5-sff_34b18721-be32-4ce5-b594-e536cc349ae8.webp"
       }
     ],
-    "createdAt": "2025-02-25",
-    "id": 8,
-    "updatedAt": "2025-02-25T16:11:36.528Z"
+    "createdAt": "2025-02-26",
+    "id": 2,
+    "updatedAt": "2025-02-26T11:26:50.017Z"
+  },
+  {
+    "name": "Ahmed",
+    "department": "Section du Fond (قسم الموضوع)",
+    "materials": [
+      {
+        "id": 3,
+        "name": "PC Lenovo ThinkCentre",
+        "serialNumber": "SN45678",
+        "image": "images/Lenovo-ThinkCentre-neo-50s-1-1.webp"
+      }
+    ],
+    "createdAt": "2025-02-26T11:15:37.012Z",
+    "id": 3
+  },
+  {
+    "name": "Jihan",
+    "department": "Section de la Propriété Intellectuelle (قسم الملكية الفكرية)",
+    "materials": [
+      {
+        "id": 4,
+        "name": "Imprimante Canon Pixma",
+        "serialNumber": "SN67890",
+        "image": "images/imprimante-multifonction-jet-d-encre-canon-pixma-ts3440-4463c007be.jpg"
+      }
+    ],
+    "createdAt": "2025-02-26T11:16:59.378Z",
+    "id": 4
+  },
+  {
+    "name": "Hamza",
+    "department": "Section de l'Immobilier (قسم العقار)",
+    "materials": [
+      {
+        "id": 5,
+        "name": "Imprimante HP LaserJet",
+        "serialNumber": "SN09876",
+        "image": "images/imprimante-laser-monochrome-hp-laserjet-pro-4003dn-2z609a.jpg"
+      }
+    ],
+    "createdAt": "2025-02-26T11:19:12.260Z",
+    "id": 5
+  },
+  {
+    "name": "Jihan",
+    "department": "Section de la Propriété Intellectuelle (قسم الملكية الفكرية)",
+    "materials": [
+      {
+        "id": 6,
+        "name": "Ecran Dell UltraSharp",
+        "serialNumber": "SN11223",
+        "image": "images/images.jpg"
+      }
+    ],
+    "createdAt": "2025-02-26T11:19:53.081Z",
+    "id": 6
+  },
+  {
+    "name": "Hamza",
+    "department": "Section de l'Immobilier (قسم العقار)",
+    "materials": [
+      {
+        "id": 7,
+        "name": "Ecran HP EliteDisplay",
+        "serialNumber": "SN33446",
+        "image": "images/C9V75AA-HP-EliteDisplay-E231-Ecran-23-Full-HD-VGA-DVI-DisplayPorts-USB-02.webp"
+      }
+    ],
+    "createdAt": "2025-02-26T11:25:46.690Z",
+    "id": 7
+  },
+  {
+    "name": "Laila",
+    "department": "Section de la Saisie-arrêt (قسم الحجز لدى الغير)",
+    "materials": [
+      {
+        "id": 8,
+        "name": "Ecran Samsung Odyssey",
+        "serialNumber": "SN77889",
+        "image": "images/68AEFF22-1923-6F36-3221-C220A56735C9-300.webp"
+      }
+    ],
+    "createdAt": "2025-02-26T11:26:19.780Z",
+    "id": 8
+  },
+  {
+    "name": "Hamza",
+    "department": "Section de l'Immobilier (قسم العقار)",
+    "materials": [
+      {
+        "id": 9,
+        "name": "Scanner 1",
+        "serialNumber": "DR-C240",
+        "image": "images/scanner_canon_imageformula_dr-c240-fournipro.ma_2.jpg"
+      }
+    ],
+    "createdAt": "2025-02-26T11:26:31.829Z",
+    "id": 9
   }
 ]

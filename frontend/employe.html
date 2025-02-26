@@ -1,321 +1,491 @@
 <!DOCTYPE html>
 <html lang="fr">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Tableau de Bord - Manager</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
-        rel="stylesheet">
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"
+    ></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
     <script src="tailwind.js"></script>
-    <link href="style.css" rel="stylesheet">
-</head>
+    <link href="style.css" rel="stylesheet" />
+  </head>
 
-<body x-data="dashboardData()" x-init="setTimeout(() => { init(); }, 100)" class="antialiased text-gray-800">
-
+  <body
+    x-data="dashboardData()"
+    x-init="setTimeout(() => { init(); }, 100)"
+    class="antialiased text-gray-800"
+  >
     <!-- Sidebar & Header Navigation -->
     <div class="flex h-screen overflow-hidden">
-        <div class="hidden md:flex md:flex-shrink-0" id="sidebar"></div>
-        <!-- Main Content Area -->
-        <div class="flex flex-col flex-1 w-0 overflow-hidden">
-            <!-- Top Navigation -->
-            <div class="relative z-10 flex-shrink-0 flex h-16 bg-white shadow-sm" id="navbar-manager"></div>
+      <div class="hidden md:flex md:flex-shrink-0" id="sidebar"></div>
+      <!-- Main Content Area -->
+      <div class="flex flex-col flex-1 w-0 overflow-hidden">
+        <!-- Top Navigation -->
+        <div
+          class="relative z-10 flex-shrink-0 flex h-16 bg-white shadow-sm"
+          id="navbar-manager"
+        ></div>
 
-            <!-- Mobile sidebar -->
-            <div x-show="sidebarOpen" class="fixed inset-0 flex z-40 md:hidden" x-cloak id="sidebar-mobile"></div>
+        <!-- Mobile sidebar -->
+        <div
+          x-show="sidebarOpen"
+          class="fixed inset-0 flex z-40 md:hidden"
+          x-cloak
+          id="sidebar-mobile"
+        ></div>
 
-            <!-- Main Content -->
-            <main class="flex-1 relative overflow-y-auto focus:outline-none">
-                <div class="py-6 px-4 sm:px-6 lg:px-8">
-
-                    <section class="mb-8">
-                        <div class="flex flex-wrap items-center justify-between mb-5">
-                            <h2 class="text-xl font-bold text-moroccan-blue flex items-center">
-                                <i class="fas fa-desktop mr-2 text-moroccan-teal"></i>
-                                Employés (PC)
-                            </h2>
-                            <div class="flex space-x-2 mt-2 sm:mt-0">
-                                <div class="relative">
-                                    <input type="text" placeholder="Rechercher..." x-model="searchQueryPC"
-                                        @input="filterEmployeesPC(searchQueryPC)"
-                                        class="pl-10 pr-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-moroccan-teal focus:border-transparent">
-                                    <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
-                                </div>
-                                <button
-                                    class="p-2 rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors">
-                                    <i class="fas fa-filter"></i>
-                                </button>
-                                <button @click="openAddEmployeeModal('PC')"
-                                    class="p-2 rounded-lg bg-moroccan-blue text-white hover:bg-moroccan-blue-700 transition-colors">
-                                    <i class="fas fa-plus mr-2"></i> Ajouter
-                                </button>
-                                <button @click="exportToExcelEmployeesPC"
-                                    class="p-2 rounded-lg bg-moroccan-teal text-white hover:bg-moroccan-teal-700 transition-colors">
-                                    <i class="fas fa-file-excel mr-2"></i> Exporter
-                                </button>
-                            </div>
-                        </div>
-
-                        <div class="bg-white rounded-xl card-shadow overflow-hidden">
-                            <div class="overflow-x-auto table-scroll responsive-table">
-                                <table class="w-full text-sm">
-                                    <thead>
-                                        <tr
-                                            class="bg-gradient-to-r from-moroccan-blue/10 to-moroccan-teal/10 text-gray-700">
-                                            <th class="p-4 text-left">Nom</th>
-                                            <th class="p-4 text-left">Département</th>
-                                            <th class="p-4 text-left">Matériel</th>
-                                            <th class="p-4 text-left">Numéro de Série</th>
-                                            <th class="p-4 text-left">Image</th>
-                                            <th class="p-4 text-right">Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="employees-pc-table">
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-
-                        <br />
-
-                        <div class="flex flex-wrap items-center justify-between mb-5">
-                            <h2 class="text-xl font-bold text-moroccan-blue flex items-center">
-                                <i class="fas fa-print mr-2 text-moroccan-teal"></i>
-                                Employés (Imprimante)
-                            </h2>
-                            <div class="flex space-x-2 mt-2 sm:mt-0">
-                                <div class="relative">
-                                    <input type="text" placeholder="Rechercher..." x-model="searchQueryPrinter"
-                                        @input="filterEmployeesPrinter(searchQueryPrinter)"
-                                        class="pl-10 pr-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-moroccan-teal focus:border-transparent">
-                                    <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
-                                </div>
-                                <button
-                                    class="p-2 rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors">
-                                    <i class="fas fa-filter"></i>
-                                </button>
-                                <button @click="openAddEmployeeModal('Printer')"
-                                    class="p-2 rounded-lg bg-moroccan-blue text-white hover:bg-moroccan-blue-700 transition-colors">
-                                    <i class="fas fa-plus mr-2"></i> Ajouter
-                                </button>
-                                <button @click="exportToExcelEmployeesPrinter"
-                                    class="p-2 rounded-lg bg-moroccan-teal text-white hover:bg-moroccan-teal-700 transition-colors">
-                                    <i class="fas fa-file-excel mr-2"></i> Exporter
-                                </button>
-                            </div>
-                        </div>
-
-                        <div class="bg-white rounded-xl card-shadow overflow-hidden">
-                            <div class="overflow-x-auto table-scroll responsive-table">
-                                <table class="w-full text-sm">
-                                    <thead>
-                                        <tr
-                                            class="bg-gradient-to-r from-moroccan-blue/10 to-moroccan-teal/10 text-gray-700">
-                                            <th class="p-4 text-left">Nom</th>
-                                            <th class="p-4 text-left">Département</th>
-                                            <th class="p-4 text-left">Matériel</th>
-                                            <th class="p-4 text-left">Numéro de Série</th>
-                                            <th class="p-4 text-left">Image</th>
-                                            <th class="p-4 text-right">Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="employees-printer-table">
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-
-                        <br />
-
-                        <div class="flex flex-wrap items-center justify-between mb-5">
-                            <h2 class="text-xl font-bold text-moroccan-blue flex items-center">
-                                <i class="fas fa-tv mr-2 text-moroccan-teal"></i>
-                                Employés (Ecrans)
-                            </h2>
-                            <div class="flex space-x-2 mt-2 sm:mt-0">
-                                <div class="relative">
-                                    <input type="text" placeholder="Rechercher..." x-model="searchQueryScreen"
-                                        @input="filterEmployeesScreen(searchQueryScreen)"
-                                        class="pl-10 pr-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-moroccan-teal focus:border-transparent">
-                                    <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
-                                </div>
-                                <button
-                                    class="p-2 rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors">
-                                    <i class="fas fa-filter"></i>
-                                </button>
-                                <button @click="openAddEmployeeModal('Screen')"
-                                    class="p-2 rounded-lg bg-moroccan-blue text-white hover:bg-moroccan-blue-700 transition-colors">
-                                    <i class="fas fa-plus mr-2"></i> Ajouter
-                                </button>
-                                <button @click="exportToExcelEmployeesScreen"
-                                    class="p-2 rounded-lg bg-moroccan-teal text-white hover:bg-moroccan-teal-700 transition-colors">
-                                    <i class="fas fa-file-excel mr-2"></i> Exporter
-                                </button>
-                            </div>
-                        </div>
-
-                        <div class="bg-white rounded-xl card-shadow overflow-hidden">
-                            <div class="overflow-x-auto table-scroll responsive-table">
-                                <table class="w-full text-sm">
-                                    <thead>
-                                        <tr
-                                            class="bg-gradient-to-r from-moroccan-blue/10 to-moroccan-teal/10 text-gray-700">
-                                            <th class="p-4 text-left">Nom</th>
-                                            <th class="p-4 text-left">Département</th>
-                                            <th class="p-4 text-left">Matériel</th>
-                                            <th class="p-4 text-left">Numéro de Série</th>
-                                            <th class="p-4 text-left">Image</th>
-                                            <th class="p-4 text-right">Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="employees-screen-table">
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-
-
-                        <template x-if="employeeModalOpen">
-                            <div class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-                                <div class="modal-content w-full max-w-md p-6 bg-white rounded-lg">
-                                    <h2 class="text-2xl font-bold mb-4"
-                                        x-text="editingEmployee.id ? 'Modifier l\'employé' : 'Ajouter un employé'"></h2>
-
-                                    <template x-if="message">
-                                        <div class="mb-4 p-3 bg-yellow-100 text-yellow-800 rounded-md">
-                                            <span x-text="message"></span>
-                                        </div>
-                                    </template>
-
-                                    <form @submit.prevent="saveEmployee">
-                                        <div class="mb-4">
-                                            <label for="employee-name"
-                                                class="block text-gray-700 font-bold mb-2">Nom:</label>
-                                            <input type="text" id="employee-name" x-model="editingEmployee.name"
-                                                required
-                                                class="w-full border border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500">
-                                        </div>
-
-                                        <div class="mb-4">
-                                            <label for="employeeModalDepartment"
-                                                class="block text-gray-700 font-bold mb-2">Département:</label>
-                                            <select id="employeeModalDepartment" x-model="editingEmployee.department.id"
-                                                required>
-                                                <option value="" selected>Sélectionner un département</option>
-                                                <template x-for="department in departments" :key="department.id">
-                                                    <option :value="department.id" x-text="department.nomdepart">
-                                                    </option>
-                                                </template>
-                                            </select>
-                                        </div>
-
-                                        <div class="mb-4">
-                                            <label class="block text-gray-700 font-bold mb-2">Matériels:</label>
-                                            <select id="employeeModalSelect" multiple
-                                                class="w-full border border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500">
-                                                <template x-for="material in filteredMaterials" :key="material.id">
-                                                    <option :value="material.id" x-text="material.name"
-                                                        :selected="editingEmployee.materials.some(empMat => empMat.id === material.id)">
-                                                    </option>
-                                                </template>
-                                            </select>
-                                        </div>
-
-                                        <div class="flex justify-end">
-                                            <button type="button" @click="closeEmployeeEditModal"
-                                                class="px-4 py-2 mr-2 bg-gray-300 rounded-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500">
-                                                Annuler
-                                            </button>
-                                            <button type="submit"
-                                                class="px-4 py-2 bg-primary-500 text-white rounded-md hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-primary-700">
-                                                Enregistrer
-                                            </button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </template>
-
-                        <template x-if="employeeModalOpen2">
-                            <div class="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-75 z-50">
-                                <div class="bg-white rounded-lg p-8 max-w-md w-full">
-                                    <h2 class="text-2xl font-bold mb-4">Détails de l'employé</h2>
-
-                                    <div class="mb-4">
-                                        <label class="block text-gray-700 font-bold mb-2">Nom:</label>
-                                        <span x-text="editingEmployee.name"></span>
-                                    </div>
-
-                                    <div class="mb-4">
-                                        <label class="block text-gray-700 font-bold mb-2">Département:</label>
-                                        <span x-text="editingEmployee.department"></span>
-                                    </div>
-
-                                    <div class="mb-4">
-                                        <label class="block text-gray-700 font-bold mb-2">Matériels:</label>
-                                        <ul class="list-disc ml-6">
-                                            <template x-for="material in editingEmployee.materials" :key="material.id">
-                                                <li x-text="material.name + ' (' + material.serialNumber + ')'"></li>
-                                            </template>
-                                        </ul>
-                                    </div>
-
-                                    <div class="mb-4">
-                                        <label class="block text-gray-700 font-bold mb-2">Date de création:</label>
-                                        <span x-text="formatDate(editingEmployee.createdAt)"></span>
-                                    </div>
-
-                                    <div class="flex justify-end">
-                                        <button @click="closeEmployeeDetailsModal"
-                                            class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded">Fermer</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </template>
-
-                    </section>
-
+        <!-- Main Content -->
+        <main class="flex-1 relative overflow-y-auto focus:outline-none">
+          <div class="py-6 px-4 sm:px-6 lg:px-8">
+            <section class="mb-8">
+              <div class="flex flex-wrap items-center justify-between mb-5">
+                <h2
+                  class="text-xl font-bold text-moroccan-blue flex items-center"
+                >
+                  <i class="fas fa-desktop mr-2 text-moroccan-teal"></i>
+                  Employés (PC)
+                </h2>
+                <div class="flex space-x-2 mt-2 sm:mt-0">
+                  <div class="relative">
+                    <input
+                      type="text"
+                      placeholder="Rechercher..."
+                      x-model="searchQueryPC"
+                      @input="filterEmployeesPC(searchQueryPC)"
+                      class="pl-10 pr-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-moroccan-teal focus:border-transparent"
+                    />
+                    <i
+                      class="fas fa-search absolute left-3 top-3 text-gray-400"
+                    ></i>
+                  </div>
+                  <button
+                    class="p-2 rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors"
+                  >
+                    <i class="fas fa-filter"></i>
+                  </button>
+                  <button
+                    @click="openAddEmployeeModal('PC')"
+                    class="p-2 rounded-lg bg-moroccan-blue text-white hover:bg-moroccan-blue-700 transition-colors"
+                  >
+                    <i class="fas fa-plus mr-2"></i> Ajouter
+                  </button>
+                  <button
+                    @click="exportToExcelEmployeesPC"
+                    class="p-2 rounded-lg bg-moroccan-teal text-white hover:bg-moroccan-teal-700 transition-colors"
+                  >
+                    <i class="fas fa-file-excel mr-2"></i> Exporter
+                  </button>
                 </div>
-            </main>
-        </div>
+              </div>
+
+              <div class="bg-white rounded-xl card-shadow overflow-hidden">
+                <div class="overflow-x-auto table-scroll responsive-table">
+                  <table class="w-full text-sm">
+                    <thead>
+                      <tr
+                        class="bg-gradient-to-r from-moroccan-blue/10 to-moroccan-teal/10 text-gray-700"
+                      >
+                        <th class="p-4 text-left">Nom</th>
+                        <th class="p-4 text-left">Département</th>
+                        <th class="p-4 text-left">Matériel</th>
+                        <th class="p-4 text-left">Numéro de Série</th>
+                        <th class="p-4 text-left">Image</th>
+                        <th class="p-4 text-right">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody id="employees-pc-table"></tbody>
+                  </table>
+                </div>
+              </div>
+
+              <br />
+
+              <div class="flex flex-wrap items-center justify-between mb-5">
+                <h2
+                  class="text-xl font-bold text-moroccan-blue flex items-center"
+                >
+                  <i class="fas fa-print mr-2 text-moroccan-teal"></i>
+                  Employés (Imprimante)
+                </h2>
+                <div class="flex space-x-2 mt-2 sm:mt-0">
+                  <div class="relative">
+                    <input
+                      type="text"
+                      placeholder="Rechercher..."
+                      x-model="searchQueryPrinter"
+                      @input="filterEmployeesPrinter(searchQueryPrinter)"
+                      class="pl-10 pr-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-moroccan-teal focus:border-transparent"
+                    />
+                    <i
+                      class="fas fa-search absolute left-3 top-3 text-gray-400"
+                    ></i>
+                  </div>
+                  <button
+                    class="p-2 rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors"
+                  >
+                    <i class="fas fa-filter"></i>
+                  </button>
+                  <button
+                    @click="openAddEmployeeModal('Printer')"
+                    class="p-2 rounded-lg bg-moroccan-blue text-white hover:bg-moroccan-blue-700 transition-colors"
+                  >
+                    <i class="fas fa-plus mr-2"></i> Ajouter
+                  </button>
+                  <button
+                    @click="exportToExcelEmployeesPrinter"
+                    class="p-2 rounded-lg bg-moroccan-teal text-white hover:bg-moroccan-teal-700 transition-colors"
+                  >
+                    <i class="fas fa-file-excel mr-2"></i> Exporter
+                  </button>
+                </div>
+              </div>
+
+              <div class="bg-white rounded-xl card-shadow overflow-hidden">
+                <div class="overflow-x-auto table-scroll responsive-table">
+                  <table class="w-full text-sm">
+                    <thead>
+                      <tr
+                        class="bg-gradient-to-r from-moroccan-blue/10 to-moroccan-teal/10 text-gray-700"
+                      >
+                        <th class="p-4 text-left">Nom</th>
+                        <th class="p-4 text-left">Département</th>
+                        <th class="p-4 text-left">Matériel</th>
+                        <th class="p-4 text-left">Numéro de Série</th>
+                        <th class="p-4 text-left">Image</th>
+                        <th class="p-4 text-right">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody id="employees-printer-table"></tbody>
+                  </table>
+                </div>
+              </div>
+
+              <br />
+
+              <div class="flex flex-wrap items-center justify-between mb-5">
+                <h2
+                  class="text-xl font-bold text-moroccan-blue flex items-center"
+                >
+                  <i class="fas fa-tv mr-2 text-moroccan-teal"></i>
+                  Employés (Ecrans)
+                </h2>
+                <div class="flex space-x-2 mt-2 sm:mt-0">
+                  <div class="relative">
+                    <input
+                      type="text"
+                      placeholder="Rechercher..."
+                      x-model="searchQueryScreen"
+                      @input="filterEmployeesScreen(searchQueryScreen)"
+                      class="pl-10 pr-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-moroccan-teal focus:border-transparent"
+                    />
+                    <i
+                      class="fas fa-search absolute left-3 top-3 text-gray-400"
+                    ></i>
+                  </div>
+                  <button
+                    class="p-2 rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors"
+                  >
+                    <i class="fas fa-filter"></i>
+                  </button>
+                  <button
+                    @click="openAddEmployeeModal('Screen')"
+                    class="p-2 rounded-lg bg-moroccan-blue text-white hover:bg-moroccan-blue-700 transition-colors"
+                  >
+                    <i class="fas fa-plus mr-2"></i> Ajouter
+                  </button>
+                  <button
+                    @click="exportToExcelEmployeesScreen"
+                    class="p-2 rounded-lg bg-moroccan-teal text-white hover:bg-moroccan-teal-700 transition-colors"
+                  >
+                    <i class="fas fa-file-excel mr-2"></i> Exporter
+                  </button>
+                </div>
+              </div>
+
+              <div class="bg-white rounded-xl card-shadow overflow-hidden">
+                <div class="overflow-x-auto table-scroll responsive-table">
+                  <table class="w-full text-sm">
+                    <thead>
+                      <tr
+                        class="bg-gradient-to-r from-moroccan-blue/10 to-moroccan-teal/10 text-gray-700"
+                      >
+                        <th class="p-4 text-left">Nom</th>
+                        <th class="p-4 text-left">Département</th>
+                        <th class="p-4 text-left">Matériel</th>
+                        <th class="p-4 text-left">Numéro de Série</th>
+                        <th class="p-4 text-left">Image</th>
+                        <th class="p-4 text-right">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody id="employees-screen-table"></tbody>
+                  </table>
+                </div>
+              </div>
+
+              <br />
+
+              <div class="flex flex-wrap items-center justify-between mb-5">
+                <h2
+                  class="text-xl font-bold text-moroccan-blue flex items-center"
+                >
+                  <i class="fas fa-tv mr-2 text-moroccan-teal"></i>
+                  Employés (Scanners)
+                </h2>
+                <div class="flex space-x-2 mt-2 sm:mt-0">
+                  <div class="relative">
+                    <input
+                      type="text"
+                      placeholder="Rechercher..."
+                      x-model="searchQueryScanner"
+                      @input="filterEmployeesScreen(searchQueryScanner)"
+                      class="pl-10 pr-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-moroccan-teal focus:border-transparent"
+                    />
+                    <i
+                      class="fas fa-search absolute left-3 top-3 text-gray-400"
+                    ></i>
+                  </div>
+                  <button
+                    class="p-2 rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors"
+                  >
+                    <i class="fas fa-filter"></i>
+                  </button>
+                  <button
+                    @click="openAddEmployeeModal('Scanner')"
+                    class="p-2 rounded-lg bg-moroccan-blue text-white hover:bg-moroccan-blue-700 transition-colors"
+                  >
+                    <i class="fas fa-plus mr-2"></i> Ajouter
+                  </button>
+                  <button
+                    @click="exportToExcelEmployeesScanner"
+                    class="p-2 rounded-lg bg-moroccan-teal text-white hover:bg-moroccan-teal-700 transition-colors"
+                  >
+                    <i class="fas fa-file-excel mr-2"></i> Exporter
+                  </button>
+                </div>
+              </div>
+
+              <div class="bg-white rounded-xl card-shadow overflow-hidden">
+                <div class="overflow-x-auto table-scroll responsive-table">
+                  <table class="w-full text-sm">
+                    <thead>
+                      <tr
+                        class="bg-gradient-to-r from-moroccan-blue/10 to-moroccan-teal/10 text-gray-700"
+                      >
+                        <th class="p-4 text-left">Nom</th>
+                        <th class="p-4 text-left">Département</th>
+                        <th class="p-4 text-left">Matériel</th>
+                        <th class="p-4 text-left">Numéro de Série</th>
+                        <th class="p-4 text-left">Image</th>
+                        <th class="p-4 text-right">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody id="employees-scanner-table"></tbody>
+                  </table>
+                </div>
+              </div>
+
+              <template x-if="employeeModalOpen">
+                <div
+                  class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
+                >
+                  <div
+                    class="modal-content w-full max-w-md p-6 bg-white rounded-lg"
+                  >
+                    <h2
+                      class="text-2xl font-bold mb-4"
+                      x-text="editingEmployee.id ? 'Modifier l\'employé' : 'Ajouter un employé'"
+                    ></h2>
+
+                    <template x-if="message">
+                      <div
+                        class="mb-4 p-3 bg-yellow-100 text-yellow-800 rounded-md"
+                      >
+                        <span x-text="message"></span>
+                      </div>
+                    </template>
+
+                    <form @submit.prevent="saveEmployee">
+                      <div class="mb-4">
+                        <label
+                          for="employee-name"
+                          class="block text-gray-700 font-bold mb-2"
+                          >Nom:</label
+                        >
+                        <input
+                          type="text"
+                          id="employee-name"
+                          x-model="editingEmployee.name"
+                          required
+                          class="w-full border border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                        />
+                      </div>
+
+                      <div class="mb-4">
+                        <label
+                          for="employeeModalDepartment"
+                          class="block text-gray-700 font-bold mb-2"
+                          >Département:</label
+                        >
+                        <select
+                          id="employeeModalDepartment"
+                          x-model="editingEmployee.department"
+                        >
+                          <option :value="null" selected>
+                            Sélectionner un département
+                          </option>
+                          <template x-for="dept in departments" :key="dept.id">
+                            <option :value="dept.nomdepart" x-text="dept.nomdepart"></option>  
+                          </template>
+                        </select>
+                        </select>
+                      </div>
+
+                      <div class="mb-4">
+                        <label class="block text-gray-700 font-bold mb-2"
+                          >Matériels:</label
+                        >
+                        <select
+                          id="employeeModalSelect"
+                          multiple
+                          class="w-full border border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                        >
+                          <template
+                            x-for="material in filteredMaterials"
+                            :key="material.id"
+                          >
+                            <option
+                              :value="material.id"
+                              x-text="material.name"
+                              :selected="editingEmployee.materials.some(empMat => empMat.id === material.id)"
+                            ></option>
+                          </template>
+                        </select>
+                      </div>
+
+                      <div class="flex justify-end">
+                        <button
+                          type="button"
+                          @click="closeEmployeeEditModal"
+                          class="px-4 py-2 mr-2 bg-gray-300 rounded-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500"
+                        >
+                          Annuler
+                        </button>
+                        <button
+                          type="submit"
+                          class="px-4 py-2 bg-primary-500 text-white rounded-md hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-primary-700"
+                        >
+                          Enregistrer
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </template>
+
+              <template x-if="employeeModalOpen2">
+                <div
+                  class="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-75 z-50"
+                >
+                  <div class="bg-white rounded-lg p-8 max-w-md w-full">
+                    <h2 class="text-2xl font-bold mb-4">
+                      Détails de l'employé
+                    </h2>
+
+                    <div class="mb-4">
+                      <label class="block text-gray-700 font-bold mb-2"
+                        >Nom:</label
+                      >
+                      <span x-text="editingEmployee.name"></span>
+                    </div>
+
+                    <div class="mb-4">
+                      <label class="block text-gray-700 font-bold mb-2"
+                        >Département:</label
+                      >
+                      <span x-text="editingEmployee.department"></span>
+                    </div>
+
+                    <div class="mb-4">
+                      <label class="block text-gray-700 font-bold mb-2"
+                        >Matériels:</label
+                      >
+                      <ul class="list-disc ml-6">
+                        <template
+                          x-for="material in editingEmployee.materials"
+                          :key="material.id"
+                        >
+                          <li
+                            x-text="material.name + ' (' + material.serialNumber + ')'"
+                          ></li>
+                        </template>
+                      </ul>
+                    </div>
+
+                    <div class="mb-4">
+                      <label class="block text-gray-700 font-bold mb-2"
+                        >Date de création:</label
+                      >
+                      <span
+                        x-text="formatDate(editingEmployee.createdAt)"
+                      ></span>
+                    </div>
+
+                    <div class="flex justify-end">
+                      <button
+                        @click="closeEmployeeDetailsModal"
+                        class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded"
+                      >
+                        Fermer
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </template>
+            </section>
+          </div>
+        </main>
+      </div>
     </div>
 
     <!-- Alpine.js Data -->
     <script src="employee.js"></script>
     <script>
-        fetch('sidebar.html')
-            .then(response => response.text())
-            .then(html => {
-                document.getElementById('sidebar').innerHTML = html;
-            });
-        fetch('sidebar-mobile.html')
-            .then(response => response.text())
-            .then(html => {
-                document.getElementById('sidebar-mobile').innerHTML = html;
-            });
-        fetch('navbar-manager.html')
-            .then(response => response.text())
-            .then(html => {
-                document.getElementById('navbar-manager').innerHTML = html;
-                setUsername();
-            });
+      fetch("sidebar.html")
+        .then((response) => response.text())
+        .then((html) => {
+          document.getElementById("sidebar").innerHTML = html;
+        });
+      fetch("sidebar-mobile.html")
+        .then((response) => response.text())
+        .then((html) => {
+          document.getElementById("sidebar-mobile").innerHTML = html;
+        });
+      fetch("navbar-manager.html")
+        .then((response) => response.text())
+        .then((html) => {
+          document.getElementById("navbar-manager").innerHTML = html;
+          setUsername();
+        });
 
-        function setUsername() {
-            const username = localStorage.getItem('username');
-            const usernameDisplay = document.getElementById('username-display');
-            if (usernameDisplay) {
-                usernameDisplay.textContent = username;
-            } else {
-                console.error("username-display element NOT FOUND!");
-            }
+      function setUsername() {
+        const username = localStorage.getItem("username");
+        const usernameDisplay = document.getElementById("username-display");
+        if (usernameDisplay) {
+          usernameDisplay.textContent = username;
+        } else {
+          console.error("username-display element NOT FOUND!");
         }
+      }
     </script>
-
-</body>
-
+  </body>
 </html>
