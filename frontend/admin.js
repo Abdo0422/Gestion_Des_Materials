@@ -81,7 +81,7 @@ function dashboardData() {
     async fetchAllMaterials() {
       try {
         const response = await fetch(
-          "https://7vsxlx-3001.csb.app/api/materials"
+          "https://gestion-des-materials.onrender.com/api/materials"
         );
         if (!response.ok) {
           throw new Error(`Erreur HTTP ! status: ${response.status}`);
@@ -98,7 +98,7 @@ function dashboardData() {
     async fetchEmployees() {
       try {
         const response = await fetch(
-          "https://7vsxlx-3001.csb.app/api/employees"
+          "https://gestion-des-materials.onrender.com/api/employees"
         );
         if (!response.ok) {
           throw new Error(`Erreur HTTP ! status: ${response.status}`);
@@ -163,7 +163,9 @@ function dashboardData() {
 
     async fetchCounts() {
       try {
-        const response = await fetch("https://7vsxlx-3001.csb.app/api/counts");
+        const response = await fetch(
+          "https://gestion-des-materials.onrender.com/api/counts"
+        );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -301,7 +303,7 @@ function dashboardData() {
     },
 
     fetchNotes() {
-      fetch("https://7vsxlx-3001.csb.app/api/notes")
+      fetch("https://gestion-des-materials.onrender.com/api/notes")
         .then((response) => {
           if (!response.ok) {
             console.error(`HTTP error! status: ${response.status}`);
@@ -334,7 +336,7 @@ function dashboardData() {
 
       const noteWithUsername = { ...this.newNote, manager: username };
 
-      fetch("https://7vsxlx-3001.csb.app/api/notes", {
+      fetch("https://gestion-des-materials.onrender.com/api/notes", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -378,7 +380,7 @@ function dashboardData() {
         return;
       }
 
-      fetch(`https://7vsxlx-3001.csb.app/api/notes/${id}`, {
+      fetch(`https://gestion-des-materials.onrender.com/api/notes/${id}`, {
         method: "DELETE",
       })
         .then((response) => {

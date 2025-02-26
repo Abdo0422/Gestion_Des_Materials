@@ -71,7 +71,7 @@ function dashboardData() {
     async fetchAllMaterials() {
       try {
         const response = await fetch(
-          "https://7vsxlx-3001.csb.app/api/materials"
+          "https://gestion-des-materials.onrender.com/api/materials"
         );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -311,8 +311,8 @@ function dashboardData() {
       try {
         const method = this.editingMaterial.id ? "PUT" : "POST";
         const url = this.editingMaterial.id
-          ? `https://7vsxlx-3001.csb.app/api/materials/${this.editingMaterial.id}`
-          : "https://7vsxlx-3001.csb.app/api/materials";
+          ? `https://gestion-des-materials.onrender.com/api/materials/${this.editingMaterial.id}`
+          : "https://gestion-des-materials.onrender.com/api/materials";
 
         const formData = new FormData();
         formData.append("name", this.editingMaterial.name);
@@ -361,7 +361,7 @@ function dashboardData() {
         if (!confirm("Êtes-vous sûr de vouloir supprimer ce matériel?")) return;
 
         const response = await fetch(
-          `https://7vsxlx-3001.csb.app/api/materials/${id}`,
+          `https://gestion-des-materials.onrender.com/api/materials/${id}`,
           {
             method: "DELETE",
           }
@@ -403,7 +403,7 @@ function dashboardData() {
         return imagePath;
       }
 
-      return `https://7vsxlx-3001.csb.app/backend/images/${imagePath
+      return `https://gestion-des-materials.onrender.com/backend/images/${imagePath
         .split("/")
         .pop()}`;
     },

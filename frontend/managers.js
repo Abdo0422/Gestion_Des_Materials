@@ -10,7 +10,9 @@ async function fetchUsers() {
     }
 
     console.log("Authenticated, proceeding to fetch users");
-    const response = await fetch("https://7vsxlx-3001.csb.app/api/users");
+    const response = await fetch(
+      "https://gestion-des-materials.onrender.com/api/users"
+    );
     if (!response.ok) {
       throw new Error(`Erreur HTTP ! Statut : ${response.status}`);
     }
@@ -102,11 +104,14 @@ document.addEventListener("DOMContentLoaded", async function () {
       const messageDiv = document.getElementById("user-message");
 
       try {
-        const response = await fetch("https://7vsxlx-3001.csb.app/api/users", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ username, password }),
-        });
+        const response = await fetch(
+          "https://gestion-des-materials.onrender.com/api/users",
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ username, password }),
+          }
+        );
 
         if (!response.ok) {
           const errorData = await response.json();
@@ -276,7 +281,7 @@ async function handleEditFormSubmit(e) {
   const messageDiv = document.getElementById("edit-user-message");
   try {
     const response = await fetch(
-      `https://7vsxlx-3001.csb.app/api/users/${userId}`,
+      `https://gestion-des-materials.onrender.com/api/users/${userId}`,
       {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
@@ -308,7 +313,7 @@ async function deleteUser(id) {
   if (confirm("Êtes-vous sûr de vouloir supprimer cet utilisateur ?")) {
     try {
       const response = await fetch(
-        `https://7vsxlx-3001.csb.app/api/users/${id}`,
+        `https://gestion-des-materials.onrender.com/api/users/${id}`,
         {
           method: "DELETE",
         }

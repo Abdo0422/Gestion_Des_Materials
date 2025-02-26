@@ -178,7 +178,7 @@ function ipAddressesData() {
     async chargerAdressesIP() {
       try {
         const reponse = await fetch(
-          "https://7vsxlx-3001.csb.app/api/ip-addresses"
+          "https://gestion-des-materials.onrender.com/api/ip-addresses"
         );
         if (!reponse.ok)
           throw new Error(`Erreur HTTP ! Statut : ${reponse.status}`);
@@ -209,7 +209,7 @@ function ipAddressesData() {
     async chargerMateriels() {
       try {
         const reponse = await fetch(
-          "https://7vsxlx-3001.csb.app/api/materials"
+          "https://gestion-des-materials.onrender.com/api/materials"
         );
         if (!reponse.ok)
           throw new Error(`Erreur HTTP ! Statut : ${reponse.status}`);
@@ -265,8 +265,8 @@ function ipAddressesData() {
       try {
         const methode = this.adresseIPEnCoursEdition.id ? "PUT" : "POST";
         const url = this.adresseIPEnCoursEdition.id
-          ? `https://7vsxlx-3001.csb.app/api/ip-addresses/${this.adresseIPEnCoursEdition.id}`
-          : "https://7vsxlx-3001.csb.app/api/ip-addresses";
+          ? `https://gestion-des-materials.onrender.com/api/ip-addresses/${this.adresseIPEnCoursEdition.id}`
+          : "https://gestion-des-materials.onrender.com/api/ip-addresses";
         const reponse = await fetch(url, {
           method: methode,
           headers: { "Content-Type": "application/json" },
@@ -329,7 +329,7 @@ function ipAddressesData() {
       if (confirm("Êtes-vous sûr de vouloir supprimer cette adresse IP ?")) {
         try {
           const reponse = await fetch(
-            `https://7vsxlx-3001.csb.app/api/ip-addresses/${id}`,
+            `https://gestion-des-materials.onrender.com/api/ip-addresses/${id}`,
             { method: "DELETE" }
           );
           if (!reponse.ok)

@@ -89,7 +89,7 @@ function dashboardData() {
     async fetchAllMaterials() {
       try {
         const response = await fetch(
-          "https://7vsxlx-3001.csb.app/api/materials"
+          "https://gestion-des-materials.onrender.com/api/materials"
         );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -106,7 +106,7 @@ function dashboardData() {
     async fetchEmployees() {
       try {
         const response = await fetch(
-          "https://7vsxlx-3001.csb.app/api/employees"
+          "https://gestion-des-materials.onrender.com/api/employees"
         );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -613,8 +613,8 @@ function dashboardData() {
         // Determine the method and URL based on whether we're editing or creating a new employee
         const method = this.editingEmployee.id ? "PUT" : "POST";
         const url = this.editingEmployee.id
-          ? `https://7vsxlx-3001.csb.app/api/employees/${this.editingEmployee.id}`
-          : "https://7vsxlx-3001.csb.app/api/employees";
+          ? `https://gestion-des-materials.onrender.com/api/employees/${this.editingEmployee.id}`
+          : "https://gestion-des-materials.onrender.com/api/employees";
 
         // Format the creation date for the API
         const formattedDate = this.formatDateForAPI(
@@ -711,7 +711,7 @@ function dashboardData() {
         if (!confirm("Êtes-vous sûr de vouloir supprimer cet employé?")) return;
 
         const response = await fetch(
-          `https://7vsxlx-3001.csb.app/api/employees/${id}`,
+          `https://gestion-des-materials.onrender.com/api/employees/${id}`,
           {
             method: "DELETE",
           }
@@ -753,7 +753,7 @@ function dashboardData() {
         return imagePath;
       }
 
-      return `https://7vsxlx-3001.csb.app/backend/images/${imagePath
+      return `https://gestion-des-materials.onrender.com/backend/images/${imagePath
         .split("/")
         .pop()}`;
     },
