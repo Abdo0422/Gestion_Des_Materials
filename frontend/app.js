@@ -25,6 +25,11 @@ function dashboardData() {
           return;
         }
 
+        const isAdmin = localStorage.getItem("isAdmin") === "true";
+        if (isAdmin) {
+          window.location.href = "admin-dashboard.html";
+          return;
+        }
         await Promise.all([
           this.fetchAllMaterials(),
           this.fetchEmployees(),

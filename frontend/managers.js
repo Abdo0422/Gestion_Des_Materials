@@ -48,7 +48,7 @@ function checkAuth() {
 
 function checkAdmin() {
   if (localStorage.getItem("isAdmin") !== "true") {
-    window.location.href = "login.html";
+    window.location.href = "index.html";
     return false;
   }
   return true;
@@ -67,7 +67,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
   const isAdmin = checkAdmin();
   if (!isAdmin) {
-    window.location.href = "login.html";
+    window.location.href = "index.html";
     return;
   }
 

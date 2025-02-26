@@ -31,6 +31,11 @@ function dashboardData() {
           window.location.href = "login.html";
           return;
         }
+        const isAdmin = localStorage.getItem("isAdmin") === "true";
+        if (isAdmin) {
+          window.location.href = "admin-dashboard.html";
+          return;
+        }
         await Promise.all([this.fetchAllMaterials()]);
       } catch (error) {
         console.error("Error during initialization:", error);

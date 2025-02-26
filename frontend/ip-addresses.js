@@ -17,6 +17,11 @@ function ipAddressesData() {
         window.location.href = "login.html";
         return;
       }
+      const isAdmin = localStorage.getItem("isAdmin") === "true";
+        if (isAdmin) {
+          window.location.href = "admin-dashboard.html";
+          return;
+        }
       await this.chargerAdressesIP();
       await this.chargerMateriels();
       this.adressesIPFiltrees = [...this.adressesIP];

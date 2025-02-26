@@ -26,7 +26,7 @@ function dashboardData() {
         }
         const isAdmin = this.checkAdmin();
         if (!isAdmin) {
-          window.location.href = "login.html";
+          window.location.href = "index.html";
           return;
         }
         await Promise.all([
@@ -48,7 +48,7 @@ function dashboardData() {
     },
     checkAdmin() {
       if (localStorage.getItem("isAdmin") !== "true") {
-        window.location.href = "login.html";
+        window.location.href = "index.html";
         return false;
       }
       return true;
