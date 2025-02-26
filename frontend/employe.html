@@ -186,7 +186,6 @@
                                     <h2 class="text-2xl font-bold mb-4"
                                         x-text="editingEmployee.id ? 'Modifier l\'employé' : 'Ajouter un employé'"></h2>
 
-                                    <!-- Display the message if it exists -->
                                     <template x-if="message">
                                         <div class="mb-4 p-3 bg-yellow-100 text-yellow-800 rounded-md">
                                             <span x-text="message"></span>
@@ -203,13 +202,14 @@
                                         </div>
 
                                         <div class="mb-4">
-                                            <label for="employee-department"
+                                            <label for="employeeModalDepartment"
                                                 class="block text-gray-700 font-bold mb-2">Département:</label>
-                                                <select id="employee-department" x-model="editingEmployee.department" required
-                                                class="w-full border border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500">
-                                                <option selected>Sélectionner un département</option>
+                                            <select id="employeeModalDepartment" x-model="editingEmployee.department.id"
+                                                required>
+                                                <option value="" selected>Sélectionner un département</option>
                                                 <template x-for="department in departments" :key="department.id">
-                                                    <option :value="department.nomdepart" x-text="department.nomdepart"></option>
+                                                    <option :value="department.id" x-text="department.nomdepart">
+                                                    </option>
                                                 </template>
                                             </select>
                                         </div>
@@ -217,10 +217,11 @@
                                         <div class="mb-4">
                                             <label class="block text-gray-700 font-bold mb-2">Matériels:</label>
                                             <select id="employeeModalSelect" multiple
-                                                class="w-full border border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
-                                                x-init="setTimeout(() => { $el.value = editingEmployee.materials.map(mat => mat.id); }, 0)">
+                                                class="w-full border border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500">
                                                 <template x-for="material in filteredMaterials" :key="material.id">
-                                                    <option :value="material.id" x-text="material.name"></option>
+                                                    <option :value="material.id" x-text="material.name"
+                                                        :selected="editingEmployee.materials.some(empMat => empMat.id === material.id)">
+                                                    </option>
                                                 </template>
                                             </select>
                                         </div>

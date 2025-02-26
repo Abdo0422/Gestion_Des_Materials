@@ -1,4 +1,4 @@
-document.getElementById('login-form').addEventListener('submit', async function(e) {
+document.getElementById('login-form').addEventListener('submit', async function (e) {
     e.preventDefault();
 
     const username = document.getElementById('username').value;
@@ -15,8 +15,15 @@ document.getElementById('login-form').addEventListener('submit', async function(
     if (response.ok) {
         localStorage.setItem('role', data.role);
         localStorage.setItem('username', username);
-        
-        window.location.href = data.role === 'admin' ? 'admin-dashboard.html' : 'index.html';
+        localStorage.setItem('isAuthenticated', 'true');
+
+        if (data.role === 'admin') {
+            localStorage.setItem('isAdmin', 'true');  
+            window.location.href = 'admin-dashboard.html';
+        } else {
+            localStorage.removeItem('isAdmin');  
+            window.location.href = 'index.html';
+        }
     } else {
         document.getElementById('error-message').classList.remove('hidden');
     }

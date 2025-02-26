@@ -20,6 +20,11 @@ function dashboardData() {
 
         async init() {
             try {
+                const isAuthenticated = await this.checkAuth();
+                if (!isAuthenticated) {
+                    window.location.href = 'login.html';
+                    return;
+                }
                 await Promise.all([
                     this.fetchAllMaterials()
                 ]);
@@ -27,16 +32,23 @@ function dashboardData() {
                 console.error("Error during initialization:", error);
             }
         },
+        checkAuth() {
+            if (localStorage.getItem('isAuthenticated') !== 'true') {
+                window.location.href = 'login.html';
+                return false;
+            }
+            return true;
+        },
 
         addNotification(message, type = 'info') {
             const notification = {
                 id: Date.now(),
                 message: message,
-                type: type, 
-                timestamp: new Date().toLocaleTimeString('fr-FR') 
+                type: type,
+                timestamp: new Date().toLocaleTimeString('fr-FR')
             };
             this.notifications.push(notification);
-        
+
             setTimeout(() => {
                 this.removeNotification(notification.id);
             }, 5000);
@@ -45,7 +57,7 @@ function dashboardData() {
         toggleNotificationPopup() {
             this.notificationPopupOpen = !this.notificationPopupOpen;
         },
-        
+
         removeNotification(id) {
             this.notifications = this.notifications.filter(notification => notification.id !== id);
         },
@@ -244,6 +256,13 @@ function dashboardData() {
             this.filteredMaterialNames = [];
             this.filteredMaterialMarques = [];
         },
+        getCurrentDateForInput() {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        },
 
         autocompleteMaterialName() {
             this.filteredMaterialNames = this.materials.filter(material =>
@@ -350,10 +369,11 @@ function dashboardData() {
         logout() {
             localStorage.removeItem('role');
             localStorage.removeItem('username');
+            localStorage.removeItem('isAuthenticated');
             window.location.href = 'login.html';
             console.log('Déconnexion effectuée');
         },
-       
+
         async exportToExcelMaterials() {
             await this.exportToExcel("materials-table", "Matériels", "materials_export.xlsx", "#4CAF50", "#FFFFFF"); // Green theme
         },
@@ -365,20 +385,20 @@ function dashboardData() {
                 this.addNotification(`Tableau non trouvé: ${tableId}`, 'error');
                 return;
             }
-        
+
             const workbook = new ExcelJS.Workbook();
             const worksheet = workbook.addWorksheet(title);
-        
+
             const titleStyle = {
                 font: { name: 'Arial', size: 20, bold: true, color: { argb: '1D4E89' } },
                 alignment: { horizontal: 'center' }
             };
-        
+
             const dateStyle = {
                 font: { name: 'Arial', size: 14, color: { argb: '7B7B7B' } },
                 alignment: { horizontal: 'center' }
             };
-        
+
             const headerStyle = {
                 font: { name: 'Arial', size: 14, bold: true, color: { argb: headerTextColor } },
                 fill: { type: "pattern", pattern: "solid", fgColor: { argb: headerColor.replace("#", "") } },
@@ -390,7 +410,7 @@ function dashboardData() {
                     right: { style: "thin" }
                 }
             };
-        
+
             const rowStyle = {
                 font: { name: "Arial", size: 12, color: { argb: '000000' } },
                 alignment: { horizontal: "left", vertical: "middle" },
@@ -401,21 +421,21 @@ function dashboardData() {
                     right: { style: "thin" }
                 }
             };
-        
-        
+
+
             const titleRow = worksheet.addRow([title]);
             titleRow.getCell(1).style = titleStyle;
             worksheet.mergeCells(`A1:D1`);
-        
+
             const dateRow = worksheet.addRow([`Exporté le : ${new Date().toLocaleString("fr-FR")}`]);
             dateRow.getCell(1).style = dateStyle;
             worksheet.mergeCells(`A2:D2`);
-        
-        
+
+
             const headers = [];
             const headerRowElements = table.querySelectorAll("thead tr th");
             if (headerRowElements.length > 0) {
-                for (let i = 0; i < headerRowElements.length - 2; i++) {  
+                for (let i = 0; i < headerRowElements.length - 2; i++) {
                     headers.push(headerRowElements[i].innerText);
                 }
             } else {
@@ -426,23 +446,23 @@ function dashboardData() {
             }
             const excelHeaderRow = worksheet.addRow(headers);
             excelHeaderRow.eachCell(cell => cell.style = headerStyle);
-        
-        
+
+
             const dataRows = [];
             const rows = table.querySelectorAll("tbody tr");
             rows.forEach(row => {
                 const rowData = [];
                 const cells = row.querySelectorAll("td");
-                for (let i = 0; i < cells.length -2; i++) { 
+                for (let i = 0; i < cells.length - 2; i++) {
                     rowData.push(cells[i].innerText);
                 }
                 dataRows.push(rowData);
             });
-        
+
             dataRows.forEach(rowData => {
                 const excelRow = worksheet.addRow(rowData);
                 excelRow.eachCell(cell => cell.style = rowStyle);
-        
+
                 if (worksheet.rowCount % 2 === 0) {
                     excelRow.eachCell(cell => {
                         cell.fill = {
@@ -453,7 +473,7 @@ function dashboardData() {
                     });
                 }
             });
-        
+
             worksheet.columns.forEach((column, index) => {
                 const widths = [];
                 for (let i = 0; i < worksheet.rowCount; i++) {
@@ -465,14 +485,14 @@ function dashboardData() {
                 const maxWidth = Math.max(...widths);
                 column.width = maxWidth + 5;
             });
-        
-        
+
+
             const buffer = await workbook.xlsx.writeBuffer();
             const blob = new Blob([buffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
             saveAs(blob, filename);
-        
+
             this.addNotification(`${title} exporté avec succès!`, 'success');
-        
+
         },
 
 

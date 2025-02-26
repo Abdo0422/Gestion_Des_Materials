@@ -2,22 +2,22 @@
   {
     "id": 1,
     "name": "PC HP ProDesk",
-    "marque": "HP",
+    "marque": "HP latitude",
     "serialNumber": "SN123453",
-    "status": "En Utilisation",
+    "status": "Disponible",
     "image": "images/1-430x430.webp",
     "createdAt": "2024-10-27T10:00:00.000Z",
-    "updatedAt": "2025-02-25T09:16:23.263Z"
+    "updatedAt": "2025-02-25T16:25:05.204Z"
   },
   {
     "id": 2,
     "name": "PC Dell OptiPlex",
     "marque": "Dell",
     "serialNumber": "SN98765",
-    "status": "Disponible",
+    "status": "En Utilisation",
     "image": "images/ordinateur-de-bureau-dell-optiplex-3000-dl-op3000-i5-sff_34b18721-be32-4ce5-b594-e536cc349ae8.webp",
     "createdAt": "2024-10-27T10:00:00.000Z",
-    "updatedAt": "2025-02-24T15:30:54.026Z"
+    "updatedAt": "2025-02-25T16:11:36.528Z"
   },
   {
     "id": 3,
@@ -42,12 +42,12 @@
   {
     "id": 5,
     "name": "Imprimante HP LaserJet",
-    "marque": "HP",
+    "marque": "HP compaq",
     "serialNumber": "SN09876",
     "status": "En Utilisation",
     "image": "images/imprimante-laser-monochrome-hp-laserjet-pro-4003dn-2z609a.jpg",
     "createdAt": "2024-10-27T10:00:00.000Z",
-    "updatedAt": "2025-02-21T11:49:55.861Z"
+    "updatedAt": "2025-02-25T16:03:08.885Z"
   },
   {
     "id": 6,

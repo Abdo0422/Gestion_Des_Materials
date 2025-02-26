@@ -1,24 +1,5 @@
 [
   {
-    "id": 1,
-    "name": "Jojo",
-    "department": "Sales",
-    "materials": [
-      {
-        "id": 1,
-        "name": "PC HP ProDesk",
-        "marque": "HP",
-        "serialNumber": "SN123453",
-        "status": "En Utilisation",
-        "image": "images/1-430x430.webp",
-        "createdAt": "2024-10-27T10:00:00.000Z",
-        "updatedAt": "2025-02-25T09:16:23.263Z"
-      }
-    ],
-    "createdAt": "2024-10-27",
-    "updatedAt": "2025-02-25T09:16:23.266Z"
-  },
-  {
     "id": 2,
     "name": "Jane Smith",
     "department": "Marketing",
@@ -30,7 +11,7 @@
       }
     ],
     "createdAt": "2024-10-27T14:22:17.775Z",
-    "updatedAt": "2025-02-25T09:16:23.267Z"
+    "updatedAt": "2025-02-25T16:03:43.244Z"
   },
   {
     "id": 3,
@@ -44,7 +25,7 @@
       }
     ],
     "createdAt": "2024-10-27T14:22:17.775Z",
-    "updatedAt": "2025-02-25T09:16:23.276Z"
+    "updatedAt": "2025-02-25T16:03:43.244Z"
   },
   {
     "id": 4,
@@ -52,13 +33,18 @@
     "department": "Human Resources",
     "materials": [
       {
+        "id": 5,
         "name": "Imprimante HP LaserJet",
+        "marque": "HP compaq",
         "serialNumber": "SN09876",
-        "image": "images/imprimante-laser-monochrome-hp-laserjet-pro-4003dn-2z609a.jpg"
+        "status": "En Utilisation",
+        "image": "images/imprimante-laser-monochrome-hp-laserjet-pro-4003dn-2z609a.jpg",
+        "createdAt": "2024-10-27T10:00:00.000Z",
+        "updatedAt": "2025-02-25T16:03:08.885Z"
       }
     ],
     "createdAt": "2024-10-27T14:22:17.775Z",
-    "updatedAt": "2025-02-25T09:16:23.277Z"
+    "updatedAt": "2025-02-25T16:03:43.244Z"
   },
   {
     "name": "James",
@@ -72,7 +58,7 @@
     ],
     "createdAt": "2025-02-21T12:07:19.146Z",
     "id": 5,
-    "updatedAt": "2025-02-25T09:16:23.277Z"
+    "updatedAt": "2025-02-25T16:03:43.244Z"
   },
   {
     "name": "Lisa",
@@ -86,7 +72,7 @@
     ],
     "createdAt": "2025-02-21T12:07:37.745Z",
     "id": 6,
-    "updatedAt": "2025-02-25T09:16:23.277Z"
+    "updatedAt": "2025-02-25T16:03:43.245Z"
   },
   {
     "name": "John",
@@ -96,6 +82,20 @@
     ],
     "createdAt": "2025-02-24T09:29:24.534Z",
     "id": 7,
-    "updatedAt": "2025-02-25T09:16:23.277Z"
+    "updatedAt": "2025-02-25T16:03:43.245Z"
+  },
+  {
+    "name": "yassine",
+    "department": "Section des Difficultés des Entreprises (قسم صعوبة المقاولة)",
+    "materials": [
+      {
+        "name": "PC Dell OptiPlex",
+        "serialNumber": "SN98765",
+        "image": "images/ordinateur-de-bureau-dell-optiplex-3000-dl-op3000-i5-sff_34b18721-be32-4ce5-b594-e536cc349ae8.webp"
+      }
+    ],
+    "createdAt": "2025-02-25",
+    "id": 8,
+    "updatedAt": "2025-02-25T16:11:36.528Z"
   }
 ]

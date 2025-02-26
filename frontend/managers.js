@@ -1,5 +1,15 @@
 async function fetchUsers() {
     try {
+        console.log("fetchUsers() called");
+
+        const isAuthenticated = checkAuth();
+        console.log("isAuthenticated:", isAuthenticated);
+        if (!isAuthenticated) {
+            console.log("Not authenticated, returning");
+            return;
+        }
+
+        console.log("Authenticated, proceeding to fetch users");
         const response = await fetch('https://supreme-xylophone-j646jr764grc5j94-3000.app.github.dev/api/users');
         if (!response.ok) {
             throw new Error(`Erreur HTTP ! Statut : ${response.status}`);
@@ -19,7 +29,45 @@ async function fetchUsers() {
     }
 }
 
+function checkAuth() {
+    console.log("checkAuth() called");
+    if (localStorage.getItem('isAuthenticated') !== 'true') {
+        console.log("isAuthenticated is false");
+        window.location.href = 'login.html';
+        return false;
+    }
+    console.log("isAuthenticated is true");
+    return true;
+}
+
+function checkAdmin() {
+    if (localStorage.getItem('isAdmin') !== 'true') {
+        window.location.href = 'login.html';
+        return false;
+    }
+    return true;
+}
+
+
+
 document.addEventListener('DOMContentLoaded', async function () {
+    console.log("DOMContentLoaded called");
+
+    const isAuthenticated = checkAuth();
+    console.log("isAuthenticated (DOMContentLoaded):", isAuthenticated);
+
+    if (!isAuthenticated) {
+        console.log("Not authenticated in DOMContentLoaded, returning");
+        return;
+    }
+
+    const isAdmin = checkAdmin();
+    if (!isAdmin) {
+        window.location.href = 'login.html';
+        return;
+    }
+
+    console.log("Authenticated in DOMContentLoaded, proceeding")
     const users = await fetchUsers();
     const searchInput = document.getElementById('user-search');
     const tableBody = document.getElementById('users-table');
@@ -127,6 +175,8 @@ function renderUsersTable(users) {
 function logout() {
     localStorage.removeItem('role');
     localStorage.removeItem('username');
+    localStorage.removeItem('isAuthenticated');
+    localStorage.removeItem('isAdmin');
     window.location.href = 'login.html';
 }
 

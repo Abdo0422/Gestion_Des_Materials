@@ -12,12 +12,30 @@ function ipAddressesData() {
         notificationPopupOpen: false,
 
         async init() {
+            const isAuthenticated = await this.checkAuth();
+            if (!isAuthenticated) {
+                window.location.href = 'login.html';
+                return;
+            }
             await this.chargerAdressesIP();
             await this.chargerMateriels();
             this.adressesIPFiltrees = [...this.adressesIP];
             this.renderTable();
         },
-
+        checkAuth() {
+            if (localStorage.getItem('isAuthenticated') !== 'true') {
+                window.location.href = 'login.html';
+                return false;
+            }
+            return true;
+        },
+        logout() {
+            localStorage.removeItem('role');
+            localStorage.removeItem('username');
+            localStorage.removeItem('isAuthenticated')
+            window.location.href = 'login.html';
+            console.log('Déconnexion effectuée');
+        },
         addNotification(message, type = 'info') {
             const notification = {
                 id: Date.now(),
@@ -44,20 +62,20 @@ function ipAddressesData() {
             const table = document.getElementById("ipTable");
             const workbook = new ExcelJS.Workbook();
             const worksheet = workbook.addWorksheet("Adresses IP");
-        
+
             const titleStyle = {
-                font: { name: 'Arial', size: 20, bold: true, color: { argb: '1D4E89' } }, 
+                font: { name: 'Arial', size: 20, bold: true, color: { argb: '1D4E89' } },
                 alignment: { horizontal: 'center' }
             };
-        
+
             const dateStyle = {
-                font: { name: 'Arial', size: 14, color: { argb: '7B7B7B' } }, 
+                font: { name: 'Arial', size: 14, color: { argb: '7B7B7B' } },
                 alignment: { horizontal: 'center' }
             };
-        
+
             const headerStyle = {
-                font: { name: 'Arial', size: 14, bold: true, color: { argb: "FFFFFF" } }, 
-                fill: { type: "pattern", pattern: "solid", fgColor: { argb: "0073E6" } }, 
+                font: { name: 'Arial', size: 14, bold: true, color: { argb: "FFFFFF" } },
+                fill: { type: "pattern", pattern: "solid", fgColor: { argb: "0073E6" } },
                 alignment: { horizontal: "center", vertical: "middle" },
                 border: {
                     top: { style: "thin" },
@@ -66,9 +84,9 @@ function ipAddressesData() {
                     right: { style: "thin" }
                 }
             };
-        
+
             const rowStyle = {
-                font: { name: "Arial", size: 12, color: { argb: '000000' } }, 
+                font: { name: "Arial", size: 12, color: { argb: '000000' } },
                 alignment: { horizontal: "left", vertical: "middle" },
                 border: {
                     top: { style: "thin" },
@@ -77,23 +95,23 @@ function ipAddressesData() {
                     right: { style: "thin" }
                 }
             };
-        
-        
+
+
             const titleRow = worksheet.addRow(["Liste des Adresses IP"]);
             titleRow.getCell(1).style = titleStyle;
-            worksheet.mergeCells('A1:D1'); 
-        
+            worksheet.mergeCells('A1:D1');
+
             const dateRow = worksheet.addRow([`Exporté le : ${new Date().toLocaleString("fr-FR")}`]);
             dateRow.getCell(1).style = dateStyle;
-            worksheet.mergeCells('A2:D2'); 
-        
+            worksheet.mergeCells('A2:D2');
+
             const headers = ["Nom du matériel", "Marque", "Numéro de Série", "Adresse IP"];
             const headerRow = worksheet.addRow(headers);
             headerRow.eachCell(cell => cell.style = headerStyle);
-        
-        
+
+
             const dataRows = [];
-            for (let i = 1; i < table.rows.length; i++) { 
+            for (let i = 1; i < table.rows.length; i++) {
                 const row = table.rows[i];
                 const rowData = [];
                 for (let j = 0; j < row.cells.length - 1; j++) {
@@ -101,11 +119,11 @@ function ipAddressesData() {
                 }
                 dataRows.push(rowData);
             }
-        
+
             dataRows.forEach(rowData => {
                 const excelRow = worksheet.addRow(rowData);
                 excelRow.eachCell(cell => cell.style = rowStyle);
-        
+
                 if (worksheet.rowCount % 2 === 0) {
                     excelRow.eachCell(cell => {
                         cell.fill = {
@@ -116,8 +134,8 @@ function ipAddressesData() {
                     });
                 }
             });
-        
-        
+
+
             worksheet.columns.forEach((column, index) => {
                 const widths = [];
                 for (let i = 0; i < worksheet.rowCount; i++) {
@@ -129,8 +147,8 @@ function ipAddressesData() {
                 const maxWidth = Math.max(...widths);
                 column.width = maxWidth + 5;
             });
-        
-        
+
+
             const buffer = await workbook.xlsx.writeBuffer();
             const blob = new Blob([buffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
             saveAs(blob, "adresses_ip.xlsx");
@@ -145,7 +163,7 @@ function ipAddressesData() {
                 console.error("Erreur lors de la récupération des adresses IP :", erreur);
             }
         },
-    
+
         filtrerAdressesIP() {
             const query = this.recherche.toLowerCase();
             this.adressesIPFiltrees = this.adressesIP.filter(item => {
@@ -166,7 +184,7 @@ function ipAddressesData() {
                 const allMateriels = await reponse.json();
 
                 this.materiels = allMateriels.filter(materiel => materiel.status === "En Utilisation");
-                this.updateAvailableMaterials(); 
+                this.updateAvailableMaterials();
 
             } catch (erreur) {
                 console.error("Erreur lors de la récupération des matériels :", erreur);
@@ -182,13 +200,13 @@ function ipAddressesData() {
             this.adresseIPEnCoursEdition = {};
             this.materielSelectionne = null;
             this.afficherModal = true;
-            this.updateAvailableMaterials(); 
+            this.updateAvailableMaterials();
         },
         ouvrirModalModifier(adresseIP) {
             this.adresseIPEnCoursEdition = { ...adresseIP };
             this.materielSelectionne = this.materiels.find(m => m.name === adresseIP.materialName);
             this.afficherModal = true;
-            this.updateAvailableMaterials(); 
+            this.updateAvailableMaterials();
         },
         gererChangementMateriel(event) {
             const nomMaterielSelectionne = event.target.value;
@@ -210,35 +228,35 @@ function ipAddressesData() {
                     body: JSON.stringify(this.adresseIPEnCoursEdition)
                 });
 
-                if (reponse.ok) { 
+                if (reponse.ok) {
                     this.fermerModal();
                     await this.chargerAdressesIP();
                     await this.chargerMateriels();
                     this.adressesIPFiltrees = [...this.adressesIP];
                     this.renderTable();
-                    this.addNotification("Adresse IP enregistrée avec succès !",'success');
+                    this.addNotification("Adresse IP enregistrée avec succès !", 'success');
                 }
 
                 if (!reponse.ok) {
                     const donneesErreur = await reponse.json();
 
                     if (donneesErreur.error && donneesErreur.error.includes("Material name")) {
-                      Alpine.store('errorMessages', { materialName: donneesErreur.error, ipAddress: '' });
+                        Alpine.store('errorMessages', { materialName: donneesErreur.error, ipAddress: '' });
                     } else if (donneesErreur.error && donneesErreur.error.includes("IP address")) {
-                      Alpine.store('errorMessages', { materialName: '', ipAddress: donneesErreur.error });
+                        Alpine.store('errorMessages', { materialName: '', ipAddress: donneesErreur.error });
                     }
-                    else if(donneesErreur.error){
+                    else if (donneesErreur.error) {
                         Alpine.store('errorMessages', { materialName: donneesErreur.error, ipAddress: donneesErreur.error });
                     }
-                    else{
+                    else {
                         throw new Error(donneesErreur.message || 'Échec de l\'enregistrement de l\'adresse IP');
                     }
-                    return; 
+                    return;
                 }
 
             } catch (erreur) {
                 console.error("Erreur lors de l'enregistrement de l'adresse IP :", erreur);
-                this.addNotification(erreur.message, 'error');  
+                this.addNotification(erreur.message, 'error');
             }
         },
         async supprimerAdresseIP(id) {
@@ -249,10 +267,10 @@ function ipAddressesData() {
                     await this.chargerAdressesIP();
                     this.adressesIPFiltrees = [...this.adressesIP];
                     this.renderTable();
-                    this.addNotification("Adresse IP supprimée avec succès !",'success');
+                    this.addNotification("Adresse IP supprimée avec succès !", 'success');
                 } catch (erreur) {
                     console.error("Erreur lors de la suppression de l'adresse IP :", erreur);
-                    this.addNotification(erreur.message || "Erreur lors de la suppression", 'error'); 
+                    this.addNotification(erreur.message || "Erreur lors de la suppression", 'error');
                 }
             }
         },
@@ -317,5 +335,5 @@ document.addEventListener('alpine:init', () => {
         materialName: '',
         ipAddress: ''
     });
-    
+
 });

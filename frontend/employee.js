@@ -31,6 +31,11 @@ function dashboardData() {
 
         async init() {
             try {
+                const isAuthenticated = await this.checkAuth();
+                if (!isAuthenticated) {
+                    window.location.href = 'login.html';
+                    return;
+                }
                 await Promise.all([
                     this.fetchAllMaterials(),
                     this.fetchEmployees(),
@@ -39,16 +44,23 @@ function dashboardData() {
                 console.error("Error during initialization:", error);
             }
         },
+        checkAuth() {
+            if (localStorage.getItem('isAuthenticated') !== 'true') {
+                window.location.href = 'login.html';
+                return false;
+            }
+            return true;
+        },
 
         addNotification(message, type = 'info') {
             const notification = {
                 id: Date.now(),
                 message: message,
-                type: type, 
-                timestamp: new Date().toLocaleTimeString('fr-FR') 
+                type: type,
+                timestamp: new Date().toLocaleTimeString('fr-FR')
             };
             this.notifications.push(notification);
-        
+
             setTimeout(() => {
                 this.removeNotification(notification.id);
             }, 5000);
@@ -57,7 +69,7 @@ function dashboardData() {
         toggleNotificationPopup() {
             this.notificationPopupOpen = !this.notificationPopupOpen;
         },
-        
+
         removeNotification(id) {
             this.notifications = this.notifications.filter(notification => notification.id !== id);
         },
@@ -283,35 +295,68 @@ function dashboardData() {
         editEmployee(id) {
             const employee = [...this.employeesPC, ...this.employeesPrinter, ...this.employeesScreen].find(e => e.id === parseInt(id));
             if (!employee) return;
-
-            this.editingEmployee = { ...employee };
-
+        
+            this.editingEmployee = JSON.parse(JSON.stringify(employee)); // Deep copy to avoid modifying original employee data
+        
             if (!this.editingEmployee.id || !this.editingEmployee.createdAt) {
                 this.editingEmployee.createdAt = this.getCurrentDateForInput();
             }
-
+        
             this.employeeModalOpen = true;
-            this.filteredMaterials = this.getFilteredMaterials(employee);
-
-            this.editingEmployee.materials = employee.materials.map(matId => {
-                const foundMaterial = this.allMaterials.find(m => m.id === parseInt(matId));
-                return foundMaterial ? foundMaterial : { id: matId, name: "Material not found" }; // Handle cases where material might be deleted
-            });
-
+            this.filterMaterialsForEdit(employee); // Call the new filtering function
+        
             queueMicrotask(() => {
+                this.selectDepartmentInDropdown(); // Select department in dropdown
                 this.selectMaterialsInDropdown();
             });
         },
 
+        filterMaterialsForEdit(employee) {
+            this.filteredMaterials = this.allMaterials.filter(mat => {
+                if (mat.status !== "Disponible" && !employee.materials.some(empMat => empMat.id === mat.id)) {
+                    return false;
+                }
+        
+                if (this.employeesPC.find(emp => emp.id === employee.id)) {
+                    return mat.name.toLowerCase().includes("pc") ||
+                        mat.name.toLowerCase().includes("laptop") ||
+                        mat.name.toLowerCase().includes("macbook");
+                } else if (this.employeesPrinter.find(emp => emp.id === employee.id)) {
+                    return mat.name.toLowerCase().includes("imprimante") ||
+                        mat.name.toLowerCase().includes("printer");
+                } else if (this.employeesScreen.find(emp => emp.id === employee.id)) {
+                    return mat.name.toLowerCase().includes("ecran") ||
+                        mat.name.toLowerCase().includes("screen") ||
+                        mat.name.toLowerCase().includes("monitor");
+                } else {
+                    return true; // Show all materials if no specific type is found
+                }
+            });
+        },
+
+
+        selectDepartmentInDropdown() {
+            const select = document.querySelector('#employeeModalDepartment');
+            if (select) {
+                const options = Array.from(select.options);
+                options.forEach(option => {
+                    if (this.editingEmployee.department && parseInt(option.value) === this.editingEmployee.department.id) {
+                        option.selected = true;
+                    } else {
+                        option.selected = false;
+                    }
+                });
+            }
+        },
         openAddEmployeeModal(type) {
             this.editingEmployee = { name: '', department: '', materials: [], createdAt: this.getCurrentDateForInput() };
             this.employeeModalOpen = true;
-        
+
             this.filteredMaterials = this.materials.filter(mat => {
                 if (mat.status !== "Disponible") {
-                    return false; 
+                    return false;
                 }
-        
+
                 if (type === 'PC') {
                     return mat.name.toLowerCase().includes("pc") ||
                         mat.name.toLowerCase().includes("laptop") ||
@@ -326,11 +371,11 @@ function dashboardData() {
                 }
                 return true;
             });
-        
+
             if (this.filteredMaterials.length === 0) {
                 this.message = "Aucun matériel disponible trouvé pour ce type.";
             } else {
-                this.message = '';  
+                this.message = '';
             }
 
             this.selectMaterialsInDropdown();
@@ -343,7 +388,6 @@ function dashboardData() {
                 const options = Array.from(select.options);
                 options.forEach(option => {
                     option.selected = this.editingEmployee.materials.some(mat => mat.id === parseInt(option.value));
-                    console.log("option selected:", option.selected, option.value, this.editingEmployee.materials);
                 });
             }
         },
@@ -374,7 +418,7 @@ function dashboardData() {
 
         closeEmployeeEditModal() {
             this.employeeModalOpen = false;
-            this.editingEmployee = { name: '', department: '', materials: [], createdAt: '' }; // Reset editingEmployee, including createdAt
+            this.editingEmployee = { name: '', department: null, materials: [], createdAt: '' }; // Reset department to null
             this.filteredMaterials = this.materials;
         },
 
@@ -430,6 +474,7 @@ function dashboardData() {
                             return null;
                         }
                         return {
+                            id: material.id, // Send the ID, not the whole object
                             name: material.name,
                             serialNumber: material.serialNumber,
                             image: material.image
@@ -437,18 +482,16 @@ function dashboardData() {
                     })
                     .filter(material => material !== null);
 
-                // Validate that at least one material is selected (if required)
-                if (selectedMaterialObjects.length === 0) {
-                    throw new Error("Veuillez sélectionner au moins un matériel pour l'employé.");
-                }
+                const selectedDepartment = document.querySelector('#employeeModalDepartment option:checked');
+                const departmentId = selectedDepartment ? parseInt(selectedDepartment.value) : null;
+                const selectedDepartmentObj = this.departments.find(dept => dept.id === departmentId);
 
-                // Prepare the employee data for the API
                 const employeeData = {
                     ...this.editingEmployee,
+                    department: selectedDepartmentObj || null, // Include the selected department object or null
                     createdAt: formattedDate,
                     materials: selectedMaterialObjects
                 };
-
                 console.log("Employee data to be saved:", employeeData);
 
                 // Send the request to the backend
@@ -540,6 +583,7 @@ function dashboardData() {
         logout() {
             localStorage.removeItem('role');
             localStorage.removeItem('username');
+            localStorage.removeItem('isAuthenticated');
             window.location.href = 'login.html';
             console.log('Déconnexion effectuée');
         },
@@ -563,20 +607,20 @@ function dashboardData() {
                 this.addNotification(`Tableau non trouvé: ${tableId}`, 'error');
                 return;
             }
-        
+
             const workbook = new ExcelJS.Workbook();
             const worksheet = workbook.addWorksheet(title);
-        
+
             const titleStyle = {
                 font: { name: 'Arial', size: 20, bold: true, color: { argb: '1D4E89' } },
                 alignment: { horizontal: 'center' }
             };
-        
+
             const dateStyle = {
                 font: { name: 'Arial', size: 14, color: { argb: '7B7B7B' } },
                 alignment: { horizontal: 'center' }
             };
-        
+
             const headerStyle = {
                 font: { name: 'Arial', size: 14, bold: true, color: { argb: headerTextColor } },
                 fill: { type: "pattern", pattern: "solid", fgColor: { argb: headerColor.replace("#", "") } },
@@ -588,7 +632,7 @@ function dashboardData() {
                     right: { style: "thin" }
                 }
             };
-        
+
             const rowStyle = {
                 font: { name: "Arial", size: 12, color: { argb: '000000' } },
                 alignment: { horizontal: "left", vertical: "middle" },
@@ -599,21 +643,21 @@ function dashboardData() {
                     right: { style: "thin" }
                 }
             };
-        
-        
+
+
             const titleRow = worksheet.addRow([title]);
             titleRow.getCell(1).style = titleStyle;
             worksheet.mergeCells(`A1:D1`);
-        
+
             const dateRow = worksheet.addRow([`Exporté le : ${new Date().toLocaleString("fr-FR")}`]);
             dateRow.getCell(1).style = dateStyle;
             worksheet.mergeCells(`A2:D2`);
-        
-        
+
+
             const headers = [];
             const headerRowElements = table.querySelectorAll("thead tr th");
             if (headerRowElements.length > 0) {
-                for (let i = 0; i < headerRowElements.length - 2; i++) {  
+                for (let i = 0; i < headerRowElements.length - 2; i++) {
                     headers.push(headerRowElements[i].innerText);
                 }
             } else {
@@ -624,23 +668,23 @@ function dashboardData() {
             }
             const excelHeaderRow = worksheet.addRow(headers);
             excelHeaderRow.eachCell(cell => cell.style = headerStyle);
-        
-        
+
+
             const dataRows = [];
             const rows = table.querySelectorAll("tbody tr");
             rows.forEach(row => {
                 const rowData = [];
                 const cells = row.querySelectorAll("td");
-                for (let i = 0; i < cells.length -2; i++) { 
+                for (let i = 0; i < cells.length - 2; i++) {
                     rowData.push(cells[i].innerText);
                 }
                 dataRows.push(rowData);
             });
-        
+
             dataRows.forEach(rowData => {
                 const excelRow = worksheet.addRow(rowData);
                 excelRow.eachCell(cell => cell.style = rowStyle);
-        
+
                 if (worksheet.rowCount % 2 === 0) {
                     excelRow.eachCell(cell => {
                         cell.fill = {
@@ -651,7 +695,7 @@ function dashboardData() {
                     });
                 }
             });
-        
+
             worksheet.columns.forEach((column, index) => {
                 const widths = [];
                 for (let i = 0; i < worksheet.rowCount; i++) {
@@ -663,14 +707,14 @@ function dashboardData() {
                 const maxWidth = Math.max(...widths);
                 column.width = maxWidth + 5;
             });
-        
-        
+
+
             const buffer = await workbook.xlsx.writeBuffer();
             const blob = new Blob([buffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
             saveAs(blob, filename);
-        
+
             this.addNotification(`${title} exporté avec succès!`, 'success');
-        
+
         },
 
 

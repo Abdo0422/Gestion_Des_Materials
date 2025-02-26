@@ -19,6 +19,12 @@ function dashboardData() {
 
         async init() {
             try {
+                const isAuthenticated = await this.checkAuth(); 
+                if (!isAuthenticated) {
+                    window.location.href = 'login.html'; 
+                    return; 
+                }
+                
                 await Promise.all([
                     this.fetchAllMaterials(),
                     this.fetchEmployees(),
@@ -28,6 +34,13 @@ function dashboardData() {
             } catch (error) {
                 console.error("Erreur lors de l'initialisation :", error);
             }
+        },
+        checkAuth() {
+            if (localStorage.getItem('isAuthenticated') !== 'true') {
+                window.location.href = 'login.html'; 
+                return false;
+            }
+            return true; 
         },
 
         addNotification(message, type = 'info') {
@@ -116,6 +129,7 @@ function dashboardData() {
         logout() {
             localStorage.removeItem('role');
             localStorage.removeItem('username');
+            localStorage.removeItem('isAuthenticated')
             window.location.href = 'login.html';
             console.log('Déconnexion effectuée');
         },
