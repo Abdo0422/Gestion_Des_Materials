@@ -302,9 +302,22 @@ function dashboardData() {
 
     fetchNotes() {
       fetch("https://7vsxlx-3001.csb.app/api/notes")
-        .then((response) => response.json())
+        .then((response) => {
+          if (!response.ok) {
+            console.error(`HTTP error! status: ${response.status}`);
+            this.notes = [];
+            return Promise.reject(
+              new Error(`HTTP error! status: ${response.status}`)
+            );
+          }
+          return response.json();
+        })
         .then((data) => {
           this.notes = data;
+        })
+        .catch((error) => {
+          console.error("Error fetching notes:", error);
+          this.notes = [];
         });
     },
 
