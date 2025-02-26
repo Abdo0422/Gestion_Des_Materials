@@ -198,7 +198,7 @@ function logout() {
   window.location.href = "login.html";
 }
 
-let editModal = null;
+let editModal; // Declare editModal outside the function scope
 
 function openEditModal(user) {
   if (!editModal) {
@@ -207,51 +207,30 @@ function openEditModal(user) {
       "fixed inset-0 flex items-center justify-center z-50 hidden bg-black bg-opacity-50";
 
     editModal.innerHTML = `
-        <div class="bg-white rounded-lg p-8 shadow-md w-full max-w-md transition-transform duration-300 ease-in-out">
-            <h2 class="text-2xl font-bold mb-4 text-gray-800">Modifier l'utilisateur</h2>
-            <form id="edit-user-form">
-                <input type="hidden" id="edit-user-id">
-                <div class="mb-4">
-                    <label for="edit-username" class="block text-gray-700 font-bold mb-2">Nom d'utilisateur</label>
-                    <input type="text" id="edit-username" class="border border-gray-300 rounded w-full px-3 py-2 focus:ring-2 focus:ring-blue-500" required>
-                </div>
-                <div class="mb-4">
-                    <label for="edit-password" class="block text-gray-700 font-bold mb-2">Mot de passe (laisser vide pour conserver l'actuel)</label>
-                    <input type="password" id="edit-password" class="border border-gray-300 rounded w-full px-3 py-2 focus:ring-2 focus:ring-blue-500">
-                </div>
-                <div class="mb-4">
-                    <label for="edit-role" class="block text-gray-700 font-bold mb-2">Rôle</label>
-                    <select id="edit-role" class="border border-gray-300 rounded w-full px-3 py-2 focus:ring-2 focus:ring-blue-500">
-                        <option value="manager" selected>Manager</option>
-                    </select>
-                </div>
-                <div class="mb-4 hidden text-red-500" id="edit-user-message"></div>
-                <div class="flex justify-end">
-                    <button type="submit" class="bg-moroccan-blue hover:bg-moroccan-blue-700 text-white font-bold py-2 px-4 rounded mr-2 focus:outline-none focus>        <div class="bg-white rounded-lg p-8 shadow-md w-full max-w-md transition-transform duration-300 ease-in-out">
-            <h2 class="text-2xl font-bold mb-4 text-gray-800">Modifier l'utilisateur</h2>
-            <form id="edit-user-form">
-                <input type="hidden" id="edit-user-id">
-                <div class="mb-4">
-                    <label for="edit-username" class="block text-gray-700 font-bold mb-2">Nom d'utilisateur</label>
-                    <input type="text" id="edit-username" class="border border-gray-300 rounded w-full px-3 py-2 focus:ring-2 focus:ring-blue-500" required>
-                </div>
-                <div class="mb-4">
-                    <label for="edit-password" class="block text-gray-700 font-bold mb-2">Mot de passe (laisser vide pour conserver l'actuel)</label>
-                    <input type="password" id="edit-password" class="border border-gray-300 rounded w-full px-3 py-2 focus:ring-2 focus:ring-blue-500">
-                </div>
-                <div class="mb-4">
-                    <label for="edit-role" class="block text-gray-700 font-bold mb-2">Rôle</label>
-                    <select id="edit-role" class="border border-gray-300 rounded w-full px-3 py-2 focus:ring-2 focus:ring-blue-500">
-                        <option value="manager" selected>Manager</option>
-                    </select>
-                </div>
-                <div class="mb-4 hidden text-red-500" id="edit-user-message"></div>
-                <div class="flex justify-end">
-                    <button type="submit" class="bg-moroccan-blue hover:bg-moroccan-blue-700 text-white font-bold py-2 px-4 rounded mr-2 focus:outline-none focus:ring-2 focus:ring-blue-500">Enregistrer</button>
-                    <button type="button" id="close-edit-modal" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-gray-300">Annuler</button>
-                </div>
-            </form>
-        </div>
+            <div class="bg-white rounded-lg p-8 shadow-md w-full max-w-md transition-transform duration-300 ease-in-out">
+                <h2 class="text-2xl font-bold mb-4 text-gray-800">Modifier l'utilisateur</h2>
+                <form id="edit-user-form">
+                    <input type="hidden" id="edit-user-id">
+                    <div class="mb-4">
+                        <label for="edit-username" class="block text-gray-700 font-bold mb-2">Nom d'utilisateur</label>
+                        <input type="text" id="edit-username" class="border border-gray-300 rounded w-full px-3 py-2 focus:ring-2 focus:ring-blue-500" required>
+                    </div>
+                    <div class="mb-4">
+                        <label for="edit-password" class="block text-gray-700 font-bold mb-2">Mot de passe (laisser vide pour conserver l'actuel)</label>
+                        <input type="password" id="edit-password" class="border border-gray-300 rounded w-full px-3 py-2 focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div class="mb-4">
+                        <label for="edit-role" class="block text-gray-700 font-bold mb-2">Rôle</label>
+                        <select id="edit-role" class="border border-gray-300 rounded w-full px-3 py-2 focus:ring-2 focus:ring-blue-500">
+                            <option value="manager">Manager</option>  </select>
+                    </div>
+                    <div class="mb-4 hidden text-red-500" id="edit-user-message"></div>
+                    <div class="flex justify-end">
+                        <button type="submit" class="bg-moroccan-blue hover:bg-moroccan-blue-700 text-white font-bold py-2 px-4 rounded mr-2 focus:outline-none focus:ring-2 focus:ring-blue-500">Enregistrer</button>
+                        <button type="button" id="close-edit-modal" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-gray-300">Annuler</button>
+                    </div>
+                </form>
+            </div>
         `;
 
     document.body.appendChild(editModal);
@@ -259,6 +238,10 @@ function openEditModal(user) {
     const closeButton = editModal.querySelector("#close-edit-modal");
     closeButton.addEventListener("click", () => {
       editModal.classList.add("hidden");
+      // Clear error messages when closing the modal
+      const messageDiv = editModal.querySelector("#edit-user-message");
+      messageDiv.textContent = "";
+      messageDiv.classList.add("hidden");
     });
 
     editModal
@@ -266,10 +249,17 @@ function openEditModal(user) {
       .addEventListener("submit", handleEditFormSubmit);
   }
 
-  editModal.classList.remove("hidden");
+  // Set user data in the form
   editModal.querySelector("#edit-user-id").value = user.id;
   editModal.querySelector("#edit-username").value = user.username;
-  editModal.querySelector("#edit-role").value = user.role;
+  editModal.querySelector("#edit-role").value = user.role; // Set the role correctly
+
+  // Clear any previous error messages
+  const messageDiv = editModal.querySelector("#edit-user-message");
+  messageDiv.textContent = "";
+  messageDiv.classList.add("hidden");
+
+  editModal.classList.remove("hidden"); // Show the modal
 }
 
 async function handleEditFormSubmit(e) {
@@ -279,6 +269,7 @@ async function handleEditFormSubmit(e) {
   const password = document.getElementById("edit-password").value;
   const role = document.getElementById("edit-role").value;
   const messageDiv = document.getElementById("edit-user-message");
+
   try {
     const response = await fetch(
       `https://gestion-des-materials.onrender.com/api/users/${userId}`,
@@ -291,21 +282,21 @@ async function handleEditFormSubmit(e) {
 
     if (!response.ok) {
       const errorData = await response.json();
-      throw new Error(
-        errorData.message || `Erreur HTTP ! Statut : ${response.status}`
-      );
+      const errorMessage =
+        errorData.message || `Erreur HTTP ! Statut : ${response.status}`;
+      throw new Error(errorMessage); // Throw the error to be caught
     }
 
     const data = await response.json();
     addNotification(data.message, "success");
     editModal.classList.add("hidden");
-    fetchUsers();
+    fetchUsers(); // Refresh the user list
   } catch (error) {
     console.error("Erreur lors de la mise à jour de l'utilisateur :", error);
     addNotification(error.message, "error");
     messageDiv.textContent = error.message;
     messageDiv.classList.remove("hidden");
-    messageDiv.classList.add("text-red-500"); // Ensure error message is red
+    messageDiv.classList.add("text-red-500");
   }
 }
 
