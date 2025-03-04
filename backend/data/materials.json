@@ -7,7 +7,7 @@
     "status": "En Utilisation",
     "image": "images/1-430x430.webp",
     "createdAt": "2024-10-27T10:00:00.000Z",
-    "updatedAt": "2025-02-26T11:09:57.733Z"
+    "updatedAt": "2025-03-04T09:42:39.239Z"
   },
   {
     "id": 2,
@@ -17,27 +17,17 @@
     "status": "En Utilisation",
     "image": "images/ordinateur-de-bureau-dell-optiplex-3000-dl-op3000-i5-sff_34b18721-be32-4ce5-b594-e536cc349ae8.webp",
     "createdAt": "2024-10-27T10:00:00.000Z",
-    "updatedAt": "2025-02-26T11:26:50.017Z"
+    "updatedAt": "2025-02-28T12:04:55.235Z"
   },
   {
     "id": 3,
     "name": "PC Lenovo ThinkCentre",
     "marque": "Lenovo",
     "serialNumber": "SN45678",
-    "status": "En Utilisation",
+    "status": "Disponible",
     "image": "images/Lenovo-ThinkCentre-neo-50s-1-1.webp",
     "createdAt": "2024-10-27T10:00:00.000Z",
-    "updatedAt": "2025-02-26T11:15:37.012Z"
-  },
-  {
-    "id": 4,
-    "name": "Imprimante Canon Pixma",
-    "marque": "Canon",
-    "serialNumber": "SN67890",
-    "status": "En Utilisation",
-    "image": "images/imprimante-multifonction-jet-d-encre-canon-pixma-ts3440-4463c007be.jpg",
-    "createdAt": "2024-10-27T10:00:00.000Z",
-    "updatedAt": "2025-02-26T11:16:59.378Z"
+    "updatedAt": "2025-02-28T09:23:48.000Z"
   },
   {
     "id": 5,
@@ -47,14 +37,14 @@
     "status": "En Utilisation",
     "image": "images/imprimante-laser-monochrome-hp-laserjet-pro-4003dn-2z609a.jpg",
     "createdAt": "2024-10-27T10:00:00.000Z",
-    "updatedAt": "2025-02-26T11:19:12.260Z"
+    "updatedAt": "2025-02-28T12:50:05.442Z"
   },
   {
     "id": 6,
     "name": "Ecran Dell UltraSharp",
     "marque": "Dell",
     "serialNumber": "SN11223",
-    "status": "En Utilisation",
+    "status": "Disponible",
     "image": "images/images.jpg",
     "createdAt": "2024-10-27T10:00:00.000Z",
     "updatedAt": "2025-02-26T11:19:53.081Z"
@@ -64,7 +54,7 @@
     "name": "Ecran HP EliteDisplay",
     "marque": "HP",
     "serialNumber": "SN33446",
-    "status": "En Utilisation",
+    "status": "Disponible",
     "image": "images/C9V75AA-HP-EliteDisplay-E231-Ecran-23-Full-HD-VGA-DVI-DisplayPorts-USB-02.webp",
     "createdAt": "2024-10-27T10:00:00.000Z",
     "updatedAt": "2025-02-26T11:25:46.690Z"
@@ -74,19 +64,820 @@
     "name": "Ecran Samsung Odyssey",
     "marque": "Samsung",
     "serialNumber": "SN77889",
-    "status": "En Utilisation",
+    "status": "Disponible",
     "image": "images/68AEFF22-1923-6F36-3221-C220A56735C9-300.webp",
     "createdAt": "2024-10-27T10:00:00.000Z",
     "updatedAt": "2025-02-26T11:26:19.780Z"
   },
   {
-    "name": "Scanner 1",
-    "marque": "Cannon",
-    "serialNumber": "DR-C240",
-    "status": "En Utilisation",
-    "createdAt": "2025-02-26T10:11:05.926Z",
-    "image": "images/scanner_canon_imageformula_dr-c240-fournipro.ma_2.jpg",
+    "name": "PC HP compaq 6000 pro",
+    "marque": "HP",
+    "serialNumber": "CWC03275TN",
+    "status": "Disponible",
+    "createdAt": "2025-02-27T11:33:24.360Z",
+    "image": "images/71Ivi2uopwL._AC_UF8941000_QL80_.jpg",
     "id": 9,
-    "updatedAt": "2025-02-26T11:26:31.829Z"
+    "updatedAt": "2025-02-28T09:26:20.476Z"
+  },
+  {
+    "name": "PC HP compaq 6000 pro",
+    "marque": "HP",
+    "serialNumber": "CZC03275RL",
+    "status": "Disponible",
+    "createdAt": "2025-02-27T11:35:26.107Z",
+    "image": "images/71Ivi2uopwL._AC_UF8941000_QL80_.jpg",
+    "id": 10,
+    "updatedAt": "2025-02-28T09:26:27.529Z"
+  },
+  {
+    "name": "PC Lenovo ThinkCentre E73",
+    "marque": "HP",
+    "serialNumber": "??",
+    "status": "Disponible",
+    "createdAt": "2025-02-27T11:44:19.587Z",
+    "image": "images/lenovo e73.webp",
+    "id": 11,
+    "updatedAt": "2025-02-28T09:23:45.473Z"
+  },
+  {
+    "name": "imprimante samsung proxpress m3820",
+    "marque": "Samsung",
+    "serialNumber": "??",
+    "status": "Disponible",
+    "createdAt": "2025-02-27T11:48:23.439Z",
+    "image": "images/samsung imp.jpg",
+    "id": 12
+  },
+  {
+    "name": "imprimant canon LBP236dw",
+    "marque": "Canon",
+    "serialNumber": "??",
+    "status": "Disponible",
+    "createdAt": "2025-02-27T11:55:20.953Z",
+    "image": "images/canon lbp.svg",
+    "id": 13,
+    "updatedAt": "2025-02-27T12:08:32.780Z"
+  },
+  {
+    "name": "imprimante samsung proxpress m3820",
+    "marque": "Samsung",
+    "serialNumber": "??",
+    "status": "Disponible",
+    "createdAt": "2025-02-27T11:56:26.146Z",
+    "image": "images/samsung imp.jpg",
+    "id": 14
+  },
+  {
+    "name": "Pc Lenovo v520s",
+    "marque": "Lenovo",
+    "serialNumber": "??",
+    "status": "Disponible",
+    "createdAt": "2025-02-27T12:02:53.568Z",
+    "image": "images/Pc Lenovo v520s.jpg",
+    "id": 15,
+    "updatedAt": "2025-02-28T09:26:38.298Z"
+  },
+  {
+    "name": "imprimante epson ALM320DN",
+    "marque": "epson",
+    "serialNumber": "??",
+    "status": "Disponible",
+    "createdAt": "2025-02-27T12:06:11.352Z",
+    "image": "images/epson imp.jpg",
+    "id": 16
+  },
+  {
+    "name": "PC DELL D11s",
+    "marque": "Dell",
+    "serialNumber": "??",
+    "status": "Disponible",
+    "createdAt": "2025-02-27T12:08:15.289Z",
+    "image": "images/dell pc d11.jpg",
+    "id": 17,
+    "updatedAt": "2025-02-28T09:26:45.851Z"
+  },
+  {
+    "name": "imprimante epson ALM320DN",
+    "marque": "epson",
+    "serialNumber": "??",
+    "status": "Disponible",
+    "createdAt": "2025-02-27T12:19:18.846Z",
+    "image": "images/epson imp.jpg",
+    "id": 18
+  },
+  {
+    "name": "PC HP compaq 6000 pro",
+    "marque": "HP",
+    "serialNumber": "??",
+    "status": "Disponible",
+    "createdAt": "2025-02-27T12:23:28.725Z",
+    "image": "images/hp compag.jpg",
+    "id": 19,
+    "updatedAt": "2025-02-28T09:26:54.617Z"
+  },
+  {
+    "name": "imprimante samsung proxpress m3820",
+    "marque": "Samsung",
+    "serialNumber": "??",
+    "status": "Disponible",
+    "createdAt": "2025-02-27T12:24:22.841Z",
+    "image": "images/samsung imp.jpg",
+    "id": 20
+  },
+  {
+    "name": "Pc Lenovo v530s",
+    "marque": "Lenovo",
+    "serialNumber": "??",
+    "status": "Disponible",
+    "createdAt": "2025-02-27T12:25:15.218Z",
+    "image": "images/Pc Lenovo v520s.jpg",
+    "id": 21,
+    "updatedAt": "2025-02-28T09:27:02.043Z"
+  },
+  {
+    "name": "Imprimante lexmark ms421",
+    "marque": "lexmark",
+    "serialNumber": "??",
+    "status": "Disponible",
+    "createdAt": "2025-02-27T12:26:16.518Z",
+    "image": "images/LEXmark.jpg",
+    "id": 22
+  },
+  {
+    "name": "Pc Lenovo v530s",
+    "marque": "Lenovo",
+    "serialNumber": "??",
+    "status": "Disponible",
+    "createdAt": "2025-02-27T12:26:50.884Z",
+    "image": "images/Pc Lenovo v520s.jpg",
+    "id": 23,
+    "updatedAt": "2025-02-28T09:27:08.540Z"
+  },
+  {
+    "name": "imprimante samsung proxpress m3820",
+    "marque": "Samsung",
+    "serialNumber": "??",
+    "status": "Disponible",
+    "createdAt": "2025-02-27T12:27:11.770Z",
+    "image": "images/samsung imp.jpg",
+    "id": 24
+  },
+  {
+    "name": "PC Lenovo ThinkCentre E73",
+    "marque": "Lenovo",
+    "serialNumber": "??",
+    "status": "Disponible",
+    "createdAt": "2025-02-27T12:27:48.650Z",
+    "image": "images/lenovo e73.webp",
+    "id": 25,
+    "updatedAt": "2025-02-28T09:27:17.771Z"
+  },
+  {
+    "name": "imprimante samsung proxpress m3820",
+    "marque": "Samsung",
+    "serialNumber": "??",
+    "status": "Disponible",
+    "createdAt": "2025-02-27T12:28:17.305Z",
+    "image": "images/samsung imp.jpg",
+    "id": 26
+  },
+  {
+    "name": "Pc Lenovo v520s",
+    "marque": "Lenovo",
+    "serialNumber": "??",
+    "status": "Disponible",
+    "createdAt": "2025-02-27T12:32:05.851Z",
+    "image": "images/Pc Lenovo v520s.jpg",
+    "id": 27,
+    "updatedAt": "2025-02-28T09:27:24.064Z"
+  },
+  {
+    "name": "imprimant canon LBP236dw",
+    "marque": "Canon",
+    "serialNumber": "??",
+    "status": "Disponible",
+    "createdAt": "2025-02-27T12:33:22.356Z",
+    "image": "images/canon lbp.svg",
+    "id": 28
+  },
+  {
+    "name": "Pc Lenovo v530s",
+    "marque": "Lenovo",
+    "serialNumber": "??",
+    "status": "Disponible",
+    "createdAt": "2025-02-27T12:34:11.474Z",
+    "image": "images/Pc Lenovo v520s.jpg",
+    "id": 29,
+    "updatedAt": "2025-02-28T09:27:32.518Z"
+  },
+  {
+    "name": "Imprimante lexmark ms421",
+    "marque": "lexmark",
+    "serialNumber": "??",
+    "status": "Disponible",
+    "createdAt": "2025-02-27T12:34:36.739Z",
+    "image": "images/LEXmark.jpg",
+    "id": 30
+  },
+  {
+    "name": "Pc Lenovo v530s",
+    "marque": "Lenovo",
+    "serialNumber": "??",
+    "status": "Disponible",
+    "createdAt": "2025-02-27T12:41:27.221Z",
+    "image": "images/Pc Lenovo v520s.jpg",
+    "id": 31,
+    "updatedAt": "2025-02-28T09:27:39.273Z"
+  },
+  {
+    "name": "Imprimante lexmark ms421",
+    "marque": "lexmark",
+    "serialNumber": "??",
+    "status": "Disponible",
+    "createdAt": "2025-02-27T12:41:46.940Z",
+    "image": "images/LEXmark.jpg",
+    "id": 32
+  },
+  {
+    "name": "Pc Lenovo v530s",
+    "marque": "Lenovo",
+    "serialNumber": "??",
+    "status": "Disponible",
+    "createdAt": "2025-02-27T12:59:30.228Z",
+    "image": "images/Pc Lenovo v520s.jpg",
+    "id": 33
+  },
+  {
+    "name": "Imprimante lexmark ms421",
+    "marque": "lexmark",
+    "serialNumber": "??",
+    "status": "Disponible",
+    "createdAt": "2025-02-27T12:59:57.416Z",
+    "image": "images/LEXmark.jpg",
+    "id": 34
+  },
+  {
+    "name": "HP compaq 6000 pro",
+    "marque": "HP",
+    "serialNumber": "??",
+    "status": "Disponible",
+    "createdAt": "2025-02-27T13:00:18.654Z",
+    "image": "images/hp compag.jpg",
+    "id": 35,
+    "updatedAt": "2025-02-28T09:27:46.006Z"
+  },
+  {
+    "name": "Imprimante OKI B431dn",
+    "marque": "OKI",
+    "serialNumber": "??",
+    "status": "Disponible",
+    "createdAt": "2025-02-27T13:01:15.272Z",
+    "image": "images/oki.jpg",
+    "id": 36
+  },
+  {
+    "name": "HP compaq 6000 pro",
+    "marque": "HP",
+    "serialNumber": "??",
+    "status": "Disponible",
+    "createdAt": "2025-02-27T13:01:32.698Z",
+    "image": "images/hp compag.jpg",
+    "id": 37,
+    "updatedAt": "2025-02-28T09:27:53.761Z"
+  },
+  {
+    "name": "imprimante samsung proxpress m3820",
+    "marque": "Samsung",
+    "serialNumber": "??",
+    "status": "Disponible",
+    "createdAt": "2025-02-27T13:01:59.948Z",
+    "image": "images/samsung imp.jpg",
+    "id": 38
+  },
+  {
+    "name": "Pc Lenovo v530s",
+    "marque": "Lenovo",
+    "serialNumber": "??",
+    "status": "Disponible",
+    "createdAt": "2025-02-27T14:19:50.346Z",
+    "image": "images/Pc Lenovo v520s.jpg",
+    "id": 39,
+    "updatedAt": "2025-02-28T09:28:00.130Z"
+  },
+  {
+    "name": "Imprimante lexmark ms421",
+    "marque": "lexmark",
+    "serialNumber": "??",
+    "status": "Disponible",
+    "createdAt": "2025-02-27T14:20:16.194Z",
+    "image": "images/LEXmark.jpg",
+    "id": 40
+  },
+  {
+    "name": "Pc Lenovo v530s",
+    "marque": "Lenovo",
+    "serialNumber": "??",
+    "status": "Disponible",
+    "createdAt": "2025-02-27T14:20:42.269Z",
+    "image": "images/Pc Lenovo v520s.jpg",
+    "id": 41,
+    "updatedAt": "2025-02-28T09:28:07.117Z"
+  },
+  {
+    "name": "Imprimante lexmark ms421",
+    "marque": "lexmark",
+    "serialNumber": "??",
+    "status": "Disponible",
+    "createdAt": "2025-02-27T14:21:00.681Z",
+    "image": "images/LEXmark.jpg",
+    "id": 42
+  },
+  {
+    "name": "HP compaq 6000 pro",
+    "marque": "HP",
+    "serialNumber": "??",
+    "status": "Disponible",
+    "createdAt": "2025-02-27T14:21:27.586Z",
+    "image": "images/hp compag.jpg",
+    "id": 43,
+    "updatedAt": "2025-02-28T09:28:14.106Z"
+  },
+  {
+    "name": "Imprimante lexmark ms421",
+    "marque": "lexmark",
+    "serialNumber": "??",
+    "status": "Disponible",
+    "createdAt": "2025-02-27T14:22:53.846Z",
+    "image": "images/LEXmark.jpg",
+    "id": 44
+  },
+  {
+    "name": "PC HP compaq 6000 pro",
+    "marque": "HP",
+    "serialNumber": "??",
+    "status": "Disponible",
+    "createdAt": "2025-02-27T14:23:55.624Z",
+    "image": "images/hp compag.jpg",
+    "id": 45,
+    "updatedAt": "2025-02-28T09:28:20.620Z"
+  },
+  {
+    "name": "Imprimante lexmark ms421",
+    "marque": "lexmark",
+    "serialNumber": "??",
+    "status": "Disponible",
+    "createdAt": "2025-02-27T14:24:22.903Z",
+    "image": "images/LEXmark.jpg",
+    "id": 46
+  },
+  {
+    "name": "PC HP compaq 6000 pro",
+    "marque": "HP",
+    "serialNumber": "??",
+    "status": "Disponible",
+    "createdAt": "2025-02-27T14:25:11.234Z",
+    "image": "images/hp compag.jpg",
+    "id": 47,
+    "updatedAt": "2025-02-28T09:28:26.222Z"
+  },
+  {
+    "name": "HP compaq 6000 pro",
+    "marque": "HP",
+    "serialNumber": "??",
+    "status": "Disponible",
+    "createdAt": "2025-02-27T14:25:34.380Z",
+    "image": "images/hp compag.jpg",
+    "id": 48,
+    "updatedAt": "2025-02-28T09:28:33.291Z"
+  },
+  {
+    "name": "Imprimante lexmark ms421",
+    "marque": "lexmark",
+    "serialNumber": "??",
+    "status": "Disponible",
+    "createdAt": "2025-02-27T14:27:33.885Z",
+    "image": "images/LEXmark.jpg",
+    "id": 49
+  },
+  {
+    "name": "Pc Lenovo v520s",
+    "marque": "Lenovo",
+    "serialNumber": "??",
+    "status": "Disponible",
+    "createdAt": "2025-02-27T14:28:06.020Z",
+    "image": "images/Pc Lenovo v520s.jpg",
+    "id": 50,
+    "updatedAt": "2025-02-28T09:28:39.852Z"
+  },
+  {
+    "name": "Imprimante lexmark ms421",
+    "marque": "lexmark",
+    "serialNumber": "??",
+    "status": "Disponible",
+    "createdAt": "2025-02-27T14:28:25.361Z",
+    "image": "images/LEXmark.jpg",
+    "id": 51
+  },
+  {
+    "name": "HP compaq 6000 pro",
+    "marque": "HP",
+    "serialNumber": "??",
+    "status": "Disponible",
+    "createdAt": "2025-02-27T14:28:50.127Z",
+    "image": "images/hp compag.jpg",
+    "id": 52,
+    "updatedAt": "2025-02-28T09:28:46.953Z"
+  },
+  {
+    "name": "imprimante samsung proxpress m3820",
+    "marque": "Samsung",
+    "serialNumber": "??",
+    "status": "Disponible",
+    "createdAt": "2025-02-27T14:37:09.964Z",
+    "image": "images/samsung imp.jpg",
+    "id": 53
+  },
+  {
+    "name": "PC HP compaq 6000 pro",
+    "marque": "HP",
+    "serialNumber": "??",
+    "status": "Disponible",
+    "createdAt": "2025-02-27T14:39:52.147Z",
+    "image": "images/hp compag.jpg",
+    "id": 54,
+    "updatedAt": "2025-02-28T09:28:54.948Z"
+  },
+  {
+    "name": "HP compaq 6000 pro",
+    "marque": "HP",
+    "serialNumber": "??",
+    "status": "Disponible",
+    "createdAt": "2025-02-27T15:35:05.699Z",
+    "image": "images/hp compag.jpg",
+    "id": 55,
+    "updatedAt": "2025-02-28T09:29:01.534Z"
+  },
+  {
+    "name": "Imprimante lexmark ms421",
+    "marque": "lexmark",
+    "serialNumber": "??",
+    "status": "Disponible",
+    "createdAt": "2025-02-27T15:35:28.825Z",
+    "image": "images/LEXmark.jpg",
+    "id": 56
+  },
+  {
+    "name": "Pc Lenovo v520s",
+    "marque": "HP",
+    "serialNumber": "??",
+    "status": "Disponible",
+    "createdAt": "2025-02-27T15:35:56.297Z",
+    "image": "images/Pc Lenovo v520s.jpg",
+    "id": 57,
+    "updatedAt": "2025-02-28T09:33:15.264Z"
+  },
+  {
+    "name": "Pc Lenovo v520s",
+    "marque": "Lenovo",
+    "serialNumber": "??",
+    "status": "Disponible",
+    "createdAt": "2025-02-27T15:36:14.181Z",
+    "image": "images/Pc Lenovo v520s.jpg",
+    "id": 58,
+    "updatedAt": "2025-02-28T09:33:22.579Z"
+  },
+  {
+    "name": "Imprimante lexmark ms421",
+    "marque": "lexmark",
+    "serialNumber": "??",
+    "status": "Disponible",
+    "createdAt": "2025-02-27T15:37:06.622Z",
+    "image": "images/LEXmark.jpg",
+    "id": 59
+  },
+  {
+    "name": "PC HP compaq 6000 pro",
+    "marque": "HP",
+    "serialNumber": "??",
+    "status": "Disponible",
+    "createdAt": "2025-02-27T15:40:37.909Z",
+    "image": "images/hp compag.jpg",
+    "id": 60,
+    "updatedAt": "2025-02-28T09:33:28.110Z"
+  },
+  {
+    "name": "imprimante samsung proxpress m3820",
+    "marque": "Samsung",
+    "serialNumber": "??",
+    "status": "Disponible",
+    "createdAt": "2025-02-27T15:41:03.241Z",
+    "image": "images/samsung imp.jpg",
+    "id": 61
+  },
+  {
+    "name": "HP compaq 6000 pro",
+    "marque": "HP",
+    "serialNumber": "??",
+    "status": "Disponible",
+    "createdAt": "2025-02-28T09:34:14.311Z",
+    "image": "images/hp compag.jpg",
+    "id": 62
+  },
+  {
+    "name": "imprimante samsung proxpress m3820",
+    "marque": "Samsung",
+    "serialNumber": "??",
+    "status": "Disponible",
+    "createdAt": "2025-02-28T09:34:38.810Z",
+    "image": "images/samsung imp.jpg",
+    "id": 63
+  },
+  {
+    "name": "HP compaq 6000 pro",
+    "marque": "HP",
+    "serialNumber": "??",
+    "status": "Disponible",
+    "createdAt": "2025-02-28T10:09:40.738Z",
+    "image": "images/hp compag.jpg",
+    "id": 64
+  },
+  {
+    "name": "imprimante samsung proxpress m3820",
+    "marque": "Samsung",
+    "serialNumber": "??",
+    "status": "Disponible",
+    "createdAt": "2025-02-28T10:10:01.748Z",
+    "image": "images/samsung imp.jpg",
+    "id": 65
+  },
+  {
+    "name": "HP compaq 6000 pro",
+    "marque": "HP",
+    "serialNumber": "??",
+    "status": "Disponible",
+    "createdAt": "2025-02-28T10:10:46.543Z",
+    "image": "images/hp compag.jpg",
+    "id": 66
+  },
+  {
+    "name": "imprimante samsung proxpress m3820",
+    "marque": "Samsung",
+    "serialNumber": "??",
+    "status": "Disponible",
+    "createdAt": "2025-02-28T10:11:09.281Z",
+    "image": "images/samsung imp.jpg",
+    "id": 67
+  },
+  {
+    "name": "Pc Lenovo v530s",
+    "marque": "Lenovo",
+    "serialNumber": "??",
+    "status": "Disponible",
+    "createdAt": "2025-02-28T10:11:43.831Z",
+    "image": "images/Pc Lenovo v520s.jpg",
+    "id": 68
+  },
+  {
+    "name": "Pc Lenovo v530s",
+    "marque": "Lenovo",
+    "serialNumber": "??",
+    "status": "Disponible",
+    "createdAt": "2025-02-28T10:12:20.203Z",
+    "image": "images/Pc Lenovo v520s.jpg",
+    "id": 69
+  },
+  {
+    "name": "Pc Lenovo v530s",
+    "marque": "Lenovo",
+    "serialNumber": "??",
+    "status": "Disponible",
+    "createdAt": "2025-02-28T10:13:50.252Z",
+    "image": "images/Pc Lenovo v520s.jpg",
+    "id": 70
+  },
+  {
+    "name": "Imprimante lexmark ms421",
+    "marque": "lexmark",
+    "serialNumber": "??",
+    "status": "Disponible",
+    "createdAt": "2025-02-28T10:14:42.322Z",
+    "image": "images/LEXmark.jpg",
+    "id": 71
+  },
+  {
+    "name": "PC Lenovo M70S Gen3",
+    "marque": "Lenovo",
+    "serialNumber": "??",
+    "status": "Disponible",
+    "createdAt": "2025-02-28T10:36:51.797Z",
+    "image": "images/lenovo-thinkcentre-m70s.jpg",
+    "id": 72
+  },
+  {
+    "name": "imprimant canon LBP236dw",
+    "marque": "Canon",
+    "serialNumber": "??",
+    "status": "Disponible",
+    "createdAt": "2025-02-28T10:41:50.382Z",
+    "image": "images/canon lbp.svg",
+    "id": 73
+  },
+  {
+    "name": "PC Lenovo M70S Gen3",
+    "marque": "Lenovo",
+    "serialNumber": "??",
+    "status": "Disponible",
+    "createdAt": "2025-02-28T10:52:44.870Z",
+    "image": "images/lenovo-thinkcentre-m70s.jpg",
+    "id": 74
+  },
+  {
+    "name": "Pc Lenovo v530s",
+    "marque": "Lenovo",
+    "serialNumber": "??",
+    "status": "Disponible",
+    "createdAt": "2025-02-28T10:55:00.148Z",
+    "image": "images/Pc Lenovo v520s.jpg",
+    "id": 75
+  },
+  {
+    "name": "Imprimante lexmark ms421",
+    "marque": "lexmark",
+    "serialNumber": "??",
+    "status": "Disponible",
+    "createdAt": "2025-02-28T10:55:15.685Z",
+    "image": "images/LEXmark.jpg",
+    "id": 76
+  },
+  {
+    "name": "HP compaq 6000 pro",
+    "marque": "HP",
+    "serialNumber": "??",
+    "status": "Disponible",
+    "createdAt": "2025-02-28T10:58:17.437Z",
+    "image": "images/hp compag.jpg",
+    "id": 77
+  },
+  {
+    "name": "Imprimante lexmark ms421",
+    "marque": "lexmark",
+    "serialNumber": "??",
+    "status": "Disponible",
+    "createdAt": "2025-02-28T10:58:52.523Z",
+    "image": "images/LEXmark.jpg",
+    "id": 78
+  },
+  {
+    "name": "PC DELL D11s",
+    "marque": "Dell",
+    "serialNumber": "??",
+    "status": "Disponible",
+    "createdAt": "2025-02-28T11:00:23.382Z",
+    "image": "images/dell pc d11.jpg",
+    "id": 79
+  },
+  {
+    "name": "Imprimante lexmark ms421",
+    "marque": "lexmark",
+    "serialNumber": "??",
+    "status": "Disponible",
+    "createdAt": "2025-02-28T11:00:46.284Z",
+    "image": "images/LEXmark.jpg",
+    "id": 80
+  },
+  {
+    "name": "Pc Lenovo v530s",
+    "marque": "Lenovo",
+    "serialNumber": "??",
+    "status": "Disponible",
+    "createdAt": "2025-02-28T11:10:10.244Z",
+    "image": "images/Pc Lenovo v520s.jpg",
+    "id": 81
+  },
+  {
+    "name": "Imprimante lexmark ms421",
+    "marque": "lexmark",
+    "serialNumber": "??",
+    "status": "Disponible",
+    "createdAt": "2025-02-28T11:10:43.657Z",
+    "image": "images/LEXmark.jpg",
+    "id": 82
+  },
+  {
+    "name": "PC HP compaq 6000 pro",
+    "marque": "HP",
+    "serialNumber": "??",
+    "status": "Disponible",
+    "createdAt": "2025-02-28T11:11:10.705Z",
+    "image": "images/hp compag.jpg",
+    "id": 83
+  },
+  {
+    "name": "Imprimante lexmark ms421",
+    "marque": "lexmark",
+    "serialNumber": "??",
+    "status": "Disponible",
+    "createdAt": "2025-02-28T11:11:28.345Z",
+    "image": "images/LEXmark.jpg",
+    "id": 84
+  },
+  {
+    "name": "Pc Lenovo v520s",
+    "marque": "Lenovo",
+    "serialNumber": "??",
+    "status": "Disponible",
+    "createdAt": "2025-02-28T11:11:51.706Z",
+    "image": "images/Pc Lenovo v520s.jpg",
+    "id": 85
+  },
+  {
+    "name": "Imprimante lexmark ms421",
+    "marque": "lexmark",
+    "serialNumber": "??",
+    "status": "Disponible",
+    "createdAt": "2025-02-28T11:12:16.425Z",
+    "image": "images/LEXmark.jpg",
+    "id": 86
+  },
+  {
+    "name": "HP compaq 6000 pro",
+    "marque": "HP",
+    "serialNumber": "??",
+    "status": "Disponible",
+    "createdAt": "2025-02-28T11:12:46.343Z",
+    "image": "images/hp compag.jpg",
+    "id": 87
+  },
+  {
+    "name": "Imprimante lexmark ms421",
+    "marque": "lexmark",
+    "serialNumber": "??",
+    "status": "Disponible",
+    "createdAt": "2025-02-28T11:13:03.078Z",
+    "image": "images/LEXmark.jpg",
+    "id": 88
+  },
+  {
+    "name": "Pc Lenovo v530s",
+    "marque": "Lenovo",
+    "serialNumber": "??",
+    "status": "Disponible",
+    "createdAt": "2025-02-28T11:13:21.177Z",
+    "image": "images/Pc Lenovo v520s.jpg",
+    "id": 89
+  },
+  {
+    "name": "Imprimante lexmark ms421",
+    "marque": "lexmark",
+    "serialNumber": "??",
+    "status": "Disponible",
+    "createdAt": "2025-02-28T11:13:37.074Z",
+    "image": "images/LEXmark.jpg",
+    "id": 90
+  },
+  {
+    "name": "Pc Lenovo v530s",
+    "marque": "Lenovo",
+    "serialNumber": "??",
+    "status": "Disponible",
+    "createdAt": "2025-02-28T11:13:52.419Z",
+    "image": "images/Pc Lenovo v520s.jpg",
+    "id": 91
+  },
+  {
+    "name": "imprimant canon LBP236dw",
+    "marque": "Canon",
+    "serialNumber": "??",
+    "status": "Disponible",
+    "createdAt": "2025-02-28T11:14:19.328Z",
+    "image": "images/canon lbp.svg",
+    "id": 92
+  },
+  {
+    "name": "HP compaq 6000 pro",
+    "marque": "HP",
+    "serialNumber": "??",
+    "status": "Disponible",
+    "createdAt": "2025-02-28T11:14:38.899Z",
+    "image": "images/hp compag.jpg",
+    "id": 93
+  },
+  {
+    "name": "imprimant canon LBP236dw",
+    "marque": "Canon",
+    "serialNumber": "??",
+    "status": "Disponible",
+    "createdAt": "2025-02-28T11:15:00.565Z",
+    "image": "images/canon lbp.svg",
+    "id": 94
+  },
+  {
+    "name": "PC ASUS BP6230",
+    "marque": "ASUS",
+    "serialNumber": "??",
+    "status": "Disponible",
+    "createdAt": "2025-02-28T11:15:51.505Z",
+    "image": "images/PC ASUS BP6230.jpg",
+    "id": 95
   }
 ]

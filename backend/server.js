@@ -5,9 +5,10 @@ const bcrypt = require("bcryptjs");
 const cors = require("cors");
 const path = require("path");
 const moment = require("moment");
-//backend
+
 const app = express();
 app.use(express.json({ limit: "10mb" }));
+app.use(express.static(path.join(__dirname, "../frontend")));
 app.use(express.urlencoded({ limit: "10mb", extended: true }));
 app.use(cors());
 
