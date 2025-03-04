@@ -68,11 +68,58 @@
                       class="fas fa-search absolute left-3 top-3 text-gray-400"
                     ></i>
                   </div>
-                  <button
-                    class="p-2 rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors"
-                  >
-                    <i class="fas fa-filter"></i>
-                  </button>
+                  <div class="relative">
+                    <button
+                      @click="sortDropdownPC = !sortDropdownPC; closeOtherSortDropdowns('PC')"
+                      class="p-2 rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors focus:outline-none focus:ring-2 focus:ring-moroccan-teal"
+                    >
+                      <i class="fas fa-filter"></i>
+                    </button>
+                    <div>
+                      <template x-if="sortDropdownPC">
+                        <div
+                          @click.away="sortDropdownPC = false"
+                          class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-md overflow-hidden z-10 border border-gray-200"
+                          x-cloak
+                        >
+                          <ul class="py-1">
+                            <li>
+                              <button
+                                @click="sortEmployeesByName('PC', 'asc')"
+                                class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 focus:outline-none"
+                              >
+                                Nom (A-Z)
+                              </button>
+                            </li>
+                            <li>
+                              <button
+                                @click="sortEmployeesByName('PC', 'desc')"
+                                class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 focus:outline-none"
+                              >
+                                Nom (Z-A)
+                              </button>
+                            </li>
+                            <li>
+                              <button
+                                @click="sortEmployeesByDepartment('PC', 'asc')"
+                                class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 focus:outline-none"
+                              >
+                                Département (A-Z)
+                              </button>
+                            </li>
+                            <li>
+                              <button
+                                @click="sortEmployeesByDepartment('PC', 'desc')"
+                                class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 focus:outline-none"
+                              >
+                                Département (Z-A)
+                              </button>
+                            </li>
+                          </ul>
+                        </div>
+                      </template>
+                    </div>
+                  </div>
                   <button
                     @click="openAddEmployeeModal('PC')"
                     class="p-2 rounded-lg bg-moroccan-blue text-white hover:bg-moroccan-blue-700 transition-colors"
@@ -105,6 +152,27 @@
                     </thead>
                     <tbody id="employees-pc-table"></tbody>
                   </table>
+                  <div class="flex justify-end mt-4 items-center">
+                    <button
+                      @click="previousPage('PC')"
+                      :disabled="currentPagePC <= 1"
+                      class="px-3 py-2 mx-1 bg-gray-200 rounded flex items-center"
+                      :class="{'opacity-50 cursor-not-allowed': currentPagePC <= 1}"
+                    >
+                      <i class="fas fa-chevron-left mr-1"></i>
+                    </button>
+                    <span class="mx-2 text-gray-600"></span>
+                      <span x-text="currentPagePC"></span
+                    ></span>
+                    <button
+                      @click="nextPage('PC')"
+                      :disabled="currentPagePC * itemsPerPage >= filteredEmployeesPC.length"
+                      class="px-3 py-2 mx-1 bg-gray-200 rounded flex items-center"
+                      :class="{'opacity-50 cursor-not-allowed': currentPagePC * itemsPerPage >= filteredEmployeesPC.length}"
+                    >
+                      <i class="fas fa-chevron-right ml-1"></i>
+                    </button>
+                  </div>
                 </div>
               </div>
 
@@ -130,11 +198,58 @@
                       class="fas fa-search absolute left-3 top-3 text-gray-400"
                     ></i>
                   </div>
-                  <button
-                    class="p-2 rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors"
-                  >
-                    <i class="fas fa-filter"></i>
-                  </button>
+                  <div class="relative">
+                    <button
+                      @click="sortDropdownPrinter = !sortDropdownPrinter; closeOtherSortDropdowns('Printer')"
+                      class="p-2 rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors focus:outline-none focus:ring-2 focus:ring-moroccan-teal"
+                    >
+                      <i class="fas fa-filter"></i>
+                    </button>
+                    <div>
+                      <template x-if="sortDropdownPrinter">
+                        <div
+                          @click.away="sortDropdownPrinter = false"
+                          class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-md overflow-hidden z-10 border border-gray-200"
+                          x-cloak
+                        >
+                          <ul class="py-1">
+                            <li>
+                              <button
+                                @click="sortEmployeesByName('Printer', 'asc')"
+                                class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 focus:outline-none"
+                              >
+                                Nom (A-Z)
+                              </button>
+                            </li>
+                            <li>
+                              <button
+                                @click="sortEmployeesByName('Printer', 'desc')"
+                                class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 focus:outline-none"
+                              >
+                                Nom (Z-A)
+                              </button>
+                            </li>
+                            <li>
+                              <button
+                                @click="sortEmployeesByDepartment('Printer', 'asc')"
+                                class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 focus:outline-none"
+                              >
+                                Département (A-Z)
+                              </button>
+                            </li>
+                            <li>
+                              <button
+                                @click="sortEmployeesByDepartment('Printer', 'desc')"
+                                class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 focus:outline-none"
+                              >
+                                Département (Z-A)
+                              </button>
+                            </li>
+                          </ul>
+                        </div>
+                      </template>
+                    </div>
+                  </div>
                   <button
                     @click="openAddEmployeeModal('Printer')"
                     class="p-2 rounded-lg bg-moroccan-blue text-white hover:bg-moroccan-blue-700 transition-colors"
@@ -167,6 +282,27 @@
                     </thead>
                     <tbody id="employees-printer-table"></tbody>
                   </table>
+                  <div class="flex justify-end mt-4 items-center">
+                    <button
+                      @click="previousPage('Printer')"
+                      :disabled="currentPagePrinter <= 1"
+                      class="px-3 py-2 mx-1 bg-gray-200 rounded flex items-center"
+                      :class="{'opacity-50 cursor-not-allowed': currentPagePrinter <= 1}"
+                    >
+                      <i class="fas fa-chevron-left mr-1"></i>
+                    </button>
+                    <span class="mx-2 text-gray-600">
+                      <span x-text="currentPagePrinter"></span
+                    ></span>
+                    <button
+                      @click="nextPage('Printer')"
+                      :disabled="currentPagePrinter * itemsPerPage >= filteredEmployeesPrinter.length"
+                      class="px-3 py-2 mx-1 bg-gray-200 rounded flex items-center"
+                      :class="{'opacity-50 cursor-not-allowed': currentPagePrinter * itemsPerPage >= filteredEmployeesPrinter.length}"
+                    >
+                      <i class="fas fa-chevron-right ml-1"></i>
+                    </button>
+                  </div>
                 </div>
               </div>
 
@@ -192,11 +328,58 @@
                       class="fas fa-search absolute left-3 top-3 text-gray-400"
                     ></i>
                   </div>
-                  <button
-                    class="p-2 rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors"
-                  >
-                    <i class="fas fa-filter"></i>
-                  </button>
+                  <div class="relative">
+                    <button
+                      @click="sortDropdownScreen = !sortDropdownScreen; closeOtherSortDropdowns('Screen')"
+                      class="p-2 rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors focus:outline-none focus:ring-2 focus:ring-moroccan-teal"
+                    >
+                      <i class="fas fa-filter"></i>
+                    </button>
+                    <div>
+                      <template x-if="sortDropdownScreen">
+                        <div
+                          @click.away="sortDropdownScreen = false"
+                          class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-md overflow-hidden z-10 border border-gray-200"
+                          x-cloak
+                        >
+                          <ul class="py-1">
+                            <li>
+                              <button
+                                @click="sortEmployeesByName('Screen', 'asc')"
+                                class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 focus:outline-none"
+                              >
+                                Nom (A-Z)
+                              </button>
+                            </li>
+                            <li>
+                              <button
+                                @click="sortEmployeesByName('Screen', 'desc')"
+                                class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 focus:outline-none"
+                              >
+                                Nom (Z-A)
+                              </button>
+                            </li>
+                            <li>
+                              <button
+                                @click="sortEmployeesByDepartment('Screen', 'asc')"
+                                class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 focus:outline-none"
+                              >
+                                Département (A-Z)
+                              </button>
+                            </li>
+                            <li>
+                              <button
+                                @click="sortEmployeesByDepartment('Screen', 'desc')"
+                                class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 focus:outline-none"
+                              >
+                                Département (Z-A)
+                              </button>
+                            </li>
+                          </ul>
+                        </div>
+                      </template>
+                    </div>
+                  </div>
                   <button
                     @click="openAddEmployeeModal('Screen')"
                     class="p-2 rounded-lg bg-moroccan-blue text-white hover:bg-moroccan-blue-700 transition-colors"
@@ -229,6 +412,27 @@
                     </thead>
                     <tbody id="employees-screen-table"></tbody>
                   </table>
+                  <div class="flex justify-end mt-4 items-center">
+                    <button
+                      @click="previousPage('Screen')"
+                      :disabled="currentPageScreen <= 1"
+                      class="px-3 py-2 mx-1 bg-gray-200 rounded flex items-center"
+                      :class="{'opacity-50 cursor-not-allowed': currentPageScreen <= 1}"
+                    >
+                      <i class="fas fa-chevron-left mr-1"></i>
+                    </button>
+                    <span class="mx-2 text-gray-600">
+                      <span x-text="currentPageScreen"></span
+                    ></span>
+                    <button
+                      @click="nextPage('Screen')"
+                      :disabled="currentPageScreen * itemsPerPage >= filteredEmployeesScreen.length"
+                      class="px-3 py-2 mx-1 bg-gray-200 rounded flex items-center"
+                      :class="{'opacity-50 cursor-not-allowed': currentPageScreen * itemsPerPage >= filteredEmployeesScreen.length}"
+                    >
+                      <i class="fas fa-chevron-right ml-1"></i>
+                    </button>
+                  </div>
                 </div>
               </div>
 
@@ -238,7 +442,7 @@
                 <h2
                   class="text-xl font-bold text-moroccan-blue flex items-center"
                 >
-                  <i class="fas fa-tv mr-2 text-moroccan-teal"></i>
+                <i class="fas fa-camera mr-2 text-moroccan-teal"></i>
                   Employés (Scanners)
                 </h2>
                 <div class="flex space-x-2 mt-2 sm:mt-0">
@@ -247,18 +451,65 @@
                       type="text"
                       placeholder="Rechercher..."
                       x-model="searchQueryScanner"
-                      @input="filterEmployeesScreen(searchQueryScanner)"
+                      @input="filterEmployeesScanner(searchQueryScanner)"
                       class="pl-10 pr-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-moroccan-teal focus:border-transparent"
                     />
                     <i
                       class="fas fa-search absolute left-3 top-3 text-gray-400"
                     ></i>
                   </div>
-                  <button
-                    class="p-2 rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors"
-                  >
-                    <i class="fas fa-filter"></i>
-                  </button>
+                  <div class="relative">
+                    <button
+                      @click="sortDropdownScanner = !sortDropdownScanner; closeOtherSortDropdowns('Scanner')"
+                      class="p-2 rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors focus:outline-none focus:ring-2 focus:ring-moroccan-teal"
+                    >
+                      <i class="fas fa-filter"></i>
+                    </button>
+                    <div>
+                      <template x-if="sortDropdownScanner">
+                        <div
+                          @click.away="sortDropdownScanner = false"
+                          class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-md overflow-hidden z-10 border border-gray-200"
+                          x-cloak
+                        >
+                          <ul class="py-1">
+                            <li>
+                              <button
+                                @click="sortEmployeesByName('Scanner', 'asc')"
+                                class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 focus:outline-none"
+                              >
+                                Nom (A-Z)
+                              </button>
+                            </li>
+                            <li>
+                              <button
+                                @click="sortEmployeesByName('Scanner', 'desc')"
+                                class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 focus:outline-none"
+                              >
+                                Nom (Z-A)
+                              </button>
+                            </li>
+                            <li>
+                              <button
+                                @click="sortEmployeesByDepartment('Scanner', 'asc')"
+                                class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 focus:outline-none"
+                              >
+                                Département (A-Z)
+                              </button>
+                            </li>
+                            <li>
+                              <button
+                                @click="sortEmployeesByDepartment('Scanner', 'desc')"
+                                class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 focus:outline-none"
+                              >
+                                Département (Z-A)
+                              </button>
+                            </li>
+                          </ul>
+                        </div>
+                      </template>
+                    </div>
+                  </div>
                   <button
                     @click="openAddEmployeeModal('Scanner')"
                     class="p-2 rounded-lg bg-moroccan-blue text-white hover:bg-moroccan-blue-700 transition-colors"
@@ -291,6 +542,27 @@
                     </thead>
                     <tbody id="employees-scanner-table"></tbody>
                   </table>
+                  <div class="flex justify-end mt-4 items-center">
+                    <button
+                      @click="previousPage('Scanner')"
+                      :disabled="currentPageScanner <= 1"
+                      class="px-3 py-2 mx-1 bg-gray-200 rounded flex items-center"
+                      :class="{'opacity-50 cursor-not-allowed': currentPageScanner <= 1}"
+                    >
+                      <i class="fas fa-chevron-left mr-1"></i>
+                    </button>
+                    <span class="mx-2 text-gray-600">
+                      <span x-text="currentPageScanner"></span
+                    ></span>
+                    <button
+                      @click="nextPage('Scanner')"
+                      :disabled="currentPageScanner * itemsPerPage >= filteredEmployeesScanner.length"
+                      class="px-3 py-2 mx-1 bg-gray-200 rounded flex items-center"
+                      :class="{'opacity-50 cursor-not-allowed': currentPageScanner * itemsPerPage >= filteredEmployeesScanner.length}"
+                    >
+                      <i class="fas fa-chevron-right ml-1"></i>
+                    </button>
+                  </div>
                 </div>
               </div>
 
@@ -299,7 +571,7 @@
                   class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
                 >
                   <div
-                    class="modal-content w-full max-w-md p-6 bg-white rounded-lg"
+                    class="modal-content w-full max-w-2xl p-6 bg-white rounded-lg"
                   >
                     <h2
                       class="text-2xl font-bold mb-4"
@@ -344,9 +616,11 @@
                             Sélectionner un département
                           </option>
                           <template x-for="dept in departments" :key="dept.id">
-                            <option :value="dept.nomdepart" x-text="dept.nomdepart"></option>  
+                            <option
+                              :value="dept.nomdepart"
+                              x-text="dept.nomdepart"
+                            ></option>
                           </template>
-                        </select>
                         </select>
                       </div>
 
@@ -365,9 +639,25 @@
                           >
                             <option
                               :value="material.id"
-                              x-text="material.name"
                               :selected="editingEmployee.materials.some(empMat => empMat.id === material.id)"
-                            ></option>
+                            >
+                              <div class="flex items-center justify-between">
+                                <span
+                                  x-text="material.name"
+                                  class="flex-grow"
+                                ></span>
+                                <template x-if="material.serialNumber">
+                                  <span class="text-sm text-gray-500 ml-2">
+                                    (N° série:
+                                    <span
+                                      x-text="material.serialNumber"
+                                      class="font-mono"
+                                    ></span
+                                    >)
+                                  </span>
+                                </template>
+                              </div>
+                            </option>
                           </template>
                         </select>
                       </div>

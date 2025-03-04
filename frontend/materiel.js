@@ -10,7 +10,11 @@ function dashboardData() {
       marque: "",
       status: "",
       image: "",
+      numeroMateriel: "",
+      dateReception: "",
     },
+    sortAscending: true,
+    sortDropdownOpen: false,
     allMaterials: [],
     filteredMaterials: [],
     filteredMaterialNames: [],
@@ -23,6 +27,9 @@ function dashboardData() {
     imagePreview: null,
     notifications: [],
     notificationPopupOpen: false,
+    page: 1,
+    pageSize: 6,
+    totalPages: 1,
 
     async init() {
       try {
@@ -36,11 +43,13 @@ function dashboardData() {
           window.location.href = "admin-dashboard.html";
           return;
         }
-        await Promise.all([this.fetchAllMaterials()]);
+        await this.fetchAllMaterials();
+        this.updatePagedMaterials();
       } catch (error) {
         console.error("Error during initialization:", error);
       }
     },
+
     checkAuth() {
       if (localStorage.getItem("isAuthenticated") !== "true") {
         window.location.href = "login.html";
@@ -75,20 +84,75 @@ function dashboardData() {
 
     async fetchAllMaterials() {
       try {
-        const response = await fetch(
-          "https://gestion-des-materials.onrender.com/api/materials"
-        );
+        const response = await fetch("/api/materials");
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         this.allMaterials = await response.json();
-        this.materials = [...this.allMaterials];
-        this.filteredMaterials = [...this.allMaterials];
-        this.renderMaterialsTable(this.materials);
+        this.totalPages = Math.ceil(this.allMaterials.length / this.pageSize);
         return this.allMaterials;
       } catch (error) {
         console.error("Error fetching materials:", error);
       }
+    },
+
+    updatePagedMaterials() {
+      const startIndex = (this.page - 1) * this.pageSize;
+      const endIndex = startIndex + this.pageSize;
+      this.materials = this.allMaterials.slice(startIndex, endIndex);
+      this.renderMaterialsTable(this.materials);
+    },
+
+    nextPage() {
+      if (this.page < this.totalPages) {
+        this.page++;
+        this.updatePagedMaterials();
+      }
+    },
+
+    prevPage() {
+      if (this.page > 1) {
+        this.page--;
+        this.updatePagedMaterials();
+      }
+    },
+
+    toggleSortDropdown() {
+      this.sortDropdownOpen = !this.sortDropdownOpen;
+    },
+
+    sortMaterialsByName(order) {
+      this.allMaterials.sort((a, b) => {
+        const nameA = a.name.toLowerCase();
+        const nameB = b.name.toLowerCase();
+
+        if (order === "asc") {
+          if (nameA < nameB) return -1;
+          if (nameA > nameB) return 1;
+          return 0;
+        } else {
+          if (nameA > nameB) return -1;
+          if (nameA < nameB) return 1;
+          return 0;
+        }
+      });
+      this.sortDropdownOpen = false;
+      this.updatePagedMaterials();
+    },
+
+    sortMaterialsByDate(order) {
+      this.allMaterials.sort((a, b) => {
+        const dateA = new Date(a.dateReception);
+        const dateB = new Date(b.dateReception);
+
+        if (order === "asc") {
+          return dateA - dateB;
+        } else {
+          return dateB - dateA;
+        }
+      });
+      this.sortDropdownOpen = false;
+      this.updatePagedMaterials();
     },
 
     renderMaterialsTable(materials) {
@@ -114,6 +178,11 @@ function dashboardData() {
           { value: mat.name, label: "Nom" },
           { value: mat.marque, label: "Marque" },
           { value: mat.serialNumber, label: "Numéro de Série" },
+          { value: mat.numeroMateriel, label: "Numéro de Marché" },
+          {
+            value: this.formatDate(mat.dateReception),
+            label: "Date de Réception",
+          },
           { value: mat.status, label: "Statut", isStatus: true },
         ];
 
@@ -125,7 +194,6 @@ function dashboardData() {
           if (cellData.isStatus) {
             const statusSpan = document.createElement("span");
             let statusClass = "";
-
             switch (cellData.value.toLowerCase()) {
               case "actif":
               case "active":
@@ -134,6 +202,7 @@ function dashboardData() {
                 break;
               case "maintenance":
               case "en utilisation":
+              case "en-utilisation":
                 statusClass = "bg-yellow-50 text-yellow-600";
                 break;
               case "défectueux":
@@ -143,6 +212,10 @@ function dashboardData() {
                 break;
               default:
                 statusClass = "bg-gray-50 text-gray-600";
+            }
+
+            if (cellData.value === "Disponible") {
+              statusClass = "bg-green-50 text-green-600";
             }
             statusSpan.className = `px-2 py-1 rounded-full ${statusClass} text-xs`;
             statusSpan.textContent = cellData.value;
@@ -154,7 +227,6 @@ function dashboardData() {
           row.appendChild(cell);
         });
 
-        // Image cell
         const imgCell = document.createElement("td");
         imgCell.className = "p-4";
         imgCell.setAttribute("data-label", "Image");
@@ -165,9 +237,9 @@ function dashboardData() {
             "w-12 h-12 rounded-lg bg-gray-100 flex items-center justify-center overflow-hidden";
 
           const img = document.createElement("img");
-          img.src = this.getImageUrl(mat.image);
           img.alt = mat.name;
-          img.className = "object-cover w-full h-full";
+          img.className = "object-cover w-full h-full lazy";
+          img.dataset.src = this.getImageUrl(mat.image);
 
           imgContainer.appendChild(img);
           imgCell.appendChild(imgContainer);
@@ -181,7 +253,6 @@ function dashboardData() {
 
         row.appendChild(imgCell);
 
-        // Actions cell
         const actionsCell = document.createElement("td");
         actionsCell.className = "p-4 text-right";
         actionsCell.setAttribute("data-label", "Actions");
@@ -218,21 +289,64 @@ function dashboardData() {
 
         tableBody.appendChild(row);
       });
+      const lazyImages = document.querySelectorAll(".lazy");
+      if ("IntersectionObserver" in window) {
+        let lazyImageObserver = new IntersectionObserver(function (
+          entries,
+          observer
+        ) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+              let lazyImage = entry.target;
+              lazyImage.src = lazyImage.dataset.src;
+              lazyImage.classList.remove("lazy");
+              lazyImageObserver.unobserve(lazyImage);
+            }
+          });
+        });
+
+        lazyImages.forEach(function (lazyImage) {
+          lazyImageObserver.observe(lazyImage);
+        });
+      } else {
+        lazyImages.forEach(function (lazyImage) {
+          lazyImage.src = lazyImage.dataset.src;
+          lazyImage.classList.remove("lazy");
+        });
+      }
     },
 
     filterMaterials(searchTerm) {
+      console.log("Filtering materials with term:", searchTerm);
       const term = searchTerm.toLowerCase();
-      const filteredMaterials = this.materials.filter(
-        (mat) =>
-          mat.name.toLowerCase().includes(term) ||
-          mat.marque.toLowerCase().includes(term) ||
-          mat.serialNumber.toLowerCase().includes(term) ||
-          mat.status.toLowerCase().includes(term)
-      );
+      const filteredMaterials = this.allMaterials.filter((mat) => {
+        const nameMatch = mat.name && mat.name.toLowerCase().includes(term);
+        const marqueMatch =
+          mat.marque && mat.marque.toLowerCase().includes(term);
+        const serialMatch =
+          mat.serialNumber && mat.serialNumber.toLowerCase().includes(term);
+        const statusMatch =
+          mat.status && mat.status.toLowerCase().includes(term);
+        const numeroMaterielMatch =
+          mat.numeroMateriel && mat.numeroMateriel.toString().includes(term);
+        const dateReceptionMatch =
+          mat.dateReception &&
+          this.formatDate(mat.dateReception).toLowerCase().includes(term);
 
-      this.renderMaterialsTable(filteredMaterials, "materials-table");
+        return (
+          nameMatch ||
+          marqueMatch ||
+          serialMatch ||
+          statusMatch ||
+          numeroMaterielMatch ||
+          dateReceptionMatch
+        );
+      });
+      this.materials = filteredMaterials.slice(0, this.pageSize);
+      this.totalPages = Math.ceil(filteredMaterials.length / this.pageSize);
+      this.page = 1;
+      this.renderMaterialsTable(this.materials);
     },
-
     viewMaterialDetails(id) {
       const material = this.materials.find((m) => m.id === id);
       if (!material) return;
@@ -258,7 +372,9 @@ function dashboardData() {
         marque: "",
         status: "",
         image: "",
-      }; // Reset the form
+        numeroMateriel: "",
+        dateReception: "",
+      };
       this.selectedFile = null;
       this.imagePreview = null;
     },
@@ -271,7 +387,9 @@ function dashboardData() {
         marque: "",
         status: "",
         image: "",
-      }; // Reset the form
+        numeroMateriel: "",
+        dateReception: "",
+      };
     },
 
     openAddMaterialModal() {
@@ -281,6 +399,8 @@ function dashboardData() {
         serialNumber: "",
         status: "Disponible",
         image: null,
+        numeroMateriel: this.getCurrentDateForInput(),
+        dateReception: this.getCurrentDateForInput(),
         createdAt: this.getCurrentDateForInput(),
       };
       this.imagePreview = null;
@@ -288,12 +408,13 @@ function dashboardData() {
       this.filteredMaterialNames = [];
       this.filteredMaterialMarques = [];
     },
+
     getCurrentDateForInput() {
       const now = new Date();
       const year = now.getFullYear();
       const month = String(now.getMonth() + 1).padStart(2, "0");
       const day = String(now.getDate()).padStart(2, "0");
-      return `${year}-${month}-${day}`;
+      return `<span class="math-inline">\{year\}\-</span>{month}-${day}`;
     },
 
     autocompleteMaterialName() {
@@ -316,13 +437,15 @@ function dashboardData() {
       try {
         const method = this.editingMaterial.id ? "PUT" : "POST";
         const url = this.editingMaterial.id
-          ? `https://gestion-des-materials.onrender.com/api/materials/${this.editingMaterial.id}`
-          : "https://gestion-des-materials.onrender.com/api/materials";
+          ? `/api/materials/${this.editingMaterial.id}`
+          : "/api/materials";
 
         const formData = new FormData();
         formData.append("name", this.editingMaterial.name);
         formData.append("marque", this.editingMaterial.marque);
         formData.append("serialNumber", this.editingMaterial.serialNumber);
+        formData.append("numeroMateriel", this.editingMaterial.numeroMateriel);
+        formData.append("dateReception", this.editingMaterial.dateReception);
         formData.append("status", this.editingMaterial.status);
 
         if (this.selectedFile) {
@@ -352,12 +475,13 @@ function dashboardData() {
 
         this.closeMaterialModal();
         await this.fetchAllMaterials();
+        this.updatePagedMaterials();
       } catch (error) {
         console.error("Error saving material:", error);
         this.addNotification(
           "Une erreur s'est produite lors de l'enregistrement du matériel. Vérifiez les détails dans la console.",
           "error"
-        ); // More informative message
+        );
       }
     },
 
@@ -365,12 +489,9 @@ function dashboardData() {
       try {
         if (!confirm("Êtes-vous sûr de vouloir supprimer ce matériel?")) return;
 
-        const response = await fetch(
-          `https://gestion-des-materials.onrender.com/api/materials/${id}`,
-          {
-            method: "DELETE",
-          }
-        );
+        const response = await fetch(`/api/materials/${id}`, {
+          method: "DELETE",
+        });
 
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -379,6 +500,7 @@ function dashboardData() {
         this.addNotification("Matériel supprimé avec succès!", "success");
 
         await this.fetchAllMaterials();
+        this.updatePagedMaterials();
       } catch (error) {
         console.error("Error deleting material:", error);
         this.addNotification(
@@ -408,9 +530,7 @@ function dashboardData() {
         return imagePath;
       }
 
-      return `https://gestion-des-materials.onrender.com/backend/images/${imagePath
-        .split("/")
-        .pop()}`;
+      return `/backend/images/${imagePath.split("/").pop()}`;
     },
 
     formatDate(dateString) {
@@ -433,8 +553,9 @@ function dashboardData() {
         "Matériels",
         "materials_export.xlsx",
         "#4CAF50",
-        "#FFFFFF"
-      ); // Green theme
+        "#FFFFFF",
+        this.allMaterials
+      );
     },
 
     async exportToExcel(
@@ -442,12 +563,11 @@ function dashboardData() {
       title,
       filename,
       headerColor,
-      headerTextColor
+      headerTextColor,
+      data = this.materials
     ) {
-      const table = document.getElementById(tableId);
-      if (!table) {
-        console.error("Table not found:", tableId);
-        this.addNotification(`Tableau non trouvé: ${tableId}`, "error");
+      if (!Array.isArray(data) || data.length === 0) {
+        this.addNotification("Aucune donnée à exporter.", "error");
         return;
       }
 
@@ -511,33 +631,16 @@ function dashboardData() {
       dateRow.getCell(1).style = dateStyle;
       worksheet.mergeCells(`A2:D2`);
 
-      const headers = [];
-      const headerRowElements = table.querySelectorAll("thead tr th");
-      if (headerRowElements.length > 0) {
-        for (let i = 0; i < headerRowElements.length - 2; i++) {
-          headers.push(headerRowElements[i].innerText);
-        }
-      } else {
-        const firstRowCells = table.querySelectorAll("tbody tr:first-child td");
-        for (let i = 0; i < firstRowCells.length - 2; i++) {
-          headers.push(firstRowCells[i].getAttribute("data-label") || "");
-        }
-      }
+      // Filter out 'image', 'createdAt', and 'updatedAt' from headers
+      const headers = Object.keys(data[0] || {}).filter(
+        (header) => !["image", "createdAt", "updatedAt"].includes(header)
+      );
+
       const excelHeaderRow = worksheet.addRow(headers);
       excelHeaderRow.eachCell((cell) => (cell.style = headerStyle));
 
-      const dataRows = [];
-      const rows = table.querySelectorAll("tbody tr");
-      rows.forEach((row) => {
-        const rowData = [];
-        const cells = row.querySelectorAll("td");
-        for (let i = 0; i < cells.length - 2; i++) {
-          rowData.push(cells[i].innerText);
-        }
-        dataRows.push(rowData);
-      });
-
-      dataRows.forEach((rowData) => {
+      data.forEach((item) => {
+        const rowData = headers.map((header) => item[header]);
         const excelRow = worksheet.addRow(rowData);
         excelRow.eachCell((cell) => (cell.style = rowStyle));
 
@@ -561,7 +664,11 @@ function dashboardData() {
           widths.push(cellValue.length);
         }
         const maxWidth = Math.max(...widths);
-        column.width = maxWidth + 5;
+        if (headers[index] === "id") {
+          column.width = 10;
+        } else {
+          column.width = maxWidth + 6;
+        }
       });
 
       const buffer = await workbook.xlsx.writeBuffer();

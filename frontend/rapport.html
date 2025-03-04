@@ -72,6 +72,8 @@
           pcChange: 0,
           ecranChange: 0,
           scannerChange: 0,
+          notifications: [],
+          notificationPopupOpen: false,
 
           async init() {
             try {
@@ -104,6 +106,29 @@
             }
             return true;
           },
+          addNotification(message, type = "info") {
+            const notification = {
+              id: Date.now(),
+              message: message,
+              type: type,
+              timestamp: new Date().toLocaleTimeString("fr-FR"),
+            };
+            this.notifications.push(notification);
+
+            setTimeout(() => {
+              this.removeNotification(notification.id);
+            }, 5000);
+          },
+
+          toggleNotificationPopup() {
+            this.notificationPopupOpen = !this.notificationPopupOpen;
+          },
+
+          removeNotification(id) {
+            this.notifications = this.notifications.filter(
+              (notification) => notification.id !== id
+            );
+          },
 
           logout() {
             localStorage.removeItem("role");
@@ -129,139 +154,154 @@
                 }
                 this.generateReportHTML();
               })
-              .catch((error) =>
-                console.error("Error fetching report data:", error)
-              );
+              .catch((error) => {
+                console.error("Error fetching report data:", error);
+                this.addNotification(
+                  "Erreur lors de la récupération des données du rapport.",
+                  "error"
+                );
+              });
           },
           generatePDF() {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
+            try {
+              const { jsPDF } = window.jspdf;
+              const doc = new jsPDF();
 
-            const today = new Date();
-            const formattedDate = today.toLocaleDateString("fr-FR", {
-              year: "numeric",
-              month: "long",
-              day: "numeric",
-            });
-
-            // Set default font (you can experiment with other fonts if needed)
-            doc.setFont("helvetica", "normal"); // Or 'times', 'courier', etc.  You might need to include font files for more exotic fonts.
-
-            doc.setFillColor(240, 240, 240);
-            doc.rect(0, 0, 210, 297, "F");
-
-            doc.setFont("helvetica", "bold");
-            doc.setFontSize(24);
-            doc.setTextColor(34, 57, 91);
-            doc.text("Rapport Mensuel", 20, 25);
-
-            doc.setFont("helvetica", "normal");
-            doc.setFontSize(14);
-            doc.setTextColor(100, 100, 100);
-            doc.text(`Date: ${formattedDate}`, 20, 40);
-
-            doc.setLineWidth(1);
-            doc.setDrawColor(34, 57, 91);
-            doc.line(20, 50, 190, 50);
-
-            // More Detailed Introduction
-            doc.setFontSize(12);
-            const introText = `Ce rapport mensuel fournit une analyse détaillée des statistiques relatives aux employés et aux équipements de l'entreprise. Il met en lumière les évolutions clés, les tendances observées et les indicateurs de performance importants pour le suivi de l'activité. Les données présentées incluent le nombre d'employés et de managers, ainsi que l'inventaire des différents types de matériels, avec une comparaison par rapport au mois précédent pour identifier les changements significatifs.`;
-            const introLines = doc.splitTextToSize(introText, 170);
-            let introY = 60;
-            introLines.forEach((line) => {
-              doc.text(line, 20, introY);
-              introY += 7;
-            });
-            introY += 10;
-
-            const generalData = [
-              ["Nombre d'Employés", this.numEmployees, this.employeeChange],
-              ["Nombre de Managers", this.numManagers, this.managerChange],
-              [
-                "Nombre Total de Matériels",
-                this.totalMaterials,
-                this.totalMaterialsChange,
-              ],
-            ];
-
-            const materialsData = [
-              ["Imprimantes", this.numImprimantes, this.imprimanteChange],
-              ["PCs", this.numPCs, this.pcChange],
-              ["Écrans", this.numEcrans, this.ecranChange],
-              ["Scanners", this.numScanners, this.scannerChange],
-            ];
-
-            function addTable(doc, data, title, yPos) {
-              doc.setFont("helvetica", "bold");
-              doc.setFontSize(16);
-              doc.setTextColor(50, 50, 50);
-
-              const titleWidth = doc.getTextWidth(title);
-              const centerX = doc.internal.pageSize.getWidth() / 2;
-              doc.text(title, centerX - titleWidth / 2, yPos - 10);
-
-              const headers = ["Type", "Nombre", "Changement (%)"]; // Table headers
-              const columnWidths = [60, 40, 40]; // Adjust as needed
-              let xPos = 20;
-
-              // Draw table headers
-              doc.setFontSize(12);
-              doc.setFont("helvetica", "bold");
-              headers.forEach((header, index) => {
-                doc.text(header, xPos, yPos);
-                xPos += columnWidths[index];
+              const today = new Date();
+              const formattedDate = today.toLocaleDateString("fr-FR", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
               });
-              yPos += 7; //Spacing between header and data
-              doc.line(20, yPos, 190, yPos); //Line under header
-              yPos += 7; //Spacing between header and data
 
-              // Draw table rows
+              // Styles de base
               doc.setFont("helvetica", "normal");
-              data.forEach((row) => {
-                xPos = 20;
-                row.forEach((cell, index) => {
-                  let text = cell.toString();
-                  if (index === 2) {
-                    // Format change percentage
-                    const change = parseFloat(cell);
-                    text = (change === 0 ? "0" : change.toFixed(1)) + "%";
-                  }
-                  const cellWidth = doc.getTextWidth(text);
-                  if (index === 1) {
-                    xPos = centerX - cellWidth / 2;
-                  }
-                  doc.text(text, xPos, yPos);
+              doc.setFillColor(240, 240, 240);
+              doc.rect(0, 0, 210, 297, "F");
+
+              // Titre et date
+              doc.setFont("helvetica", "bold");
+              doc.setFontSize(24);
+              doc.setTextColor(34, 57, 91);
+              doc.text("Rapport Mensuel", 20, 25);
+              doc.setFont("helvetica", "normal");
+              doc.setFontSize(14);
+              doc.setTextColor(100, 100, 100);
+              doc.text(`Date: ${formattedDate}`, 20, 40);
+              doc.setLineWidth(1);
+              doc.setDrawColor(34, 57, 91);
+              doc.line(20, 50, 190, 50);
+
+              // Introduction
+              doc.setFontSize(12);
+              const introText = `Ce rapport mensuel fournit une analyse détaillée des statistiques relatives aux employés et aux équipements de l'entreprise. Il met en lumière les évolutions clés, les tendances observées et les indicateurs de performance importants pour le suivi de l'activité. Les données présentées incluent le nombre d'employés et de managers, ainsi que l'inventaire des différents types de matériels, avec une comparaison par rapport au mois précédent pour identifier les changements significatifs.`;
+              const introLines = doc.splitTextToSize(introText, 170);
+              let introY = 60;
+              introLines.forEach((line) => {
+                doc.text(line, 20, introY);
+                introY += 7;
+              });
+              introY += 10;
+
+              // Données
+              const generalData = [
+                ["Nombre d'Employés", this.numEmployees, this.employeeChange],
+                ["Nombre de Managers", this.numManagers, this.managerChange],
+                [
+                  "Nombre Total de Matériels",
+                  this.totalMaterials,
+                  this.totalMaterialsChange,
+                ],
+              ];
+
+              const materialsData = [
+                ["Imprimantes", this.numImprimantes, this.imprimanteChange],
+                ["PCs", this.numPCs, this.pcChange],
+                ["Écrans", this.numEcrans, this.ecranChange],
+                ["Scanners", this.numScanners, this.scannerChange],
+              ];
+
+              // Fonction pour ajouter les tables
+              function addTable(doc, data, title, yPos) {
+                // ... (votre code addTable)
+                doc.setFont("helvetica", "bold");
+                doc.setFontSize(16);
+                doc.setTextColor(50, 50, 50);
+                const titleWidth = doc.getTextWidth(title);
+                const centerX = doc.internal.pageSize.getWidth() / 2;
+                doc.text(title, centerX - titleWidth / 2, yPos - 10);
+                const headers = ["Type", "Nombre", "Changement (%)"];
+                const columnWidths = [60, 40, 40];
+                let xPos = 20;
+
+                doc.setFontSize(12);
+                doc.setFont("helvetica", "bold");
+                headers.forEach((header, index) => {
+                  doc.text(header, xPos, yPos);
                   xPos += columnWidths[index];
                 });
-                yPos += 10;
+                yPos += 7;
+                doc.line(20, yPos, 190, yPos);
+                yPos += 7;
+                doc.setFont("helvetica", "normal");
+
+                data.forEach((row) => {
+                  xPos = 20;
+                  row.forEach((cell, index) => {
+                    let text = cell.toString();
+                    if (index === 2) {
+                      const change = parseFloat(cell);
+                      text = (change === 0 ? "0" : change.toFixed(1)) + "%";
+                    }
+                    const cellWidth = doc.getTextWidth(text);
+                    if (index === 1) {
+                      xPos = centerX - cellWidth / 2;
+                    }
+                    doc.text(text, xPos, yPos);
+                    xPos += columnWidths[index];
+                  });
+                  yPos += 10;
+                });
+
+                return yPos;
+              }
+
+              // Ajout des tables au document
+              let currentY = introY;
+              currentY = addTable(
+                doc,
+                generalData,
+                "Statistiques Générales",
+                currentY + 10
+              );
+              currentY = addTable(
+                doc,
+                materialsData,
+                "Statistiques des Matériels",
+                currentY + 20
+              );
+
+              // Conclusion
+              const conclusionText = `Ce rapport a été généré automatiquement. Les données sont sujettes à changement et peuvent être mises à jour périodiquement. Pour toute question ou demande d'informations complémentaires, veuillez contacter l'administrateur du système.`;
+              const conclusionLines = doc.splitTextToSize(conclusionText, 170);
+              conclusionLines.forEach((line) => {
+                doc.text(line, 20, currentY + 10);
+                currentY += 7;
               });
 
-              return yPos;
+              // Sauvegarde du PDF
+              doc.save("rapport_mensuel.pdf");
+              this.addNotification(
+                "Rapport PDF généré avec succès.",
+                "success"
+              );
+            } catch (error) {
+              console.error("Erreur lors de la génération du PDF :", error);
+              this.addNotification(
+                "Erreur lors de la génération du PDF.",
+                "error"
+              );
             }
-
-            let currentY = introY;
-            currentY = addTable(
-              doc,
-              generalData,
-              "Statistiques Générales",
-              currentY + 10
-            );
-            currentY = addTable(
-              doc,
-              materialsData,
-              "Statistiques des Matériels",
-              currentY + 20
-            );
-
-            const conclusionText = `Ce rapport a été généré automatiquement.  Les données sont sujettes à changement et peuvent être mises à jour périodiquement. Pour toute question ou demande d'informations complémentaires, veuillez contacter l'administrateur du système.`;
-            const conclusionLines = doc.splitTextToSize(conclusionText, 170);
-            conclusionLines.forEach((line) => {
-              doc.text(line, 20, currentY + 10);
-              currentY += 7;
-            });
-
-            doc.save("rapport_mensuel.pdf");
           },
           generateReportHTML() {
             if (!this.reportData) return;
@@ -348,16 +388,26 @@
     x-init="init()"
     class="antialiased text-gray-800 bg-gray-100"
   >
-    <div class="flex h-screen">
+    <!-- Sidebar & Header Navigation -->
+    <div class="flex h-screen overflow-hidden">
       <!-- Sidebar -->
-      <div class="hidden md:flex w-64 bg-white shadow-md" id="sidebar"></div>
+      <div class="hidden md:flex md:flex-shrink-0" id="sidebar"></div>
 
-      <!-- Main Content -->
-      <div class="flex-1 flex flex-col">
-        <!-- Navbar -->
-        <div class="h-16 bg-white shadow flex items-center px-6" id="navbar">
-          <h1 class="text-xl font-semibold">Tableau de Bord</h1>
-        </div>
+      <!-- Main Content Area -->
+      <div class="flex flex-col flex-1 w-0 overflow-hidden">
+        <!-- Top Navigation -->
+        <div
+          class="relative z-10 flex-shrink-0 flex h-16 bg-white shadow-sm"
+          id="navbar"
+        ></div>
+
+        <!-- Mobile sidebar -->
+        <div
+          x-data="{ sidebarOpen: false }"
+          class="fixed inset-0 flex z-40 md:hidden"
+          x-cloak
+          id="sidebar-mobile"
+        ></div>
 
         <main class="p-6">
           <div id="report-content"></div>

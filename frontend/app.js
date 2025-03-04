@@ -74,9 +74,7 @@ function dashboardData() {
 
     async fetchAllMaterials() {
       try {
-        const response = await fetch(
-          "https://gestion-des-materials.onrender.com/api/materials"
-        );
+        const response = await fetch("/api/materials");
         if (!response.ok) {
           throw new Error(`Erreur HTTP ! status: ${response.status}`);
         }
@@ -91,9 +89,7 @@ function dashboardData() {
 
     async fetchEmployees() {
       try {
-        const response = await fetch(
-          "https://gestion-des-materials.onrender.com/api/employees"
-        );
+        const response = await fetch("/api/employees");
         if (!response.ok) {
           throw new Error(`Erreur HTTP ! status: ${response.status}`);
         }
@@ -118,7 +114,16 @@ function dashboardData() {
               mat.name &&
               (mat.name.toLowerCase().includes("pc") ||
                 mat.name.toLowerCase().includes("laptop") ||
-                mat.name.toLowerCase().includes("macbook"))
+                mat.name.toLowerCase().includes("macbook") ||
+                mat.name.toLowerCase().includes("desktop") ||
+                mat.name.toLowerCase().includes("computer") ||
+                mat.name.toLowerCase().includes("workstation") ||
+                mat.name.toLowerCase().includes("notebook") ||
+                mat.name.toLowerCase().includes("netbook") ||
+                mat.name.toLowerCase().includes("chromebook") ||
+                mat.name.toLowerCase().includes("tower") ||
+                mat.name.toLowerCase().includes("unité centrale") ||
+                mat.name.toLowerCase().includes("ordinateur"))
           )
       );
 
@@ -129,7 +134,11 @@ function dashboardData() {
             (mat) =>
               mat.name &&
               (mat.name.toLowerCase().includes("imprimante") ||
-                mat.name.toLowerCase().includes("printer"))
+                mat.name.toLowerCase().includes("printer") ||
+                mat.name.toLowerCase().includes("copier") ||
+                mat.name.toLowerCase().includes("impression") ||
+                mat.name.toLowerCase().includes("impressionante") ||
+                mat.name.toLowerCase().includes("print"))
           )
       );
 
@@ -141,7 +150,12 @@ function dashboardData() {
               mat.name &&
               (mat.name.toLowerCase().includes("ecran") ||
                 mat.name.toLowerCase().includes("screen") ||
-                mat.name.toLowerCase().includes("monitor"))
+                mat.name.toLowerCase().includes("monitor") ||
+                mat.name.toLowerCase().includes("display") ||
+                mat.name.toLowerCase().includes("affichage") ||
+                mat.name.toLowerCase().includes("visualiseur") ||
+                mat.name.toLowerCase().includes("écrant") ||
+                mat.name.toLowerCase().includes("video"))
           )
       );
 
@@ -153,7 +167,12 @@ function dashboardData() {
               mat.name &&
               (mat.name.toLowerCase().includes("scanner") ||
                 mat.name.toLowerCase().includes("numériseur") ||
-                mat.name.toLowerCase().includes("balayage"))
+                mat.name.toLowerCase().includes("balayage") ||
+                mat.name.toLowerCase().includes("scan") ||
+                mat.name.toLowerCase().includes("numérisation") ||
+                mat.name.toLowerCase().includes("digitisateur") ||
+                mat.name.toLowerCase().includes("scaneur") ||
+                mat.name.toLowerCase().includes("imageur"))
           )
       );
     },
@@ -176,18 +195,39 @@ function dashboardData() {
           (mat) =>
             mat.name.toLowerCase().includes("pc") ||
             mat.name.toLowerCase().includes("laptop") ||
-            mat.name.toLowerCase().includes("macbook")
+            mat.name.toLowerCase().includes("macbook") ||
+            mat.name.toLowerCase().includes("desktop") ||
+            mat.name.toLowerCase().includes("computer") ||
+            mat.name.toLowerCase().includes("workstation") ||
+            mat.name.toLowerCase().includes("notebook") ||
+            mat.name.toLowerCase().includes("netbook") ||
+            mat.name.toLowerCase().includes("chromebook") ||
+            mat.name.toLowerCase().includes("tower") ||
+            mat.name.toLowerCase().includes("unité centrale") ||
+            mat.name.toLowerCase().includes("ordinateur")
         ).length;
         const imprimanteCount = this.materials.filter(
           (mat) =>
             mat.name.toLowerCase().includes("imprimante") ||
-            mat.name.toLowerCase().includes("printer")
+            mat.name.toLowerCase().includes("printer") ||
+            mat.name.toLowerCase().includes("copier") ||
+            mat.name.toLowerCase().includes("impression") ||
+            mat.name.toLowerCase().includes("impressionante") ||
+            mat.name.toLowerCase().includes("print")
         ).length;
         const ecranCount = this.materials.filter((mat) =>
           mat.name.toLowerCase().includes("ecran")
         ).length;
-        const scannerCount = this.materials.filter((mat) =>
-          mat.name.toLowerCase().includes("scanner")
+        const scannerCount = this.materials.filter(
+          (mat) =>
+            mat.name.toLowerCase().includes("ecran") ||
+            mat.name.toLowerCase().includes("screen") ||
+            mat.name.toLowerCase().includes("monitor") ||
+            mat.name.toLowerCase().includes("display") ||
+            mat.name.toLowerCase().includes("affichage") ||
+            mat.name.toLowerCase().includes("visualiseur") ||
+            mat.name.toLowerCase().includes("écrant") ||
+            mat.name.toLowerCase().includes("video")
         ).length;
 
         const employeeCountElement = document.getElementById("employee-count");
@@ -228,9 +268,7 @@ function dashboardData() {
 
         this.createMaterialChart();
 
-        const response = await fetch(
-          "https://gestion-des-materials.onrender.com/api/counts"
-        );
+        const response = await fetch("/api/counts");
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -304,9 +342,7 @@ function dashboardData() {
 
     async fetchEmployeeCount() {
       try {
-        const response = await fetch(
-          "https://gestion-des-materials.onrender.com/api/employees"
-        );
+        const response = await fetch("/api/employees");
         if (!response.ok) {
           throw new Error(`Erreur HTTP ! status: ${response.status}`);
         }
@@ -327,21 +363,47 @@ function dashboardData() {
         (mat) =>
           mat.name.toLowerCase().includes("pc") ||
           mat.name.toLowerCase().includes("laptop") ||
-          mat.name.toLowerCase().includes("macbook")
+          mat.name.toLowerCase().includes("macbook") ||
+          mat.name.toLowerCase().includes("desktop") ||
+          mat.name.toLowerCase().includes("computer") ||
+          mat.name.toLowerCase().includes("workstation") ||
+          mat.name.toLowerCase().includes("notebook") ||
+          mat.name.toLowerCase().includes("netbook") ||
+          mat.name.toLowerCase().includes("chromebook") ||
+          mat.name.toLowerCase().includes("tower") ||
+          mat.name.toLowerCase().includes("unité centrale") ||
+          mat.name.toLowerCase().includes("ordinateur")
       ).length;
       const imprimanteCount = this.materials.filter(
         (mat) =>
           mat.name.toLowerCase().includes("imprimante") ||
-          mat.name.toLowerCase().includes("printer")
+          mat.name.toLowerCase().includes("printer") ||
+          mat.name.toLowerCase().includes("copier") ||
+          mat.name.toLowerCase().includes("impression") ||
+          mat.name.toLowerCase().includes("impressionante") ||
+          mat.name.toLowerCase().includes("print")
       ).length;
-      const ecranCount = this.materials.filter((mat) =>
-        mat.name.toLowerCase().includes("ecran")
+      const ecranCount = this.materials.filter(
+        (mat) =>
+          mat.name.toLowerCase().includes("ecran") ||
+          mat.name.toLowerCase().includes("screen") ||
+          mat.name.toLowerCase().includes("monitor") ||
+          mat.name.toLowerCase().includes("display") ||
+          mat.name.toLowerCase().includes("affichage") ||
+          mat.name.toLowerCase().includes("visualiseur") ||
+          mat.name.toLowerCase().includes("écrant") ||
+          mat.name.toLowerCase().includes("video")
       ).length;
       const scannerCount = this.materials.filter(
         (mat) =>
           mat.name.toLowerCase().includes("scanner") ||
           mat.name.toLowerCase().includes("numériseur") ||
-          mat.name.toLowerCase().includes("balayage")
+          mat.name.toLowerCase().includes("balayage") ||
+          mat.name.toLowerCase().includes("scan") ||
+          mat.name.toLowerCase().includes("numérisation") ||
+          mat.name.toLowerCase().includes("digitisateur") ||
+          mat.name.toLowerCase().includes("scaneur") ||
+          mat.name.toLowerCase().includes("imageur")
       ).length;
       const otherCount =
         this.materials.length -
@@ -390,7 +452,7 @@ function dashboardData() {
     },
 
     fetchNotes() {
-      fetch("https://gestion-des-materials.onrender.com/api/notes")
+      fetch("/api/notes")
         .then((response) => response.json())
         .then((data) => {
           this.notes = data;
@@ -410,7 +472,7 @@ function dashboardData() {
 
       const noteWithUsername = { ...this.newNote, manager: username };
 
-      fetch("https://gestion-des-materials.onrender.com/api/notes", {
+      fetch("/api/notes", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -454,7 +516,7 @@ function dashboardData() {
         return;
       }
 
-      fetch(`https://gestion-des-materials.onrender.com/api/notes/${id}`, {
+      fetch(`/api/notes/${id}`, {
         method: "DELETE",
       })
         .then((response) => {

@@ -1,262 +1,471 @@
 <!DOCTYPE html>
 <html lang="fr">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Tableau de Bord - Manager</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
-        rel="stylesheet">
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"
+    ></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
     <script src="tailwind.js"></script>
-    <link href="style.css" rel="stylesheet">
+    <link href="style.css" rel="stylesheet" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
-</head>
+  </head>
 
-<body x-data="dashboardData()" x-init="setTimeout(() => { init(); }, 100)" class="antialiased text-gray-800">
-
-    <!-- Sidebar & Header Navigation -->
+  <body
+    x-data="dashboardData()"
+    x-init="setTimeout(() => { init(); }, 100)"
+    class="antialiased text-gray-800"
+  >
     <div class="flex h-screen overflow-hidden">
-        <div class="hidden md:flex md:flex-shrink-0" id="sidebar"></div>
-        <!-- Main Content Area -->
-        <div class="flex flex-col flex-1 w-0 overflow-hidden">
-            <!-- Top Navigation -->
-            <div class="relative z-10 flex-shrink-0 flex h-16 bg-white shadow-sm" id="navbar-manager"></div>
+      <div class="hidden md:flex md:flex-shrink-0" id="sidebar"></div>
+      <div class="flex flex-col flex-1 w-0 overflow-hidden">
+        <div
+          class="relative z-10 flex-shrink-0 flex h-16 bg-white shadow-sm"
+          id="navbar-manager"
+        ></div>
 
-            <!-- Mobile sidebar -->
-            <div x-show="sidebarOpen" class="fixed inset-0 flex z-40 md:hidden" x-cloak id="sidebar-mobile"></div>
+        <div
+          x-show="sidebarOpen"
+          class="fixed inset-0 flex z-40 md:hidden"
+          x-cloak
+          id="sidebar-mobile"
+        ></div>
 
-            <!-- Main Content -->
-            <main class="flex-1 relative overflow-y-auto focus:outline-none">
-                <div class="py-6 px-4 sm:px-6 lg:px-8">
-
-                    <section class="mb-8">
-                        <div class="flex flex-wrap items-center justify-between mb-5">
-                            <h2 class="text-xl font-bold text-moroccan-blue flex items-center">
-                                <i class="fa-solid fa-box-open mr-2 text-moroccan-teal"></i>
-                                Tout les matériels
-                            </h2>
-                            <div class="flex space-x-2 mt-2 sm:mt-0">
-                                <div class="relative">
-                                    <input type="text" placeholder="Rechercher..." x-model="searchQueryMaterials"
-                                        @input="filterMaterials(searchQueryMaterials)"
-                                        class="pl-10 pr-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-moroccan-teal focus:border-transparent">
-                                    <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
-                                </div>
-                                <button
-                                    class="p-2 rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors">
-                                    <i class="fas fa-filter"></i>
-                                </button>
-                                <button @click="openAddMaterialModal"
-                                    class="p-2 rounded-lg bg-moroccan-blue text-white hover:bg-moroccan-blue-700 transition-colors">
-                                    <i class="fas fa-plus mr-2"></i> Ajouter
-                                </button>
-                                <button @click="exportToExcelMaterials"
-                                    class="p-2 rounded-lg bg-moroccan-teal text-white hover:bg-moroccan-teal-700 transition-colors">
-                                    <i class="fas fa-file-excel mr-2"></i> Exporter
-                                </button>
-                            </div>
-                        </div>
-
-                        <div class="bg-white rounded-xl card-shadow overflow-hidden">
-                            <div class="overflow-x-auto table-scroll responsive-table">
-                                <table class="w-full text-sm">
-                                    <thead>
-                                        <tr
-                                            class="bg-gradient-to-r from-moroccan-blue/10 to-moroccan-teal/10 text-gray-700">
-                                            <th class="p-4 text-left">Nom du matériel</th>
-                                            <th class="p-4 text-left">Marque</th>
-                                            <th class="p-4 text-left">Numéro de Série</th>
-                                            <th class="p-4 text-left">Status</th>
-                                            <th class="p-4 text-left">Image</th>
-                                            <th class="p-4 text-right">Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="materials-table">
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-
-
-                        <template x-if="showMaterialModal">
-                            <div class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-                                <div class="modal-content w-full max-w-md p-6 bg-white rounded-lg">
-                                    <h2 class="text-2xl font-bold mb-4"
-                                        x-text="editingMaterial.id ? 'Modifier le matériel' : 'Ajouter un matériel'">
-                                    </h2>
-
-                                    <form @submit.prevent="saveMaterial">
-                                        <div class="mb-4">
-                                            <label for="material-name"
-                                                class="block text-gray-700 font-bold mb-2">Nom:</label>
-                                            <input type="text" id="material-name" x-model="editingMaterial.name"
-                                                @input="autocompleteMaterialName" list="material-name-suggestions"
-                                                required
-                                                class="w-full border border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500">
-                                            <datalist id="material-name-suggestions">
-                                                <template x-for="material in filteredMaterialNames" :key="material.id">
-                                                    <option :value="material.name"></option>
-                                                </template>
-                                            </datalist>
-                                        </div>
-
-                                        <div class="mb-4">
-                                            <label for="material-marque"
-                                                class="block text-gray-700 font-bold mb-2">Marque:</label>
-                                            <input type="text" id="material-marque" x-model="editingMaterial.marque"
-                                                @input="autocompleteMaterialMarque" list="material-marque-suggestions"
-                                                required
-                                                class="w-full border border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500">
-                                            <datalist id="material-marque-suggestions">
-                                                <template x-for="material in filteredMaterialMarques"
-                                                    :key="material.id">
-                                                    <option :value="material.marque"></option>
-                                                </template>
-                                            </datalist>
-                                        </div>
-
-                                        <div class="mb-4">
-                                            <label for="material-serial"
-                                                class="block text-gray-700 font-bold mb-2">Numéro de Série:</label>
-                                            <input type="text" id="material-serial"
-                                                x-model="editingMaterial.serialNumber" required
-                                                class="w-full border border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500">
-                                        </div>
-
-                                        <div class="mb-4">
-                                            <label for="material-status"
-                                                class="block text-gray-700 font-bold mb-2">Statut:</label>
-                                            <select id="material-status" x-model="editingMaterial.status" required
-                                                class="w-full border border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500">
-                                                <option selected>Choisir</option>
-                                                <option value="Disponible">Disponible</option>
-                                                <option value="En Utilisation">En Utilisation</option>
-                                                <option value="défectueux">Défectueux</option>
-                                            </select>
-                                        </div>
-
-                                        <div class="mb-4">
-                                            <label for="material-image"
-                                                class="block text-gray-700 font-bold mb-2">Image:</label>
-                                            <input type="file" id="material-image" @change="handleFileUpload"
-                                                class="w-full border border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500">
-                                            <template x-if="imagePreview">
-                                                <div
-                                                    class="mt-2 w-[50px] h-[50px] rounded-lg bg-gray-100 flex items-center justify-center overflow-hidden">
-                                                    <img :src="imagePreview" alt="Image Preview"
-                                                        class="object-cover w-full h-full">
-                                                </div>
-                                            </template>
-                                            <template x-if="editingMaterial.image && !imagePreview">
-                                                <div
-                                                    class="mt-2 w-[50px] h-[50px] rounded-lg bg-gray-100 flex items-center justify-center overflow-hidden">
-                                                    <img :src="getImageUrl(editingMaterial.image)" alt="Current Image"
-                                                        class="object-cover w-full h-full">
-                                                </div>
-                                            </template>
-                                        </div>
-
-
-                                        <div class="flex justify-end">
-                                            <button type="button" @click="closeMaterialModal"
-                                                class="px-4 py-2 mr-2 bg-gray-300 rounded-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500">
-                                                Annuler
-                                            </button>
-                                            <button type="submit"
-                                                class="px-4 py-2 bg-moroccan-blue text-white rounded-md hover:bg-moroccan-blue-700 focus:outline-none focus:ring-2 focus:ring-moroccan-blue-500">
-                                                Enregistrer
-                                            </button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </template>
-
-                        <template x-if="showMaterialModal2">
-                            <div class="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-75 z-50">
-                                <div class="bg-white rounded-lg p-8 max-w-md w-full">
-                                    <h2 class="text-2xl font-bold mb-4">Détails du matériel</h2>
-
-                                    <div class="mb-4">
-                                        <label class="block text-gray-700 font-bold mb-2">Nom:</label>
-                                        <span x-text="editingMaterial.name"></span>
-                                    </div>
-                                    <div class="mb-4">
-                                        <label class="block text-gray-700 font-bold mb-2">Marque:</label>
-                                        <span x-text="editingMaterial.marque"></span>
-                                    </div>
-                                    <div class="mb-4">
-                                        <label class="block text-gray-700 font-bold mb-2">Numéro de Série:</label>
-                                        <span x-text="editingMaterial.serialNumber"></span>
-                                    </div>
-                                    <div class="mb-4">
-                                        <label class="block text-gray-700 font-bold mb-2">Image:</label>
-                                        <div
-                                            class="w-24 h-24 rounded-lg bg-gray-100 flex items-center justify-center overflow-hidden">
-                                            <img :src="getImageUrl(editingMaterial.image)" :alt="editingMaterial.name"
-                                                class="object-cover w-full h-full" x-show="editingMaterial.image">
-                                            <template x-if="!editingMaterial.image">
-                                                <i class="fas fa-image text-4xl text-gray-400"></i> </template>
-
-                                        </div>
-                                    </div>
-
-                                    <div class="mb-4">
-                                        <label class="block text-gray-700 font-bold mb-2">Date de création:</label>
-                                        <span x-text="formatDate(editingMaterial.createdAt)"></span>
-                                    </div>
-
-                                    <div class="flex justify-end">
-                                        <button @click="closeMaterialDetailsModal"
-                                            class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded">Fermer</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </template>
-
-                    </section>
-
+        <main class="flex-1 relative overflow-y-auto focus:outline-none">
+          <div class="py-6 px-4 sm:px-6 lg:px-8">
+            <section class="mb-8">
+              <div class="flex flex-wrap items-center justify-between mb-5">
+                <h2
+                  class="text-xl font-bold text-moroccan-blue flex items-center"
+                >
+                  <i class="fa-solid fa-box-open mr-2 text-moroccan-teal"></i>
+                  Tout les matériels
+                </h2>
+                <div class="flex space-x-2 mt-2 sm:mt-0">
+                  <div class="relative">
+                    <input
+                      type="text"
+                      placeholder="Rechercher..."
+                      x-model="searchQueryMaterials"
+                      @input="filterMaterials(searchQueryMaterials)"
+                      class="pl-10 pr-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-moroccan-teal focus:border-transparent"
+                    />
+                    <i
+                      class="fas fa-search absolute left-3 top-3 text-gray-400"
+                    ></i>
+                  </div>
+                  <div class="relative">
+                    <button
+                      @click="toggleSortDropdown"
+                      class="p-2 rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors focus:outline-none focus:ring-2 focus:ring-moroccan-teal"
+                    >
+                      <i class="fas fa-filter"></i>
+                    </button>
+                    <div
+                      x-show="sortDropdownOpen"
+                      :class="{ 'hidden': !sortDropdownOpen }"
+                      @click.away="sortDropdownOpen = false"
+                      class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-md overflow-hidden z-50 border border-gray-200"
+                    >
+                      <ul class="py-1">
+                        <li>
+                          <button
+                            @click="sortMaterialsByName('asc')"
+                            class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 focus:outline-none"
+                          >
+                            Nom (A-Z)
+                          </button>
+                        </li>
+                        <li>
+                          <button
+                            @click="sortMaterialsByName('desc')"
+                            class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 focus:outline-none"
+                          >
+                            Nom (Z-A)
+                          </button>
+                        </li>
+                        <li>
+                          <button
+                            @click="sortMaterialsByDate('asc')"
+                            class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 focus:outline-none"
+                          >
+                            Date de Réception (Plus Ancien - Plus Récent)
+                          </button>
+                        </li>
+                        <li>
+                          <button
+                            @click="sortMaterialsByDate('desc')"
+                            class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 focus:outline-none"
+                          >
+                            Date de Réception (Plus Récent - Plus Ancien)
+                          </button>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                  <button
+                    @click="openAddMaterialModal"
+                    class="p-2 rounded-lg bg-moroccan-blue text-white hover:bg-moroccan-blue-700 transition-colors"
+                  >
+                    <i class="fas fa-plus mr-2"></i> Ajouter
+                  </button>
+                  <button
+                    @click="exportToExcelMaterials"
+                    class="p-2 rounded-lg bg-moroccan-teal text-white hover:bg-moroccan-teal-700 transition-colors"
+                  >
+                    <i class="fas fa-file-excel mr-2"></i> Exporter
+                  </button>
                 </div>
-            </main>
-        </div>
+              </div>
+
+              <div class="bg-white rounded-xl card-shadow overflow-hidden">
+                <div class="overflow-x-auto table-scroll responsive-table">
+                  <table class="w-full text-sm">
+                    <thead>
+                      <tr
+                        class="bg-gradient-to-r from-moroccan-blue/10 to-moroccan-teal/10 text-gray-700"
+                      >
+                        <th class="p-4 text-left">Nom du matériel</th>
+                        <th class="p-4 text-left">Marque</th>
+                        <th class="p-4 text-left">Numéro de Série</th>
+                        <th class="p-4 text-left">Numéro de Marché</th>
+                        <th class="p-4 text-left">Date de Réception</th>
+                        <th class="p-4 text-left">Status</th>
+                        <th class="p-4 text-left">Image</th>
+                        <th class="p-4 text-right">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody id="materials-table"></tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div class="flex justify-center mt-6 items-center space-x-4">
+                <button
+                  @click="prevPage()"
+                  :disabled="page === 1"
+                  class="flex items-center justify-center px-4 py-2 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                  <i class="fas fa-chevron-left mr-2"></i> Précédent
+                </button>
+                <span class="text-sm font-medium text-gray-600">
+                  Page <span x-text="page"></span> sur
+                  <span x-text="totalPages"></span>
+                </span>
+                <button
+                  @click="nextPage()"
+                  :disabled="page === totalPages"
+                  class="flex items-center justify-center px-4 py-2 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                  Suivant <i class="fas fa-chevron-right ml-2"></i>
+                </button>
+              </div>
+
+              <template x-if="showMaterialModal">
+                <div
+                  class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
+                >
+                  <div
+                    class="modal-content w-full max-w-md p-6 bg-white rounded-lg"
+                  >
+                    <h2
+                      class="text-2xl font-bold mb-4"
+                      x-text="editingMaterial.id ? 'Modifier le matériel' : 'Ajouter un matériel'"
+                    ></h2>
+
+                    <form @submit.prevent="saveMaterial">
+                      <div class="mb-4">
+                        <label
+                          for="material-name"
+                          class="block text-gray-700 font-bold mb-2"
+                          >Nom:</label
+                        >
+                        <input
+                          type="text"
+                          id="material-name"
+                          x-model="editingMaterial.name"
+                          @input="autocompleteMaterialName"
+                          list="material-name-suggestions"
+                          required
+                          class="w-full border border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                        />
+                        <datalist id="material-name-suggestions">
+                          <template
+                            x-for="material in filteredMaterialNames"
+                            :key="material.id"
+                          >
+                            <option :value="material.name"></option>
+                          </template>
+                        </datalist>
+                      </div>
+
+                      <div class="mb-4">
+                        <label
+                          for="material-marque"
+                          class="block text-gray-700 font-bold mb-2"
+                          >Marque:</label
+                        >
+                        <input
+                          type="text"
+                          id="material-marque"
+                          x-model="editingMaterial.marque"
+                          @input="autocompleteMaterialMarque"
+                          list="material-marque-suggestions"
+                          required
+                          class="w-full border border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                        />
+                        <datalist id="material-marque-suggestions">
+                          <template
+                            x-for="material in filteredMaterialMarques"
+                            :key="material.id"
+                          >
+                            <option :value="material.marque"></option>
+                          </template>
+                        </datalist>
+                      </div>
+
+                      <div class="mb-4">
+                        <label
+                          for="material-serial"
+                          class="block text-gray-700 font-bold mb-2"
+                          >Numéro de Série:</label
+                        >
+                        <input
+                          type="text"
+                          id="material-serial"
+                          x-model="editingMaterial.serialNumber"
+                          required
+                          class="w-full border border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                        />
+                      </div>
+
+                      <div class="mb-4">
+                        <label
+                          for="material-numero"
+                          class="block text-gray-700 font-bold mb-2"
+                          >Numéro de Matériel:</label
+                        >
+                        <input
+                          type="date"
+                          id="material-numero"
+                          x-model="editingMaterial.numeroMateriel"
+                          required
+                          class="w-full border border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                        />
+                      </div>
+
+                      <div class="mb-4">
+                        <label
+                          for="material-date-reception"
+                          class="block text-gray-700 font-bold mb-2"
+                          >Date de Réception:</label
+                        >
+                        <input
+                          type="date"
+                          id="material-date-reception"
+                          x-model="editingMaterial.dateReception"
+                          required
+                          class="w-full border border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                        />
+                      </div>
+
+                      <div class="mb-4">
+                        <label
+                          for="material-status"
+                          class="block text-gray-700 font-bold mb-2"
+                          >Statut:</label
+                        >
+                        <select
+                          id="material-status"
+                          x-model="editingMaterial.status"
+                          required
+                          class="w-full border border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                        >
+                          <option selected>Choisir</option>
+                          <option value="Disponible">Disponible</option>
+                          <option value="En Utilisation">En Utilisation</option>
+                          <option value="défectueux">Défectueux</option>
+                        </select>
+                      </div>
+
+                      <div class="mb-4">
+                        <label
+                          for="material-image"
+                          class="block text-gray-700 font-bold mb-2"
+                          >Image:</label
+                        >
+                        <input
+                          type="file"
+                          id="material-image"
+                          @change="handleFileUpload"
+                          class="w-full border border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                        />
+                        <template x-if="imagePreview">
+                          <div
+                            class="mt-2 w-[50px] h-[50px] rounded-lg bg-gray-100 flex items-center justify-center overflow-hidden"
+                          >
+                            <img
+                              :src="imagePreview"
+                              alt="Image Preview"
+                              class="object-cover w-full h-full"
+                            />
+                          </div>
+                        </template>
+                        <template x-if="editingMaterial.image && !imagePreview">
+                          <div
+                            class="mt-2 w-[50px] h-[50px] rounded-lg bg-gray-100 flex items-center justify-center overflow-hidden"
+                          >
+                            <img
+                              :src="getImageUrl(editingMaterial.image)"
+                              alt="Current Image"
+                              class="object-cover w-full h-full"
+                            />
+                          </div>
+                        </template>
+                      </div>
+
+                      <div class="flex justify-end">
+                        <button
+                          type="button"
+                          @click="closeMaterialModal"
+                          class="px-4 py-2 mr-2 bg-gray-300 rounded-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500"
+                        >
+                          Annuler
+                        </button>
+                        <button
+                          type="submit"
+                          class="px-4 py-2 bg-moroccan-blue text-white rounded-md hover:bg-moroccan-blue-700 focus:outline-none focus:ring-2 focus:ring-moroccan-blue-500"
+                        >
+                          Enregistrer
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </template>
+
+              <template x-if="showMaterialModal2">
+                <div
+                  class="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-75 z-50"
+                >
+                  <div class="bg-white rounded-lg p-8 max-w-md w-full">
+                    <h2 class="text-2xl font-bold mb-4">Détails du matériel</h2>
+
+                    <div class="mb-4">
+                      <label class="block text-gray-700 font-bold mb-2"
+                        >Nom:</label
+                      >
+                      <span x-text="editingMaterial.name"></span>
+                    </div>
+                    <div class="mb-4">
+                      <label class="block text-gray-700 font-bold mb-2"
+                        >Marque:</label
+                      >
+                      <span x-text="editingMaterial.marque"></span>
+                    </div>
+                    <div class="mb-4">
+                      <label class="block text-gray-700 font-bold mb-2"
+                        >Numéro de Série:</label
+                      >
+                      <span x-text="editingMaterial.serialNumber"></span>
+                    </div>
+                    <div class="mb-4">
+                      <label class="block text-gray-700 font-bold mb-2"
+                        >Numéro de Matériel:</label
+                      >
+                      <span x-text="editingMaterial.numeroMateriel"></span>
+                    </div>
+                    <div class="mb-4">
+                      <label class="block text-gray-700 font-bold mb-2"
+                        >Date de Réception:</label
+                      >
+                      <span
+                        x-text="formatDate(editingMaterial.dateReception)"
+                      ></span>
+                    </div>
+                    <div class="mb-4">
+                      <label class="block text-gray-700 font-bold mb-2"
+                        >Image:</label
+                      >
+                      <div
+                        class="w-24 h-24 rounded-lg bg-gray-100 flex items-center justify-center overflow-hidden"
+                      >
+                        <img
+                          :src="getImageUrl(editingMaterial.image)"
+                          :alt="editingMaterial.name"
+                          class="object-cover w-full h-full"
+                          x-show="editingMaterial.image"
+                        />
+                        <template x-if="!editingMaterial.image">
+                          <i class="fas fa-image text-4xl text-gray-400"></i>
+                        </template>
+                      </div>
+                    </div>
+
+                    <div class="mb-4">
+                      <label class="block text-gray-700 font-bold mb-2"
+                        >Date de création:</label
+                      >
+                      <span
+                        x-text="formatDate(editingMaterial.createdAt)"
+                      ></span>
+                    </div>
+
+                    <div class="flex justify-end">
+                      <button
+                        @click="closeMaterialDetailsModal"
+                        class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded"
+                      >
+                        Fermer
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </template>
+            </section>
+          </div>
+        </main>
+      </div>
     </div>
 
-    <!-- Alpine.js Data -->
     <script src="materiel.js"></script>
 
     <script>
-        fetch('sidebar.html')
-            .then(response => response.text())
-            .then(html => {
-                document.getElementById('sidebar').innerHTML = html;
-            });
-        fetch('sidebar-mobile.html')
-            .then(response => response.text())
-            .then(html => {
-                document.getElementById('sidebar-mobile').innerHTML = html;
-            });
-        fetch('navbar-manager.html')
-            .then(response => response.text())
-            .then(html => {
-                document.getElementById('navbar-manager').innerHTML = html;
-                setUsername();
-            });
+      fetch("sidebar.html")
+        .then((response) => response.text())
+        .then((html) => {
+          document.getElementById("sidebar").innerHTML = html;
+        });
+      fetch("sidebar-mobile.html")
+        .then((response) => response.text())
+        .then((html) => {
+          document.getElementById("sidebar-mobile").innerHTML = html;
+        });
+      fetch("navbar-manager.html")
+        .then((response) => response.text())
+        .then((html) => {
+          document.getElementById("navbar-manager").innerHTML = html;
+          setUsername();
+        });
 
-        function setUsername() { 
-            const username = localStorage.getItem('username');
-            const usernameDisplay = document.getElementById('username-display');
-            if (usernameDisplay) {
-                usernameDisplay.textContent = username;
-            } else {
-                console.error("username-display element NOT FOUND!"); 
-            }
+      function setUsername() {
+        const username = localStorage.getItem("username");
+        const usernameDisplay = document.getElementById("username-display");
+        if (usernameDisplay) {
+          usernameDisplay.textContent = username;
+        } else {
+          console.error("username-display element NOT FOUND!");
         }
+      }
     </script>
-
-</body>
-
+  </body>
 </html>
