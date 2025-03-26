@@ -80,9 +80,7 @@ function dashboardData() {
 
     async fetchAllMaterials() {
       try {
-        const response = await fetch(
-          "https://gestion-des-materials.onrender.com/api/materials"
-        );
+        const response = await fetch("/api/materials");
         if (!response.ok) {
           throw new Error(`Erreur HTTP ! status: ${response.status}`);
         }
@@ -97,9 +95,7 @@ function dashboardData() {
 
     async fetchEmployees() {
       try {
-        const response = await fetch(
-          "https://gestion-des-materials.onrender.com/api/employees"
-        );
+        const response = await fetch("/api/employees");
         if (!response.ok) {
           throw new Error(`Erreur HTTP ! status: ${response.status}`);
         }
@@ -124,7 +120,16 @@ function dashboardData() {
               mat.name &&
               (mat.name.toLowerCase().includes("pc") ||
                 mat.name.toLowerCase().includes("laptop") ||
-                mat.name.toLowerCase().includes("macbook"))
+                mat.name.toLowerCase().includes("macbook") ||
+                mat.name.toLowerCase().includes("desktop") ||
+                mat.name.toLowerCase().includes("computer") ||
+                mat.name.toLowerCase().includes("workstation") ||
+                mat.name.toLowerCase().includes("notebook") ||
+                mat.name.toLowerCase().includes("netbook") ||
+                mat.name.toLowerCase().includes("chromebook") ||
+                mat.name.toLowerCase().includes("tower") ||
+                mat.name.toLowerCase().includes("unité centrale") ||
+                mat.name.toLowerCase().includes("ordinateur"))
           )
       );
 
@@ -135,7 +140,11 @@ function dashboardData() {
             (mat) =>
               mat.name &&
               (mat.name.toLowerCase().includes("imprimante") ||
-                mat.name.toLowerCase().includes("printer"))
+              mat.name.toLowerCase().includes("printer") ||
+              mat.name.toLowerCase().includes("copier") ||
+              mat.name.toLowerCase().includes("impression") ||
+              mat.name.toLowerCase().includes("impressionante") ||
+              mat.name.toLowerCase().includes("print"))
           )
       );
 
@@ -146,8 +155,13 @@ function dashboardData() {
             (mat) =>
               mat.name &&
               (mat.name.toLowerCase().includes("ecran") ||
-                mat.name.toLowerCase().includes("screen") ||
-                mat.name.toLowerCase().includes("monitor"))
+              mat.name.toLowerCase().includes("screen") ||
+              mat.name.toLowerCase().includes("monitor") ||
+              mat.name.toLowerCase().includes("display") ||
+              mat.name.toLowerCase().includes("affichage") ||
+              mat.name.toLowerCase().includes("visualiseur") ||
+              mat.name.toLowerCase().includes("écrant") ||
+              mat.name.toLowerCase().includes("video"))
           )
       );
     },
@@ -163,9 +177,7 @@ function dashboardData() {
 
     async fetchCounts() {
       try {
-        const response = await fetch(
-          "https://gestion-des-materials.onrender.com/api/counts"
-        );
+        const response = await fetch("/api/counts");
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -303,7 +315,7 @@ function dashboardData() {
     },
 
     fetchNotes() {
-      fetch("https://gestion-des-materials.onrender.com/api/notes")
+      fetch("/api/notes")
         .then((response) => {
           if (!response.ok) {
             console.error(`HTTP error! status: ${response.status}`);
@@ -336,7 +348,7 @@ function dashboardData() {
 
       const noteWithUsername = { ...this.newNote, manager: username };
 
-      fetch("https://gestion-des-materials.onrender.com/api/notes", {
+      fetch("/api/notes", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -380,7 +392,7 @@ function dashboardData() {
         return;
       }
 
-      fetch(`https://gestion-des-materials.onrender.com/api/notes/${id}`, {
+      fetch(`/api/notes/${id}`, {
         method: "DELETE",
       })
         .then((response) => {

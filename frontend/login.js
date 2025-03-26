@@ -7,7 +7,7 @@ document
     const password = document.getElementById("password").value;
 
     const response = await fetch(
-      "https://gestion-des-materials.onrender.com/api/login",
+      "/api/login",
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },

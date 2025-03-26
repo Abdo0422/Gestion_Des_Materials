@@ -1,13 +1,13 @@
 function ipAddressesData() {
   return {
     adressesIP: [],
-    materiels: [],
+    employees: [],
     adressesIPFiltrees: [],
     recherche: "",
     afficherModal: false,
     adresseIPEnCoursEdition: {},
-    materielSelectionne: null,
-    materielsDisponibles: [],
+    employeeSelectionne: null,
+    employeesDisponibles: [],
     notifications: [],
     notificationPopupOpen: false,
 
@@ -18,12 +18,15 @@ function ipAddressesData() {
         return;
       }
       const isAdmin = localStorage.getItem("isAdmin") === "true";
-        if (isAdmin) {
-          window.location.href = "admin-dashboard.html";
-          return;
-        }
+      if (isAdmin) {
+        window.location.href = "admin-dashboard.html";
+        return;
+      }
+      if (this.employees.length > 0) {
+        this.employeeSelectionne = this.employees[0];
+      }
       await this.chargerAdressesIP();
-      await this.chargerMateriels();
+      await this.chargerEmployees();
       this.adressesIPFiltrees = [...this.adressesIP];
       this.renderTable();
     },
@@ -119,19 +122,19 @@ function ipAddressesData() {
 
       const titleRow = worksheet.addRow(["Liste des Adresses IP"]);
       titleRow.getCell(1).style = titleStyle;
-      worksheet.mergeCells("A1:D1");
+      worksheet.mergeCells("A1:D1"); // Adjusted merge cells
 
       const dateRow = worksheet.addRow([
         `Exporté le : ${new Date().toLocaleString("fr-FR")}`,
       ]);
       dateRow.getCell(1).style = dateStyle;
-      worksheet.mergeCells("A2:D2");
+      worksheet.mergeCells("A2:D2"); // Adjusted merge cells
 
       const headers = [
         "Nom du matériel",
-        "Marque",
         "Numéro de Série",
         "Adresse IP",
+        "Nom Employé", // Adjusted headers
       ];
       const headerRow = worksheet.addRow(headers);
       headerRow.eachCell((cell) => (cell.style = headerStyle));
@@ -182,9 +185,7 @@ function ipAddressesData() {
 
     async chargerAdressesIP() {
       try {
-        const reponse = await fetch(
-          "https://gestion-des-materials.onrender.com/api/ip-addresses"
-        );
+        const reponse = await fetch("/api/ip-addresses");
         if (!reponse.ok)
           throw new Error(`Erreur HTTP ! Statut : ${reponse.status}`);
         this.adressesIP = await reponse.json();
@@ -200,9 +201,10 @@ function ipAddressesData() {
       const query = this.recherche.toLowerCase();
       this.adressesIPFiltrees = this.adressesIP.filter((item) => {
         return (
+          (item.employeeName &&
+            item.employeeName.toLowerCase().includes(query)) ||
           (item.materialName &&
             item.materialName.toLowerCase().includes(query)) ||
-          (item.marque && item.marque.toLowerCase().includes(query)) ||
           (item.serialNumber &&
             item.serialNumber.toLowerCase().includes(query)) ||
           (item.ipAddress && item.ipAddress.toLowerCase().includes(query))
@@ -211,56 +213,66 @@ function ipAddressesData() {
       this.renderTable();
     },
 
-    async chargerMateriels() {
+    async chargerEmployees() {
       try {
-        const reponse = await fetch(
-          "https://gestion-des-materials.onrender.com/api/materials"
-        );
-        if (!reponse.ok)
+        const reponse = await fetch("/api/employees");
+        if (!reponse.ok) {
           throw new Error(`Erreur HTTP ! Statut : ${reponse.status}`);
-        const allMateriels = await reponse.json();
-
-        this.materiels = allMateriels.filter(
-          (materiel) => materiel.status === "En Utilisation"
-        );
-        this.updateAvailableMaterials();
+        }
+        const allEmployees = await reponse.json();
+        this.employees = allEmployees;
+        console.log("Employees loaded:", this.employees);
+        this.updateAvailableEmployees();
       } catch (erreur) {
-        console.error("Erreur lors de la récupération des matériels :", erreur);
+        console.error("Erreur lors de la récupération des employés :", erreur);
       }
     },
 
-    updateAvailableMaterials() {
-      const usedMaterialNames = this.adressesIP.map((ip) => ip.materialName);
-      this.materielsDisponibles = this.materiels.filter(
-        (materiel) => !usedMaterialNames.includes(materiel.name)
+    updateAvailableEmployees() {
+      const usedEmployeeNames = this.adressesIP.map((ip) => ip.employeeName);
+      this.employeesDisponibles = this.employees.filter(
+        (employee) => !usedEmployeeNames.includes(employee.name)
       );
     },
 
     ouvrirModalAjouter() {
       this.adresseIPEnCoursEdition = {};
-      this.materielSelectionne = null;
+      this.employeeSelectionne = null;
       this.afficherModal = true;
-      this.updateAvailableMaterials();
+      this.updateAvailableEmployees();
     },
     ouvrirModalModifier(adresseIP) {
       this.adresseIPEnCoursEdition = { ...adresseIP };
-      this.materielSelectionne = this.materiels.find(
-        (m) => m.name === adresseIP.materialName
+      console.log("Modal opened with:", this.adresseIPEnCoursEdition); // Add this line
+
+      this.employeeSelectionne = this.employees.find(
+        (e) => e.name === this.adresseIPEnCoursEdition.employeeName
       );
+
       this.afficherModal = true;
-      this.updateAvailableMaterials();
+      this.updateAvailableEmployees();
     },
-    gererChangementMateriel(event) {
-      const nomMaterielSelectionne = event.target.value;
-      this.materielSelectionne = this.materiels.find(
-        (m) => m.name === nomMaterielSelectionne
+
+    gererChangementEmploye(event) {
+      const nomEmployeSelectionne = event.target.value;
+      this.employeeSelectionne = this.employees.find(
+        (e) => e.name === nomEmployeSelectionne
       );
-      this.adresseIPEnCoursEdition.marque = this.materielSelectionne
-        ? this.materielSelectionne.marque
+      this.adresseIPEnCoursEdition.materialName = this.employeeSelectionne
+        ? this.employeeSelectionne.materials &&
+          this.employeeSelectionne.materials.length > 0
+          ? this.employeeSelectionne.materials[0].name
+          : ""
         : "";
-      this.adresseIPEnCoursEdition.serialNumber = this.materielSelectionne
-        ? this.materielSelectionne.serialNumber
-        : "";
+      this.adresseIPEnCoursEdition.serialNumber =
+        this.employeeSelectionne &&
+        this.employeeSelectionne.materials &&
+        this.employeeSelectionne.materials.length > 0
+          ? this.employeeSelectionne.materials[0].serialNumber
+          : "";
+      this.adresseIPEnCoursEdition.employeeName = this.employeeSelectionne
+        ? this.employeeSelectionne.name
+        : ""; //added employee name
     },
     fermerModal() {
       this.afficherModal = false;
@@ -270,8 +282,8 @@ function ipAddressesData() {
       try {
         const methode = this.adresseIPEnCoursEdition.id ? "PUT" : "POST";
         const url = this.adresseIPEnCoursEdition.id
-          ? `https://gestion-des-materials.onrender.com/api/ip-addresses/${this.adresseIPEnCoursEdition.id}`
-          : "https://gestion-des-materials.onrender.com/api/ip-addresses";
+          ? `/api/ip-addresses/${this.adresseIPEnCoursEdition.id}`
+          : "/api/ip-addresses";
         const reponse = await fetch(url, {
           method: methode,
           headers: { "Content-Type": "application/json" },
@@ -281,7 +293,7 @@ function ipAddressesData() {
         if (reponse.ok) {
           this.fermerModal();
           await this.chargerAdressesIP();
-          await this.chargerMateriels();
+          await this.chargerEmployees();
           this.adressesIPFiltrees = [...this.adressesIP];
           this.renderTable();
           this.addNotification(
@@ -333,10 +345,9 @@ function ipAddressesData() {
     async supprimerAdresseIP(id) {
       if (confirm("Êtes-vous sûr de vouloir supprimer cette adresse IP ?")) {
         try {
-          const reponse = await fetch(
-            `https://gestion-des-materials.onrender.com/api/ip-addresses/${id}`,
-            { method: "DELETE" }
-          );
+          const reponse = await fetch(`/api/ip-addresses/${id}`, {
+            method: "DELETE",
+          });
           if (!reponse.ok)
             throw new Error("Échec de la suppression de l'adresse IP");
           await this.chargerAdressesIP();
@@ -355,9 +366,9 @@ function ipAddressesData() {
         }
       }
     },
-    getNomMateriel(idMateriel) {
-      const materiel = this.materiels.find((m) => m.id === idMateriel);
-      return materiel ? materiel.name : "";
+    getNomEmployee(idEmployee) {
+      const employee = this.employees.find((e) => e.id === idEmployee);
+      return employee ? employee.name : "";
     },
     renderTable() {
       const corpsTable = document.getElementById("ip-addresses-table");
@@ -366,7 +377,7 @@ function ipAddressesData() {
       if (!this.adressesIPFiltrees || this.adressesIPFiltrees.length === 0) {
         const ligne = corpsTable.insertRow();
         const cellule = ligne.insertCell();
-        cellule.colSpan = 5;
+        cellule.colSpan = 4; // Adjusted colspan
         cellule.textContent = "Aucun matériel disponible.";
         cellule.className = "p-4 text-center text-gray-500 italic";
         return;
@@ -376,9 +387,9 @@ function ipAddressesData() {
         ligne.className = "border-b border-gray-100 table-row";
         const cellules = [
           { value: item.materialName, label: "Nom" },
-          { value: item.marque, label: "Marque" },
           { value: item.serialNumber, label: "Numéro de Série" },
           { value: item.ipAddress, label: "Adresse IP" },
+          { value: item.employeeName, label: "Nom Employé" }, // Added employee name
         ];
         cellules.forEach((donneesCellule) => {
           const cellule = document.createElement("td");

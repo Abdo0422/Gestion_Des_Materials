@@ -10,9 +10,7 @@ async function fetchUsers() {
     }
 
     console.log("Authenticated, proceeding to fetch users");
-    const response = await fetch(
-      "https://gestion-des-materials.onrender.com/api/users"
-    );
+    const response = await fetch("/api/users");
     if (!response.ok) {
       throw new Error(`Erreur HTTP ! Statut : ${response.status}`);
     }
@@ -104,14 +102,11 @@ document.addEventListener("DOMContentLoaded", async function () {
       const messageDiv = document.getElementById("user-message");
 
       try {
-        const response = await fetch(
-          "https://gestion-des-materials.onrender.com/api/users",
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ username, password }),
-          }
-        );
+        const response = await fetch("/api/users", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username, password }),
+        });
 
         if (!response.ok) {
           const errorData = await response.json();
@@ -181,9 +176,6 @@ function renderUsersTable(users) {
     deleteButton.innerHTML = '<i class="fas fa-trash-alt"></i>';
     deleteButton.addEventListener("click", () => deleteUser(parseInt(user.id)));
 
-    if (user.role === "admin") {
-      row.classList.add("opacity-50", "pointer-events-none");
-    }
     actionsContainer.appendChild(editButton);
     actionsContainer.appendChild(deleteButton);
     actionsCell.appendChild(actionsContainer);
@@ -271,14 +263,11 @@ async function handleEditFormSubmit(e) {
   const messageDiv = document.getElementById("edit-user-message");
 
   try {
-    const response = await fetch(
-      `https://gestion-des-materials.onrender.com/api/users/${userId}`,
-      {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password, role }),
-      }
-    );
+    const response = await fetch(`/api/users/${userId}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username, password, role }),
+    });
 
     if (!response.ok) {
       const errorData = await response.json();
@@ -303,12 +292,9 @@ async function handleEditFormSubmit(e) {
 async function deleteUser(id) {
   if (confirm("Êtes-vous sûr de vouloir supprimer cet utilisateur ?")) {
     try {
-      const response = await fetch(
-        `https://gestion-des-materials.onrender.com/api/users/${id}`,
-        {
-          method: "DELETE",
-        }
-      );
+      const response = await fetch(`/api/users/${id}`, {
+        method: "DELETE",
+      });
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(

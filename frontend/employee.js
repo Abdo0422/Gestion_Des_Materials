@@ -1,17 +1,19 @@
 const departments = [
-  { id: 1, nomdepart: "Section de l'Immobilier (قسم العقار)" },
-  {
-    id: 2,
-    nomdepart: "Section des Difficultés des Entreprises (قسم صعوبة المقاولة)",
-  },
-  { id: 3, nomdepart: "Section des Référés (قسم الاستعجال)" },
-  { id: 4, nomdepart: "Section de la Saisie-arrêt (قسم الحجز لدى الغير)" },
-  { id: 5, nomdepart: "Section du Fond (قسم الموضوع)" },
-  { id: 6, nomdepart: "Section des Litiges Maritimes (قسم المنازعات البحرية)" },
-  {
-    id: 7,
-    nomdepart: "Section de la Propriété Intellectuelle (قسم الملكية الفكرية)",
-  },
+  { id: 1, nomdepart: "Immobilier (العقار)" },
+  { id: 2, nomdepart: "Saisie-arrêt (الحجز لدى الغير)" },
+  { id: 3, nomdepart: "Caisse (الصندوق)" },
+  { id: 4, nomdepart: "Remise de copies (تسليم النسخ)" },
+  { id: 5, nomdepart: "Notification et exécution (التبليغ والتنفيذ)" },
+  { id: 6, nomdepart: "Fond (الموضوع)" },
+  { id: 7, nomdepart: "Référé (الاستعجالي)" },
+  { id: 8, nomdepart: "Bureau administratif (المكتب الإداري)" },
+  { id: 9, nomdepart: "Accueil (الاستقبال)" },
+  { id: 10, nomdepart: "Juges (القضاة)" },
+  { id: 11, nomdepart: "Président (الرئيس)" },
+  { id: 12, nomdepart: "Bureau des invités (مكتب الضيف)" },
+  { id: 13, nomdepart: "Informatique (informatique)" },
+  { id: 14, nomdepart: "Recouvrement (التحصيل)" },
+  { id: 15, nomdepart: "Divers (مختلف)" },
 ];
 function dashboardData() {
   return {
@@ -21,6 +23,11 @@ function dashboardData() {
     searchQueryScanner: "",
     searchQueryPrinter: "",
     searchQueryScreen: "",
+    sortDropdownPC: false,
+    sortDropdownPrinter: false,
+    sortDropdownScreen: false,
+    sortDropdownScanner: false,
+    sortDropdownOpen: false,
     editingEmployee: {
       name: "",
       department: null,
@@ -41,6 +48,15 @@ function dashboardData() {
     imagePreview: null,
     notifications: [],
     notificationPopupOpen: false,
+    itemsPerPage: 5,
+    currentPagePC: 1,
+    currentPagePrinter: 1,
+    currentPageScreen: 1,
+    currentPageScanner: 1,
+    filteredEmployeesPC: [],
+    filteredEmployeesPrinter: [],
+    filteredEmployeesScreen: [],
+    filteredEmployeesScanner: [],
 
     async init() {
       try {
@@ -93,9 +109,7 @@ function dashboardData() {
 
     async fetchAllMaterials() {
       try {
-        const response = await fetch(
-          "https://gestion-des-materials.onrender.com/api/materials"
-        );
+        const response = await fetch("/api/materials");
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -110,9 +124,7 @@ function dashboardData() {
 
     async fetchEmployees() {
       try {
-        const response = await fetch(
-          "https://gestion-des-materials.onrender.com/api/employees"
-        );
+        const response = await fetch("/api/employees");
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -137,7 +149,16 @@ function dashboardData() {
               mat.name &&
               (mat.name.toLowerCase().includes("pc") ||
                 mat.name.toLowerCase().includes("laptop") ||
-                mat.name.toLowerCase().includes("macbook"))
+                mat.name.toLowerCase().includes("macbook") ||
+                mat.name.toLowerCase().includes("desktop") ||
+                mat.name.toLowerCase().includes("computer") ||
+                mat.name.toLowerCase().includes("workstation") ||
+                mat.name.toLowerCase().includes("notebook") ||
+                mat.name.toLowerCase().includes("netbook") ||
+                mat.name.toLowerCase().includes("chromebook") ||
+                mat.name.toLowerCase().includes("tower") ||
+                mat.name.toLowerCase().includes("unité centrale") ||
+                mat.name.toLowerCase().includes("ordinateur"))
           )
       );
 
@@ -148,7 +169,11 @@ function dashboardData() {
             (mat) =>
               mat.name &&
               (mat.name.toLowerCase().includes("imprimante") ||
-                mat.name.toLowerCase().includes("printer"))
+                mat.name.toLowerCase().includes("printer") ||
+                mat.name.toLowerCase().includes("copier") ||
+                mat.name.toLowerCase().includes("impression") ||
+                mat.name.toLowerCase().includes("impressionante") ||
+                mat.name.toLowerCase().includes("print"))
           )
       );
 
@@ -160,7 +185,12 @@ function dashboardData() {
               mat.name &&
               (mat.name.toLowerCase().includes("ecran") ||
                 mat.name.toLowerCase().includes("screen") ||
-                mat.name.toLowerCase().includes("monitor"))
+                mat.name.toLowerCase().includes("monitor") ||
+                mat.name.toLowerCase().includes("display") ||
+                mat.name.toLowerCase().includes("affichage") ||
+                mat.name.toLowerCase().includes("visualiseur") ||
+                mat.name.toLowerCase().includes("écrant") ||
+                mat.name.toLowerCase().includes("video"))
           )
       );
 
@@ -172,20 +202,271 @@ function dashboardData() {
               mat.name &&
               (mat.name.toLowerCase().includes("scanner") ||
                 mat.name.toLowerCase().includes("numériseur") ||
-                mat.name.toLowerCase().includes("balayage"))
+                mat.name.toLowerCase().includes("balayage") ||
+                mat.name.toLowerCase().includes("scan") ||
+                mat.name.toLowerCase().includes("numérisation") ||
+                mat.name.toLowerCase().includes("digitisateur") ||
+                mat.name.toLowerCase().includes("scaneur") ||
+                mat.name.toLowerCase().includes("imageur"))
           )
       );
 
-      this.renderEmployeesTable(this.employeesPC, "employees-pc-table");
+      this.filteredEmployeesPC = [...this.employeesPC];
+      this.filteredEmployeesPrinter = [...this.employeesPrinter];
+      this.filteredEmployeesScreen = [...this.employeesScreen];
+      this.filteredEmployeesScanner = [...this.employeesScanner];
+
       this.renderEmployeesTable(
-        this.employeesScanner,
+        this.getPaginatedEmployees(
+          this.filteredEmployeesPC,
+          this.currentPagePC
+        ),
+        "employees-pc-table"
+      );
+      this.renderEmployeesTable(
+        this.getPaginatedEmployees(
+          this.filteredEmployeesScanner,
+          this.currentPageScanner
+        ),
         "employees-scanner-table"
       );
       this.renderEmployeesTable(
-        this.employeesPrinter,
+        this.getPaginatedEmployees(
+          this.filteredEmployeesPrinter,
+          this.currentPagePrinter
+        ),
         "employees-printer-table"
       );
-      this.renderEmployeesTable(this.employeesScreen, "employees-screen-table");
+      this.renderEmployeesTable(
+        this.getPaginatedEmployees(
+          this.filteredEmployeesScreen,
+          this.currentPageScreen
+        ),
+        "employees-screen-table"
+      );
+    },
+
+    getPaginatedEmployees(employees, currentPage) {
+      const startIndex = (currentPage - 1) * this.itemsPerPage;
+      const endIndex = startIndex + this.itemsPerPage;
+      return employees.slice(startIndex, endIndex);
+    },
+
+    nextPage(type) {
+      if (
+        type === "PC" &&
+        this.currentPagePC * this.itemsPerPage < this.filteredEmployeesPC.length
+      ) {
+        this.currentPagePC++;
+        this.renderEmployeesTable(
+          this.getPaginatedEmployees(
+            this.filteredEmployeesPC,
+            this.currentPagePC
+          ),
+          "employees-pc-table"
+        );
+      } else if (
+        type === "Printer" &&
+        this.currentPagePrinter * this.itemsPerPage <
+          this.filteredEmployeesPrinter.length
+      ) {
+        this.currentPagePrinter++;
+        this.renderEmployeesTable(
+          this.getPaginatedEmployees(
+            this.filteredEmployeesPrinter,
+            this.currentPagePrinter
+          ),
+          "employees-printer-table"
+        );
+      } else if (
+        type === "Screen" &&
+        this.currentPageScreen * this.itemsPerPage <
+          this.filteredEmployeesScreen.length
+      ) {
+        this.currentPageScreen++;
+        this.renderEmployeesTable(
+          this.getPaginatedEmployees(
+            this.filteredEmployeesScreen,
+            this.currentPageScreen
+          ),
+          "employees-screen-table"
+        );
+      } else if (
+        type === "Scanner" &&
+        this.currentPageScanner * this.itemsPerPage <
+          this.filteredEmployeesScanner.length
+      ) {
+        this.currentPageScanner++;
+        this.renderEmployeesTable(
+          this.getPaginatedEmployees(
+            this.filteredEmployeesScanner,
+            this.currentPageScanner
+          ),
+          "employees-scanner-table"
+        );
+      }
+    },
+
+    previousPage(type) {
+      if (type === "PC" && this.currentPagePC > 1) {
+        this.currentPagePC--;
+        this.renderEmployeesTable(
+          this.getPaginatedEmployees(
+            this.filteredEmployeesPC,
+            this.currentPagePC
+          ),
+          "employees-pc-table"
+        );
+      } else if (type === "Printer" && this.currentPagePrinter > 1) {
+        this.currentPagePrinter--;
+        this.renderEmployeesTable(
+          this.getPaginatedEmployees(
+            this.filteredEmployeesPrinter,
+            this.currentPagePrinter
+          ),
+          "employees-printer-table"
+        );
+      } else if (type === "Screen" && this.currentPageScreen > 1) {
+        this.currentPageScreen--;
+        this.renderEmployeesTable(
+          this.getPaginatedEmployees(
+            this.filteredEmployeesScreen,
+            this.currentPageScreen
+          ),
+          "employees-screen-table"
+        );
+      } else if (type === "Scanner" && this.currentPageScanner > 1) {
+        this.currentPageScanner--;
+        this.renderEmployeesTable(
+          this.getPaginatedEmployees(
+            this.filteredEmployeesScanner,
+            this.currentPageScanner
+          ),
+          "employees-scanner-table"
+        );
+      }
+    },
+
+    toggleSortDropdown(type) {
+      console.log(`Toggling dropdown for: ${type}`);
+      this[`sortDropdown${type}`] = !this[`sortDropdown${type}`];
+      console.log(`sortDropdown${type} is now: ${this[`sortDropdown${type}`]}`);
+      // Close other dropdowns
+      ["PC", "Printer", "Screen", "Scanner"].forEach((t) => {
+        if (t !== type) {
+          this[`sortDropdown${t}`] = false;
+          console.log(`Closing dropdown for: ${t}`);
+        }
+      });
+    },
+
+    closeOtherSortDropdowns(currentType) {
+      console.log(`Closing other dropdowns, current type: ${currentType}`);
+      ["PC", "Printer", "Screen", "Scanner"].forEach((type) => {
+        if (type !== currentType) {
+          console.log(`Setting sortDropdown${type} to false`);
+          this[`sortDropdown${type}`] = false;
+        }
+      });
+      console.log(
+        `Setting sortDropdown${currentType} to ${
+          this[`sortDropdown${currentType}`]
+        }`
+      );
+    },
+
+    sortEmployeesByName(type, order) {
+      let employees;
+      let tableId;
+
+      switch (type) {
+        case "PC":
+          employees = this.employeesPC;
+          tableId = "employees-pc-table";
+          break;
+        case "Printer":
+          employees = this.employeesPrinter;
+          tableId = "employees-printer-table";
+          break;
+        case "Screen":
+          employees = this.employeesScreen;
+          tableId = "employees-screen-table";
+          break;
+        case "Scanner":
+          employees = this.employeesScanner;
+          tableId = "employees-scanner-table";
+          break;
+        default:
+          return;
+      }
+
+      employees.sort((a, b) => {
+        const nameA = a.name.toLowerCase();
+        const nameB = b.name.toLowerCase();
+
+        if (order === "asc") {
+          if (nameA < nameB) return -1;
+          if (nameA > nameB) return 1;
+          return 0;
+        } else {
+          if (nameA > nameB) return -1;
+          if (nameA < nameB) return 1;
+          return 0;
+        }
+      });
+
+      this.renderEmployeesTable(
+        this.getPaginatedEmployees(employees, this[`currentPage${type}`]),
+        tableId
+      );
+      this[`sortDropdown${type}`] = false;
+    },
+
+    sortEmployeesByDepartment(type, order) {
+      let employees;
+      let tableId;
+
+      switch (type) {
+        case "PC":
+          employees = this.employeesPC;
+          tableId = "employees-pc-table";
+          break;
+        case "Printer":
+          employees = this.employeesPrinter;
+          tableId = "employees-printer-table";
+          break;
+        case "Screen":
+          employees = this.employeesScreen;
+          tableId = "employees-screen-table";
+          break;
+        case "Scanner":
+          employees = this.employeesScanner;
+          tableId = "employees-scanner-table";
+          break;
+        default:
+          return;
+      }
+
+      employees.sort((a, b) => {
+        const deptA = a.department ? a.department.toLowerCase() : "";
+        const deptB = b.department ? b.department.toLowerCase() : "";
+
+        if (order === "asc") {
+          if (deptA < deptB) return -1;
+          if (deptA > deptB) return 1;
+          return 0;
+        } else {
+          if (deptA > deptB) return -1;
+          if (deptA < deptB) return 1;
+          return 0;
+        }
+      });
+
+      this.renderEmployeesTable(
+        this.getPaginatedEmployees(employees, this[`currentPage${type}`]),
+        tableId
+      );
+      this[`sortDropdown${type}`] = false;
     },
 
     renderEmployeesTable(employees, tableId) {
@@ -296,68 +577,96 @@ function dashboardData() {
       });
     },
 
-    filterEmployeesPC(searchTerm) {
-      const term = searchTerm.toLowerCase();
-      const filteredPC = this.employeesPC.filter(
-        (emp) =>
-          emp.name.toLowerCase().includes(term) ||
-          emp.department.toLowerCase().includes(term) ||
-          (emp.materials &&
-            emp.materials.some(
-              (mat) =>
-                mat.name.toLowerCase().includes(term) ||
-                mat.serialNumber.toLowerCase().includes(term)
-            ))
+    filterEmployeesPC(query) {
+      this.searchQueryPC = query;
+      this.filteredEmployeesPC = this.employeesPC.filter((employee) => {
+        const searchString = `${employee.name} ${
+          employee.department
+        } ${employee.materials
+          .map((mat) => mat.name)
+          .join(" ")} ${employee.materials
+          .map((mat) => mat.serialNumber)
+          .join(" ")}`.toLowerCase();
+        return searchString.includes(query.toLowerCase());
+      });
+      this.currentPagePC = 1;
+      this.renderEmployeesTable(
+        this.getPaginatedEmployees(
+          this.filteredEmployeesPC,
+          this.currentPagePC
+        ),
+        "employees-pc-table"
       );
-      this.renderEmployeesTable(filteredPC, "employees-pc-table");
     },
 
-    filterEmployeesScanner(searchTerm) {
-      const term = searchTerm.toLowerCase();
-      const filteredScanner = this.employeesScanner.filter(
-        (emp) =>
-          emp.name.toLowerCase().includes(term) ||
-          emp.department.toLowerCase().includes(term) ||
-          (emp.materials &&
-            emp.materials.some(
-              (mat) =>
-                mat.name.toLowerCase().includes(term) ||
-                mat.serialNumber.toLowerCase().includes(term)
-            ))
+    filterEmployeesPrinter(query) {
+      this.searchQueryPrinter = query;
+      this.filteredEmployeesPrinter = this.employeesPrinter.filter(
+        (employee) => {
+          const searchString = `${employee.name} ${
+            employee.department
+          } ${employee.materials
+            .map((mat) => mat.name)
+            .join(" ")} ${employee.materials
+            .map((mat) => mat.serialNumber)
+            .join(" ")}`.toLowerCase();
+          return searchString.includes(query.toLowerCase());
+        }
       );
-      this.renderEmployeesTable(filteredScanner, "employees-scanner-table");
+      this.currentPagePrinter = 1;
+      this.renderEmployeesTable(
+        this.getPaginatedEmployees(
+          this.filteredEmployeesPrinter,
+          this.currentPagePrinter
+        ),
+        "employees-printer-table"
+      );
     },
 
-    filterEmployeesPrinter(searchTerm) {
-      const term = searchTerm.toLowerCase();
-      const filteredPrinter = this.employeesPrinter.filter(
-        (emp) =>
-          emp.name.toLowerCase().includes(term) ||
-          emp.department.toLowerCase().includes(term) ||
-          (emp.materials &&
-            emp.materials.some(
-              (mat) =>
-                mat.name.toLowerCase().includes(term) ||
-                mat.serialNumber.toLowerCase().includes(term)
-            ))
+    filterEmployeesScreen(query) {
+      this.searchQueryScreen = query;
+      this.filteredEmployeesScreen = this.employeesScreen.filter((employee) => {
+        const searchString = `${employee.name} ${
+          employee.department
+        } ${employee.materials
+          .map((mat) => mat.name)
+          .join(" ")} ${employee.materials
+          .map((mat) => mat.serialNumber)
+          .join(" ")}`.toLowerCase();
+        return searchString.includes(query.toLowerCase());
+      });
+      this.currentPageScreen = 1;
+      this.renderEmployeesTable(
+        this.getPaginatedEmployees(
+          this.filteredEmployeesScreen,
+          this.currentPageScreen
+        ),
+        "employees-screen-table"
       );
-      this.renderEmployeesTable(filteredPrinter, "employees-printer-table");
     },
 
-    filterEmployeesScreen(searchTerm) {
-      const term = searchTerm.toLowerCase();
-      const filteredEcrans = this.employeesScreen.filter(
-        (emp) =>
-          emp.name.toLowerCase().includes(term) ||
-          emp.department.toLowerCase().includes(term) ||
-          (emp.materials &&
-            emp.materials.some(
-              (mat) =>
-                mat.name.toLowerCase().includes(term) ||
-                mat.serialNumber.toLowerCase().includes(term)
-            ))
+    filterEmployeesScanner(query) {
+      this.searchQueryScanner = query;
+      this.filteredEmployeesScanner = this.employeesScanner.filter(
+        (employee) => {
+          const searchString = `${employee.name} ${
+            employee.department
+          } ${employee.materials
+            .map((mat) => mat.name)
+            .join(" ")} ${employee.materials
+            .map((mat) => mat.serialNumber)
+            .join(" ")}`.toLowerCase();
+          return searchString.includes(query.toLowerCase());
+        }
       );
-      this.renderEmployeesTable(filteredEcrans, "employees-screen-table");
+      this.currentPageScanner = 1;
+      this.renderEmployeesTable(
+        this.getPaginatedEmployees(
+          this.filteredEmployeesScanner,
+          this.currentPageScanner
+        ),
+        "employees-scanner-table"
+      );
     },
 
     viewEmployeeDetails(id) {
@@ -421,20 +730,38 @@ function dashboardData() {
           return (
             mat.name.toLowerCase().includes("pc") ||
             mat.name.toLowerCase().includes("laptop") ||
-            mat.name.toLowerCase().includes("macbook")
+            mat.name.toLowerCase().includes("macbook") ||
+            mat.name.toLowerCase().includes("desktop") ||
+            mat.name.toLowerCase().includes("computer") ||
+            mat.name.toLowerCase().includes("workstation") ||
+            mat.name.toLowerCase().includes("notebook") ||
+            mat.name.toLowerCase().includes("netbook") ||
+            mat.name.toLowerCase().includes("chromebook") ||
+            mat.name.toLowerCase().includes("tower") ||
+            mat.name.toLowerCase().includes("unité centrale") ||
+            mat.name.toLowerCase().includes("ordinateur")
           );
         } else if (
           this.employeesPrinter.find((emp) => emp.id === employee.id)
         ) {
           return (
             mat.name.toLowerCase().includes("imprimante") ||
-            mat.name.toLowerCase().includes("printer")
+            mat.name.toLowerCase().includes("printer") ||
+            mat.name.toLowerCase().includes("copier") ||
+            mat.name.toLowerCase().includes("impression") ||
+            mat.name.toLowerCase().includes("impressionante") ||
+            mat.name.toLowerCase().includes("print")
           );
         } else if (this.employeesScreen.find((emp) => emp.id === employee.id)) {
           return (
             mat.name.toLowerCase().includes("ecran") ||
             mat.name.toLowerCase().includes("screen") ||
-            mat.name.toLowerCase().includes("monitor")
+            mat.name.toLowerCase().includes("monitor") ||
+            mat.name.toLowerCase().includes("display") ||
+            mat.name.toLowerCase().includes("affichage") ||
+            mat.name.toLowerCase().includes("visualiseur") ||
+            mat.name.toLowerCase().includes("écrant") ||
+            mat.name.toLowerCase().includes("video")
           );
         } else if (
           this.employeesScanner.find((emp) => emp.id === employee.id)
@@ -442,7 +769,12 @@ function dashboardData() {
           return (
             mat.name.toLowerCase().includes("scanner") ||
             mat.name.toLowerCase().includes("numériseur") ||
-            mat.name.toLowerCase().includes("balayage")
+            mat.name.toLowerCase().includes("balayage") ||
+            mat.name.toLowerCase().includes("scan") ||
+            mat.name.toLowerCase().includes("numérisation") ||
+            mat.name.toLowerCase().includes("digitisateur") ||
+            mat.name.toLowerCase().includes("scaneur") ||
+            mat.name.toLowerCase().includes("imageur")
           );
         } else {
           return true;
@@ -481,29 +813,51 @@ function dashboardData() {
         if (mat.status !== "Disponible") {
           return false;
         }
-
         if (type === "PC") {
           return (
             mat.name.toLowerCase().includes("pc") ||
             mat.name.toLowerCase().includes("laptop") ||
-            mat.name.toLowerCase().includes("macbook")
+            mat.name.toLowerCase().includes("macbook") ||
+            mat.name.toLowerCase().includes("desktop") ||
+            mat.name.toLowerCase().includes("computer") ||
+            mat.name.toLowerCase().includes("workstation") ||
+            mat.name.toLowerCase().includes("notebook") ||
+            mat.name.toLowerCase().includes("netbook") ||
+            mat.name.toLowerCase().includes("chromebook") ||
+            mat.name.toLowerCase().includes("tower") ||
+            mat.name.toLowerCase().includes("unité centrale") ||
+            mat.name.toLowerCase().includes("ordinateur")
           );
         } else if (type === "Printer") {
           return (
             mat.name.toLowerCase().includes("imprimante") ||
-            mat.name.toLowerCase().includes("printer")
+            mat.name.toLowerCase().includes("printer") ||
+            mat.name.toLowerCase().includes("copier") ||
+            mat.name.toLowerCase().includes("impression") ||
+            mat.name.toLowerCase().includes("impressionante") ||
+            mat.name.toLowerCase().includes("print")
           );
         } else if (type === "Screen") {
           return (
             mat.name.toLowerCase().includes("ecran") ||
             mat.name.toLowerCase().includes("screen") ||
-            mat.name.toLowerCase().includes("monitor")
+            mat.name.toLowerCase().includes("monitor") ||
+            mat.name.toLowerCase().includes("display") ||
+            mat.name.toLowerCase().includes("affichage") ||
+            mat.name.toLowerCase().includes("visualiseur") ||
+            mat.name.toLowerCase().includes("écrant") ||
+            mat.name.toLowerCase().includes("video")
           );
         } else if (type === "Scanner") {
           return (
             mat.name.toLowerCase().includes("scanner") ||
             mat.name.toLowerCase().includes("numériseur") ||
-            mat.name.toLowerCase().includes("balayage")
+            mat.name.toLowerCase().includes("balayage") ||
+            mat.name.toLowerCase().includes("scan") ||
+            mat.name.toLowerCase().includes("numérisation") ||
+            mat.name.toLowerCase().includes("digitisateur") ||
+            mat.name.toLowerCase().includes("scaneur") ||
+            mat.name.toLowerCase().includes("imageur")
           );
         } else {
           return true;
@@ -539,27 +893,50 @@ function dashboardData() {
           (mat) =>
             mat.name.toLowerCase().includes("pc") ||
             mat.name.toLowerCase().includes("laptop") ||
-            mat.name.toLowerCase().includes("macbook")
+            mat.name.toLowerCase().includes("macbook") ||
+            mat.name.toLowerCase().includes("desktop") ||
+            mat.name.toLowerCase().includes("computer") ||
+            mat.name.toLowerCase().includes("workstation") ||
+            mat.name.toLowerCase().includes("notebook") ||
+            mat.name.toLowerCase().includes("netbook") ||
+            mat.name.toLowerCase().includes("chromebook") ||
+            mat.name.toLowerCase().includes("tower") ||
+            mat.name.toLowerCase().includes("unité centrale") ||
+            mat.name.toLowerCase().includes("ordinateur")
         );
       } else if (this.employeesPrinter.find((emp) => emp.id === employee.id)) {
         return this.materials.filter(
           (mat) =>
             mat.name.toLowerCase().includes("imprimante") ||
-            mat.name.toLowerCase().includes("printer")
+            mat.name.toLowerCase().includes("printer") ||
+            mat.name.toLowerCase().includes("copier") ||
+            mat.name.toLowerCase().includes("impression") ||
+            mat.name.toLowerCase().includes("impressionante") ||
+            mat.name.toLowerCase().includes("print")
         );
       } else if (this.employeesScreen.find((emp) => emp.id === employee.id)) {
         return this.materials.filter(
           (mat) =>
             mat.name.toLowerCase().includes("ecran") ||
             mat.name.toLowerCase().includes("screen") ||
-            mat.name.toLowerCase().includes("monitor")
+            mat.name.toLowerCase().includes("monitor") ||
+            mat.name.toLowerCase().includes("display") ||
+            mat.name.toLowerCase().includes("affichage") ||
+            mat.name.toLowerCase().includes("visualiseur") ||
+            mat.name.toLowerCase().includes("écrant") ||
+            mat.name.toLowerCase().includes("video")
         );
       } else if (this.employeesScanner.find((emp) => emp.id === employee.id)) {
         return this.materials.filter(
           (mat) =>
             mat.name.toLowerCase().includes("scanner") ||
             mat.name.toLowerCase().includes("numériseur") ||
-            mat.name.toLowerCase().includes("balayage")
+            mat.name.toLowerCase().includes("balayage") ||
+            mat.name.toLowerCase().includes("scan") ||
+            mat.name.toLowerCase().includes("numérisation") ||
+            mat.name.toLowerCase().includes("digitisateur") ||
+            mat.name.toLowerCase().includes("scaneur") ||
+            mat.name.toLowerCase().includes("imageur")
         );
       } else {
         return this.materials;
@@ -618,8 +995,8 @@ function dashboardData() {
         // Determine the method and URL based on whether we're editing or creating a new employee
         const method = this.editingEmployee.id ? "PUT" : "POST";
         const url = this.editingEmployee.id
-          ? `https://gestion-des-materials.onrender.com/api/employees/${this.editingEmployee.id}`
-          : "https://gestion-des-materials.onrender.com/api/employees";
+          ? `/api/employees/${this.editingEmployee.id}`
+          : "api/employees";
 
         // Format the creation date for the API
         const formattedDate = this.formatDateForAPI(
@@ -715,12 +1092,9 @@ function dashboardData() {
       try {
         if (!confirm("Êtes-vous sûr de vouloir supprimer cet employé?")) return;
 
-        const response = await fetch(
-          `https://gestion-des-materials.onrender.com/api/employees/${id}`,
-          {
-            method: "DELETE",
-          }
-        );
+        const response = await fetch(`/api/employees/${id}`, {
+          method: "DELETE",
+        });
 
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -758,9 +1132,7 @@ function dashboardData() {
         return imagePath;
       }
 
-      return `https://gestion-des-materials.onrender.com/backend/images/${imagePath
-        .split("/")
-        .pop()}`;
+      return `/backend/images/${imagePath.split("/").pop()}`;
     },
 
     formatDate(dateString) {

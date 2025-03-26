@@ -1,44 +1,135 @@
 [
   {
-    "name": "Hamza",
-    "department": "Immobilier (العقار)",
-    "materials": [
-      {
-        "id": 2,
-        "name": "PC Dell OptiPlex",
-        "serialNumber": "SN98765",
-        "image": "images/ordinateur-de-bureau-dell-optiplex-3000-dl-op3000-i5-sff_34b18721-be32-4ce5-b594-e536cc349ae8.webp"
-      }
-    ],
-    "createdAt": "2025-02-28T12:04:55.235Z",
-    "id": 1
-  },
-  {
     "name": "Leila",
     "department": "Fond (الموضوع)",
-    "materials": [
-      {
-        "id": 5,
-        "name": "Imprimante HP LaserJet",
-        "serialNumber": "SN09876",
-        "image": "images/imprimante-laser-monochrome-hp-laserjet-pro-4003dn-2z609a.jpg"
-      }
-    ],
+    "materials": [],
     "createdAt": "2025-02-28T12:50:05.441Z",
-    "id": 2
+    "id": 2,
+    "updatedAt": "2025-03-04T11:29:58.051Z"
   },
   {
-    "name": "Leila",
+    "name": "nadia kharoubi",
     "department": "Fond (الموضوع)",
     "materials": [
       {
-        "id": 1,
-        "name": "PC HP ProDesk",
-        "serialNumber": "SN123453",
-        "image": "images/1-430x430.webp"
+        "id": 9,
+        "name": "PC HP compaq 6000 pro",
+        "serialNumber": "CWC03275TN",
+        "image": "images/71Ivi2uopwL._AC_UF8941000_QL80_.jpg"
       }
     ],
-    "createdAt": "2025-03-04T09:42:39.239Z",
-    "id": 3
+    "createdAt": "2025-03-03",
+    "id": 3,
+    "updatedAt": "2025-03-04T11:29:58.053Z"
+  },
+  {
+    "name": "khadija nachabi",
+    "department": "Fond (الموضوع)",
+    "materials": [
+      {
+        "id": 10,
+        "name": "PC HP compaq 6000 pro",
+        "serialNumber": "CZC03275RL",
+        "image": "images/71Ivi2uopwL._AC_UF8941000_QL80_.jpg"
+      }
+    ],
+    "createdAt": "2025-03-03",
+    "id": 4,
+    "updatedAt": "2025-03-04T11:29:58.055Z"
+  },
+  {
+    "name": "nadia kharoubi",
+    "department": "Fond (الموضوع)",
+    "materials": [
+      {
+        "name": "imprimante canon LBP236dw",
+        "marque": "Canon",
+        "serialNumber": "??",
+        "status": "Disponible",
+        "createdAt": "2025-02-27T11:55:20.953Z",
+        "image": "images/canon lbp.svg",
+        "id": 13,
+        "updatedAt": "2025-03-04T10:19:20.696Z",
+        "numeroMateriel": "2025-03-04",
+        "dateReception": "2025-03-04"
+      }
+    ],
+    "createdAt": "2025-03-03",
+    "id": 5,
+    "updatedAt": "2025-03-04T11:29:58.058Z"
+  },
+  {
+    "name": "nazha elmalki",
+    "department": "Fond (الموضوع)",
+    "materials": [
+      {
+        "id": 100,
+        "name": "PC HP compaq 6000 pro",
+        "serialNumber": "CZC03275Z0",
+        "image": "images/hp compag.jpg"
+      }
+    ],
+    "createdAt": "2025-03-04T10:22:06.526Z",
+    "id": 8,
+    "updatedAt": "2025-03-04T11:29:58.060Z"
+  },
+  {
+    "name": "nazha elmalki",
+    "department": "Fond (الموضوع)",
+    "materials": [
+      {
+        "id": 90,
+        "name": "Imprimante lexmark ms421",
+        "serialNumber": "S460001431CF00",
+        "image": "images/LEXmark.jpg"
+      }
+    ],
+    "createdAt": "2025-03-04",
+    "id": 9,
+    "updatedAt": "2025-03-04T11:29:58.061Z"
+  },
+  {
+    "name": "amal choukri",
+    "department": "Fond (الموضوع)",
+    "materials": [
+      {
+        "id": 102,
+        "name": "PC HP compaq 6000 pro",
+        "serialNumber": "CZC03276KY",
+        "image": "images/hp compag.jpg"
+      }
+    ],
+    "createdAt": "2025-03-04",
+    "id": 10,
+    "updatedAt": "2025-03-04T11:30:26.992Z"
+  },
+  {
+    "name": "amal choukri",
+    "department": "Fond (الموضوع)",
+    "materials": [
+      {
+        "id": 103,
+        "name": "Imprimante lexmark ms421",
+        "serialNumber": "S460001431CDL0",
+        "image": "images/LEXmark.jpg"
+      }
+    ],
+    "createdAt": "2025-03-04",
+    "id": 11,
+    "updatedAt": "2025-03-04T11:30:39.540Z"
+  },
+  {
+    "name": "khadija nachabi",
+    "department": "Fond (الموضوع)",
+    "materials": [
+      {
+        "id": 13,
+        "name": "imprimante canon LBP236dw",
+        "serialNumber": "NPZA036290",
+        "image": "images/canon lbp.svg"
+      }
+    ],
+    "createdAt": "2025-03-04T11:31:14.581Z",
+    "id": 12
   }
 ]

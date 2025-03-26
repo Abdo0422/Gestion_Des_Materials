@@ -1,7 +1,11 @@
 body {
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
   background-color: #fafafa;
-  background-image: linear-gradient(rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.95)), url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1MCIgaGVpZ2h0PSI1MCI+CjxyZWN0IHdpZHRoPSI1MCIgaGVpZ2h0PSI1MCIgZmlsbD0iI2ZhZjVmZiI+PC9yZWN0Pgo8cGF0aCBkPSJNMTIuNSAxMkwyNSAwTDM3LjUgMTJMNTAgMjVMMzcuNSAzNy41TDI1IDUwTDEyLjUgMzcuNUwwIDI1TDEyLjUgMTJaTTI1IDI1TDM3LjUgMTJMMjUgMEwxMi41IDEyTDI1IDI1Wk0yNSAyNUwxMi41IDM3LjVMMjUgNTBMMzcuNSAzNy41TDI1IDI1Wk01MCAyNUwzNy41IDEyTDI1IDI1TDM3LjUgMzcuNUw1MCAyNVpNMCAyNUwxMi41IDEyTDI1IDI1TDEyLjUgMzcuNUwwIDI1WiIgc3Ryb2tlPSIjMWQ0ZTg5IiBzdHJva2Utb3BhY2l0eT0iMC4wMyIgZmlsbD0ibm9uZSI+PC9wYXRoPgo8cGF0aCBkPSJNMTIuNSAxMkwyNSAwTDM3LjUgMTJMNTAgMjVMMzcuNSAzNy41TDI1IDUwTDEyLjUgMzcuNUwwIDI1TDEyLjUgMTJaIiBzdHJva2U9IiMwMGE3OWQiIHN0cm9rZS1vcGFjaXR5PSIwLjAzIiBmaWxsPSJub25lIj48L3BhdGg+Cjwvc3ZnPg==');
+  background-image: linear-gradient(
+      rgba(255, 255, 255, 0.95),
+      rgba(255, 255, 255, 0.95)
+    ),
+    url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1MCIgaGVpZ2h0PSI1MCI+CjxyZWN0IHdpZHRoPSI1MCIgaGVpZ2h0PSI1MCIgZmlsbD0iI2ZhZjVmZiI+PC9yZWN0Pgo8cGF0aCBkPSJNMTIuNSAxMkwyNSAwTDM3LjUgMTJMNTAgMjVMMzcuNSAzNy41TDI1IDUwTDEyLjUgMzcuNUwwIDI1TDEyLjUgMTJaTTI1IDI1TDM3LjUgMTJMMjUgMEwxMi41IDEyTDI1IDI1Wk0yNSAyNUwxMi41IDM3LjVMMjUgNTBMMzcuNSAzNy41TDI1IDI1Wk01MCAyNUwzNy41IDEyTDI1IDI1TDM3LjUgMzcuNUw1MCAyNVpNMCAyNUwxMi41IDEyTDI1IDI1TDEyLjUgMzcuNUwwIDI1WiIgc3Ryb2tlPSIjMWQ0ZTg5IiBzdHJva2Utb3BhY2l0eT0iMC4wMyIgZmlsbD0ibm9uZSI+PC9wYXRoPgo8cGF0aCBkPSJNMTIuNSAxMkwyNSAwTDM3LjUgMTJMNTAgMjVMMzcuNSAzNy41TDI1IDUwTDEyLjUgMzcuNUwwIDI1TDEyLjUgMTJaIiBzdHJva2U9IiMwMGE3OWQiIHN0cm9rZS1vcGFjaXR5PSIwLjAzIiBmaWxsPSJub25lIj48L3BhdGg+Cjwvc3ZnPg==");
 }
 
 .moroccan-arch {
@@ -16,13 +20,13 @@ body {
 }
 
 .moroccan-border::after {
-  content: '';
+  content: "";
   position: absolute;
   left: 0;
   bottom: 0;
   height: 3px;
   width: 100%;
-  background: linear-gradient(90deg, #00A79D 0%, #1D4E89 50%, #D4AF37 100%);
+  background: linear-gradient(90deg, #00a79d 0%, #1d4e89 50%, #d4af37 100%);
   border-radius: 2px;
 }
 
@@ -31,13 +35,17 @@ body {
   width: 8px;
 }
 
+.hidden {
+  display: none;
+}
+
 .table-scroll::-webkit-scrollbar-track {
   background: #f1f1f1;
   border-radius: 4px;
 }
 
 .table-scroll::-webkit-scrollbar-thumb {
-  background: #00A79D;
+  background: #00a79d;
   border-radius: 4px;
 }
 
@@ -46,7 +54,7 @@ body {
 }
 
 .btn-gradient {
-  background: linear-gradient(135deg, #1D4E89 0%, #00A79D 100%);
+  background: linear-gradient(135deg, #1d4e89 0%, #00a79d 100%);
   transition: all 0.3s ease;
 }
 
@@ -57,7 +65,7 @@ body {
 }
 
 .btn-danger-gradient {
-  background: linear-gradient(135deg, #C73E3A 0%, #E06363 100%);
+  background: linear-gradient(135deg, #c73e3a 0%, #e06363 100%);
   transition: all 0.3s ease;
 }
 
@@ -84,46 +92,47 @@ body {
 }
 
 .card-shadow {
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05);
 }
 
 @media (max-width: 768px) {
   .responsive-table {
-      display: block;
+    display: block;
   }
 
   .responsive-table thead {
-      display: none;
+    display: none;
   }
 
   .responsive-table tbody {
-      display: block;
+    display: block;
   }
 
   .responsive-table tbody tr {
-      display: block;
-      margin-bottom: 1rem;
-      border-radius: 0.5rem;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-      background-color: white;
+    display: block;
+    margin-bottom: 1rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    background-color: white;
   }
 
   .responsive-table tbody td {
-      display: flex;
-      text-align: right;
-      padding: 0.5rem 1rem;
-      border-bottom: 1px solid #f0f0f0;
+    display: flex;
+    text-align: right;
+    padding: 0.5rem 1rem;
+    border-bottom: 1px solid #f0f0f0;
   }
 
   .responsive-table tbody td:before {
-      content: attr(data-label);
-      font-weight: 600;
-      margin-right: auto;
-      color: #1D4E89;
+    content: attr(data-label);
+    font-weight: 600;
+    margin-right: auto;
+    color: #1d4e89;
   }
 
   .responsive-table tbody td:last-child {
-      border-bottom: none;
+    border-bottom: none;
   }
 }
 
@@ -154,8 +163,12 @@ svg circle {
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 #loading-overlay.hidden {
@@ -189,7 +202,7 @@ svg circle {
   font-size: 1.5rem;
   font-weight: 600;
   margin-bottom: 1rem;
-  color: #1D4E89;
+  color: #1d4e89;
 }
 
 .report-table {
@@ -223,3 +236,12 @@ svg circle {
 .negative-change {
   color: red;
 }
+[dir="rtl"] .ml-4 {
+  margin-left: 0;
+  margin-right: 1rem;
+}
+[dir="rtl"] .ml-2 {
+  margin-left: 0;
+  margin-right: 0.5rem;
+}
+/* Add more RTL overrides as needed */
