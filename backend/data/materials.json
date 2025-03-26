@@ -14,10 +14,10 @@
     "name": "PC Dell OptiPlex",
     "marque": "Dell",
     "serialNumber": "SN98765",
-    "status": "Disponible",
+    "status": "En Utilisation",
     "image": "images/ordinateur-de-bureau-dell-optiplex-3000-dl-op3000-i5-sff_34b18721-be32-4ce5-b594-e536cc349ae8.webp",
     "createdAt": "2024-10-27T10:00:00.000Z",
-    "updatedAt": "2025-03-03T12:36:44.085Z"
+    "updatedAt": "2025-03-26T14:18:54.722Z"
   },
   {
     "id": 3,
@@ -63,11 +63,11 @@
     "name": "PC Lenovo ThinkCentre E73",
     "marque": "HP",
     "serialNumber": "??",
-    "status": "Disponible",
+    "status": "En Utilisation",
     "createdAt": "2025-02-27T11:44:19.587Z",
     "image": "images/lenovo e73.webp",
     "id": 11,
-    "updatedAt": "2025-03-04T13:07:44.191Z"
+    "updatedAt": "2025-03-26T14:19:07.666Z"
   },
   {
     "name": "imprimante samsung proxpress m3820",

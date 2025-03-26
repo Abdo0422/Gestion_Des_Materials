@@ -131,5 +131,33 @@
     ],
     "createdAt": "2025-03-04T11:31:14.581Z",
     "id": 12
+  },
+  {
+    "name": "John",
+    "department": "Juges (القضاة)",
+    "materials": [
+      {
+        "id": 2,
+        "name": "PC Dell OptiPlex",
+        "serialNumber": "SN98765",
+        "image": "images/ordinateur-de-bureau-dell-optiplex-3000-dl-op3000-i5-sff_34b18721-be32-4ce5-b594-e536cc349ae8.webp"
+      }
+    ],
+    "createdAt": "2025-03-26T14:18:54.722Z",
+    "id": 13
+  },
+  {
+    "name": "Hamza",
+    "department": "Remise de copies (تسليم النسخ)",
+    "materials": [
+      {
+        "id": 11,
+        "name": "PC Lenovo ThinkCentre E73",
+        "serialNumber": "??",
+        "image": "images/lenovo e73.webp"
+      }
+    ],
+    "createdAt": "2025-03-26T14:19:07.666Z",
+    "id": 14
   }
 ]
