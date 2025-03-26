@@ -8,6 +8,19 @@ body {
     url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1MCIgaGVpZ2h0PSI1MCI+CjxyZWN0IHdpZHRoPSI1MCIgaGVpZ2h0PSI1MCIgZmlsbD0iI2ZhZjVmZiI+PC9yZWN0Pgo8cGF0aCBkPSJNMTIuNSAxMkwyNSAwTDM3LjUgMTJMNTAgMjVMMzcuNSAzNy41TDI1IDUwTDEyLjUgMzcuNUwwIDI1TDEyLjUgMTJaTTI1IDI1TDM3LjUgMTJMMjUgMEwxMi41IDEyTDI1IDI1Wk0yNSAyNUwxMi41IDM3LjVMMjUgNTBMMzcuNSAzNy41TDI1IDI1Wk01MCAyNUwzNy41IDEyTDI1IDI1TDM3LjUgMzcuNUw1MCAyNVpNMCAyNUwxMi41IDEyTDI1IDI1TDEyLjUgMzcuNUwwIDI1WiIgc3Ryb2tlPSIjMWQ0ZTg5IiBzdHJva2Utb3BhY2l0eT0iMC4wMyIgZmlsbD0ibm9uZSI+PC9wYXRoPgo8cGF0aCBkPSJNMTIuNSAxMkwyNSAwTDM3LjUgMTJMNTAgMjVMMzcuNSAzNy41TDI1IDUwTDEyLjUgMzcuNUwwIDI1TDEyLjUgMTJaIiBzdHJva2U9IiMwMGE3OWQiIHN0cm9rZS1vcGFjaXR5PSIwLjAzIiBmaWxsPSJub25lIj48L3BhdGg+Cjwvc3ZnPg==");
 }
 
+html[lang="ar"] body {
+  font-family: "Cairo", serif;
+}
+
+html[lang="ar"] p,
+span {
+  padding-right: 5px;
+  text-align: right;
+}
+
+#m {
+  padding-right: 0;
+}
 .moroccan-arch {
   position: relative;
   border-top-left-radius: 50% 30%;

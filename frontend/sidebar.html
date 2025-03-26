@@ -1,42 +1,66 @@
 <div class="flex flex-col w-64 bg-white shadow-lg">
-    <div class="flex items-center justify-center h-20 bg-moroccan-blue py-6">
-        <div class="text-white text-2xl font-bold">
-            <span class="text-moroccan-gold">M</span>anager<span class="text-moroccan-teal">Pro</span>
-        </div>
+  <div class="flex items-center justify-center h-20 bg-moroccan-blue py-6">
+    <div class="text-white text-2xl font-bold">
+      <span class="text-moroccan-gold" data-fr="M" data-ar="م" id="m">M</span
+      ><span class="text-moroccan-gold" data-fr="anager" data-ar="دير" id="m"
+        >anager</span
+      >
+      <span class="text-moroccan-teal" id="m">Pro</span>
     </div>
+  </div>
 
-    <div class="flex flex-col flex-grow py-5 overflow-y-auto bg-white">
-        <nav class="flex-1 px-4 space-y-2">
-            <a href="index.html"
-               class="flex items-center px-4 py-3 text-sm rounded-lg text-gray-600 hover:bg-gray-50 hover:text-moroccan-teal transition-all duration-200 group"
-               id="dashboard-link">
-                <i class="fas fa-tachometer-alt mr-3"></i>
-                <span>Tableau de Bord</span>
-            </a>
-            <a href="employe.html"
-               class="flex items-center px-4 py-3 text-sm rounded-lg text-gray-600 hover:bg-gray-50 hover:text-moroccan-teal transition-all duration-200 group"
-               id="employee-link">
-                <i class="fas fa-users mr-3 text-gray-500 group-hover:text-moroccan-teal"></i>
-                <span>Employés</span>
-            </a>
-            <a href="materiel.html"
-               class="flex items-center px-4 py-3 text-sm rounded-lg text-gray-600 hover:bg-gray-50 hover:text-moroccan-teal transition-all duration-200 group"
-               id="material-link">
-                <i class="fas fa-laptop mr-3 text-gray-500 group-hover:text-moroccan-teal"></i>
-                <span>Matériels</span>
-            </a>
-            <a href="ip-adresses.html"  class="flex items-center px-4 py-3 text-sm rounded-lg text-gray-600 hover:bg-gray-50 hover:text-moroccan-teal transition-all duration-200 group"
-               id="ip-addresses-link">
-                <i class="fas fa-network-wired mr-3 text-gray-500 group-hover:text-moroccan-teal"></i>  <span>Adresses IP</span>
-            </a>
-        </nav>
-    </div>
+  <div class="flex flex-col flex-grow py-5 overflow-y-auto bg-white">
+    <nav class="flex-1 px-4 space-y-2">
+      <a
+        href="index.html"
+        class="flex items-center px-4 py-3 text-sm rounded-lg text-gray-600 hover:bg-gray-50 hover:text-moroccan-teal transition-all duration-200 group"
+        id="dashboard-link"
+      >
+        <i class="fas fa-tachometer-alt mr-3"></i>
+        <span data-fr="Tableau de Bord" data-ar="لوحة التحكم"
+          >Tableau de Bord</span
+        >
+      </a>
+      <a
+        href="employe.html"
+        class="flex items-center px-4 py-3 text-sm rounded-lg text-gray-600 hover:bg-gray-50 hover:text-moroccan-teal transition-all duration-200 group"
+        id="employee-link"
+      >
+        <i
+          class="fas fa-users mr-3 text-gray-500 group-hover:text-moroccan-teal"
+        ></i>
+        <span data-fr="Employés" data-ar="الموظفين">Employés</span>
+      </a>
+      <a
+        href="materiel.html"
+        class="flex items-center px-4 py-3 text-sm rounded-lg text-gray-600 hover:bg-gray-50 hover:text-moroccan-teal transition-all duration-200 group"
+        id="material-link"
+      >
+        <i
+          class="fas fa-laptop mr-3 text-gray-500 group-hover:text-moroccan-teal"
+        ></i>
+        <span data-fr="Matériels" data-ar="المعدات">Matériels</span>
+      </a>
+      <a
+        href="ip-adresses.html"
+        class="flex items-center px-4 py-3 text-sm rounded-lg text-gray-600 hover:bg-gray-50 hover:text-moroccan-teal transition-all duration-200 group"
+        id="ip-addresses-link"
+      >
+        <i
+          class="fas fa-network-wired mr-3 text-gray-500 group-hover:text-moroccan-teal"
+        ></i>
+        <span data-fr="Adresses IP" data-ar="عناوين IP">Adresses IP</span>
+      </a>
+    </nav>
+  </div>
 
-    <div class="p-4 border-t border-gray-200">
-        <button @click="logout()"
-                class="flex items-center justify-center w-full py-2 px-4 rounded-lg btn-danger-gradient">
-            <i class="fas fa-sign-out-alt mr-2"></i>
-            <span>Déconnexion</span>
-        </button>
-    </div>
+  <div class="p-4 border-t border-gray-200">
+    <button
+      @click="logout()"
+      class="flex items-center justify-center w-full py-2 px-4 rounded-lg btn-danger-gradient"
+    >
+      <i class="fas fa-sign-out-alt mr-2"></i>
+      <span data-fr="Déconnexion" data-ar="تسجيل الخروج">Déconnexion</span>
+    </button>
+  </div>
 </div>

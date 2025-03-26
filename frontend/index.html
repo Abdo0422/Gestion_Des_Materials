@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" dir="ltr">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -11,6 +11,14 @@
     ></script>
     <link
       href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700&display=swap"
       rel="stylesheet"
     />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
@@ -44,10 +52,11 @@
           setUsername();
 
           const languageToggle = {
-            isRTL: false,
+            isRTL: document.documentElement.getAttribute("dir") === "rtl",
             toggleLanguage() {
               this.isRTL = !this.isRTL;
               document.documentElement.dir = this.isRTL ? "rtl" : "ltr";
+              document.documentElement.lang = this.isRTL ? "ar" : "fr";
 
               const langButton = document.querySelector(
                 '[aria-label="Toggle Language"]'
@@ -55,7 +64,7 @@
               if (langButton) {
                 langButton.setAttribute(
                   "title",
-                  this.isRTL ? "Switch to French" : "Switch to Arabic"
+                  languageToggle.isRTL ? "Switch to French" : "Switch to Arabic"
                 );
               }
 
@@ -63,8 +72,16 @@
                 "Language toggled to:",
                 this.isRTL ? "Arabic (RTL)" : "French (LTR)"
               );
+
+              updateContentForLanguage(this.isRTL ? "ar" : "fr");
             },
           };
+
+          // Set default language to Arabic on initial load
+          document.documentElement.dir = "rtl";
+          document.documentElement.lang = "ar";
+          languageToggle.isRTL = true; // Update the toggle state
+          updateContentForLanguage("ar");
 
           const langButton = document.querySelector(
             '[aria-label="Toggle Language"]'
@@ -80,31 +97,36 @@
             );
           }
 
-          // Add RTL-specific CSS overrides
           const style = document.createElement("style");
           style.textContent = `
-      [dir="rtl"] .ml-4 {
-        margin-left: 0;
-        margin-right: 1rem;
-      }
-      [dir="rtl"] .ml-2 {
-        margin-left: 0;
-        margin-right: 0.5rem;
-      }
-      [dir="rtl"] .ml-3 {
-        margin-left: 0;
-        margin-right: 0.75rem;
-      }
-      [dir="rtl"] .ml-6 {
-        margin-left: 0;
-        margin-right: 1.5rem;
-      }
-      [dir="rtl"] .mr-4 {
-        margin-right: 0;
-        margin-left: 1rem;
-      }
-      /* Add more RTL overrides as needed */
-    `;
+          [dir="rtl"] .ml-4 {
+            margin-left: 0;
+            margin-right: 1rem;
+          }
+          [dir="rtl"] .ml-2 {
+            margin-left: 0;
+            margin-right: 0.5rem;
+          }
+          [dir="rtl"] .ml-3 {
+            margin-left: 0;
+            margin-right: 0.75rem;
+          }
+          [dir="rtl"] .ml-6 {
+            margin-left: 0;
+            margin-right: 1.5rem;
+          }
+          [dir="rtl"] .mr-4 {
+            margin-right: 0;
+            margin-left: 1rem;
+          }
+          [dir="rtl"] .text-left {
+            text-align: right;
+          }
+          [dir="rtl"] .text-right {
+            text-align: left;
+          }
+          /* Add more RTL overrides as needed for alignment */
+        `;
           document.head.appendChild(style);
         })
         .catch((error) => {
@@ -118,6 +140,37 @@
           usernameDisplay.textContent = username;
         } else {
           console.error("username-display element NOT FOUND!");
+        }
+      }
+
+      function updateContentForLanguage(lang) {
+        const elementsToTranslate = document.querySelectorAll(
+          "[data-fr], [data-ar]"
+        );
+        elementsToTranslate.forEach((el) => {
+          const frenchText = el.dataset.fr;
+          const arabicText = el.dataset.ar;
+
+          if (lang === "fr" && frenchText) {
+            el.textContent = frenchText;
+          } else if (lang === "ar" && arabicText) {
+            el.textContent = arabicText;
+          }
+        });
+        if (window.materialChart && window.materialChart.config) {
+          const chartConfig = window.materialChart.config;
+          if (chartConfig.data && chartConfig.data.labels) {
+            const originalLabels = ["PC", "Imprimantes", "Écrans", "Scanners"];
+            const frenchLabels = ["PC", "Imprimantes", "Écrans", "Scanners"];
+            const arabicLabels = ["حواسيب", "طابعات", "شاشات", "ماسحات ضوئية"];
+
+            if (lang === "fr") {
+              chartConfig.data.labels = frenchLabels;
+            } else if (lang === "ar") {
+              chartConfig.data.labels = arabicLabels;
+            }
+            window.materialChart.update();
+          }
         }
       }
     </script>
@@ -166,7 +219,11 @@
                     <i class="fas fa-users text-moroccan-blue text-xl"></i>
                   </div>
                   <div>
-                    <p class="text-sm text-gray-500 font-medium">
+                    <p
+                      class="text-sm text-gray-500 font-medium"
+                      data-fr="Total Employés"
+                      data-ar="إجمالي الموظفين"
+                    >
                       Total Employés
                     </p>
                     <h3
@@ -181,7 +238,12 @@
                 >
                   <i></i>
                   <p></p>
-                  <span class="text-gray-500 ml-2">vs dernier mois</span>
+                  <span
+                    class="text-gray-500 ml-2"
+                    data-fr="vs dernier mois"
+                    data-ar="مقارنة بالشهر الماضي"
+                    >vs dernier mois</span
+                  >
                 </div>
               </div>
 
@@ -193,7 +255,13 @@
                     <i class="fas fa-laptop text-moroccan-teal text-xl"></i>
                   </div>
                   <div>
-                    <p class="text-sm text-gray-500 font-medium">Total PC</p>
+                    <p
+                      class="text-sm text-gray-500 font-medium"
+                      data-fr="Total PC"
+                      data-ar="إجمالي أجهزة الكمبيوتر"
+                    >
+                      Total PC
+                    </p>
                     <h3
                       class="text-2xl font-bold text-gray-800"
                       id="pc-count"
@@ -206,7 +274,12 @@
                 >
                   <i></i>
                   <p></p>
-                  <span class="text-gray-500 ml-2">vs dernier mois</span>
+                  <span
+                    class="text-gray-500 ml-2"
+                    data-fr="vs dernier mois"
+                    data-ar="مقارنة بالشهر الماضي"
+                    >vs dernier mois</span
+                  >
                 </div>
               </div>
 
@@ -218,7 +291,11 @@
                     <i class="fas fa-print text-moroccan-red text-xl"></i>
                   </div>
                   <div>
-                    <p class="text-sm text-gray-500 font-medium">
+                    <p
+                      class="text-sm text-gray-500 font-medium"
+                      data-fr="Total Imprimantes"
+                      data-ar="إجمالي الطابعات"
+                    >
                       Total Imprimantes
                     </p>
                     <h3
@@ -233,7 +310,12 @@
                 >
                   <i></i>
                   <p></p>
-                  <span class="text-gray-500 ml-2">vs dernier mois</span>
+                  <span
+                    class="text-gray-500 ml-2"
+                    data-fr="vs dernier mois"
+                    data-ar="مقارنة بالشهر الماضي"
+                    >vs dernier mois</span
+                  >
                 </div>
               </div>
 
@@ -245,7 +327,11 @@
                     <i class="fas fa-tv text-moroccan-gold text-xl"></i>
                   </div>
                   <div>
-                    <p class="text-sm text-gray-500 font-medium">
+                    <p
+                      class="text-sm text-gray-500 font-medium"
+                      data-fr="Total Ecrans"
+                      data-ar="إجمالي الشاشات"
+                    >
                       Total Ecrans
                     </p>
                     <h3
@@ -260,7 +346,12 @@
                 >
                   <i></i>
                   <p></p>
-                  <span class="text-gray-500 ml-2">vs dernier mois</span>
+                  <span
+                    class="text-gray-500 ml-2"
+                    data-fr="vs dernier mois"
+                    data-ar="مقارنة بالشهر الماضي"
+                    >vs dernier mois</span
+                  >
                 </div>
               </div>
 
@@ -272,7 +363,11 @@
                     <i class="fas fa-camera text-gray-600 text-xl"></i>
                   </div>
                   <div>
-                    <p class="text-sm text-gray-500 font-medium">
+                    <p
+                      class="text-sm text-gray-500 font-medium"
+                      data-fr="Total Scanners"
+                      data-ar="إجمالي الماسحات الضوئية"
+                    >
                       Total Scanners
                     </p>
                     <h3
@@ -287,7 +382,12 @@
                 >
                   <i></i>
                   <p></p>
-                  <span class="text-gray-500 ml-2">vs dernier mois</span>
+                  <span
+                    class="text-gray-500 ml-2"
+                    data-fr="vs dernier mois"
+                    data-ar="مقارنة بالشهر الماضي"
+                    >vs dernier mois</span
+                  >
                 </div>
               </div>
             </div>
@@ -295,7 +395,11 @@
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
               <div>
                 <div class="bg-white rounded-xl card-shadow p-6">
-                  <h3 class="text-lg font-bold mb-4">
+                  <h3
+                    class="text-lg font-bold mb-4"
+                    data-fr="Répartition des Matériels"
+                    data-ar="توزيع المعدات"
+                  >
                     Répartition des Matériels
                   </h3>
                   <div class="h-[400px] w-full">
@@ -305,12 +409,20 @@
               </div>
               <div class="mt-8">
                 <div class="flex items-center justify-between mb-4">
-                  <h2 class="text-xl font-bold">Notes</h2>
+                  <h2
+                    class="text-xl font-bold"
+                    data-fr="Notes"
+                    data-ar="ملاحظات"
+                  >
+                    Notes
+                  </h2>
                   <button
                     @click="isAddingNote = true"
                     class="bg-moroccan-blue hover:bg-moroccan-blue-700 text-white font-bold py-2 px-4 rounded"
                   >
-                    Ajouter une note
+                    <span data-fr="Ajouter une note" data-ar="أضف ملاحظة"
+                      >Ajouter une note</span
+                    >
                   </button>
                 </div>
 
@@ -331,13 +443,15 @@
                       @click="addNote()"
                       class="bg-moroccan-blue hover:bg-moroccan-blue-700 text-white font-bold py-2 px-4 rounded mr-2"
                     >
-                      Enregistrer
+                      <span data-fr="Enregistrer" data-ar="حفظ"
+                        >Enregistrer</span
+                      >
                     </button>
                     <button
                       @click="isAddingNote = false; newNote = { title: '', content: '' }"
                       class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded"
                     >
-                      Annuler
+                      <span data-fr="Annuler" data-ar="إلغاء">Annuler</span>
                     </button>
                   </div>
                 </template>
@@ -352,7 +466,12 @@
                         <h3 class="font-bold" x-text="note.title"></h3>
                         <p class="text-gray-600" x-text="note.content"></p>
                         <p class="text-gray-500 text-sm">
-                          Cré(e) par: <span x-text="note.manager"></span>
+                          <span
+                            data-fr="Cré(e) par:"
+                            data-ar="تم الإنشاء بواسطة:"
+                            >Cré(e) par:</span
+                          >
+                          <span x-text="note.manager"></span>
                         </p>
                       </div>
                       <button
@@ -364,7 +483,13 @@
                     </div>
                   </template>
                   <template x-if="notes.length === 0">
-                    <p class="text-gray-500">Aucune note pour le moment.</p>
+                    <p
+                      class="text-gray-500"
+                      data-fr="Aucune note pour le moment."
+                      data-ar="لا توجد ملاحظات حاليًا."
+                    >
+                      Aucune note pour le moment.
+                    </p>
                   </template>
                 </div>
               </div>

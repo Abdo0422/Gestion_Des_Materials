@@ -2,31 +2,40 @@
   @click="sidebarOpen = !sidebarOpen"
   class="md:hidden px-4 text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-moroccan-teal"
 >
-  <span class="sr-only">Open sidebar</span>
+  <span
+    class="sr-only"
+    data-fr="Ouvrir la barre latérale"
+    data-ar="فتح الشريط الجانبي"
+    >Open sidebar</span
+  >
   <i class="fas fa-bars text-lg"></i>
 </button>
 <div class="flex-1 px-4 flex justify-between items-center">
   <div class="flex-1 flex items-center">
     <h1 class="text-xl font-semibold text-moroccan-blue md:hidden">
-      <span class="text-moroccan-gold">M</span>anager<span
-        class="text-moroccan-teal"
-        >Pro</span
-      >
+      <span class="text-moroccan-gold">M</span>
+      <span data-fr="anager" data-ar="دير">anager</span>
+      <span class="text-moroccan-teal">Pro</span>
     </h1>
     <div class="hidden md:flex md:items-center md:ml-6">
-      <h1 class="text-xl font-semibold text-gray-700 moroccan-border pb-1">
+      <h1
+        class="text-xl font-semibold text-gray-700 moroccan-border pb-1"
+        data-fr="Tableau de Bord Manager"
+        data-ar="لوحة تحكم المدير"
+      >
         Tableau de Bord Manager
       </h1>
     </div>
   </div>
   <div class="ml-4 flex items-center md:ml-6 relative">
-    <!-- Language Toggle Button -->
     <button
       aria-label="Toggle Language"
       class="p-1 mx-2 rounded-full text-gray-400 hover:text-moroccan-teal focus:outline-none"
       :title="isRTL ? 'Switch to French' : 'Switch to Arabic'"
     >
-      <span class="sr-only">Toggle Language</span>
+      <span class="sr-only" data-fr="Changer de langue" data-ar="تبديل اللغة"
+        >Toggle Language</span
+      >
       <i class="fas fa-language text-lg"></i>
     </button>
 
@@ -34,7 +43,9 @@
       @click="toggleNotificationPopup"
       class="p-1 rounded-full text-gray-400 hover:text-moroccan-teal focus:outline-none relative"
     >
-      <span class="sr-only">Notifications</span>
+      <span class="sr-only" data-fr="Notifications" data-ar="الإشعارات"
+        >Notifications</span
+      >
       <i class="fas fa-bell text-lg"></i>
       <span
         x-show="notifications.length > 0"
@@ -50,17 +61,23 @@
       class="absolute right-0 top-full mt-2 w-64 bg-white rounded-lg shadow-lg z-50"
     >
       <div class="p-4 border-b border-gray-200">
-        <h3 class="text-lg font-semibold">Notifications</h3>
+        <h3
+          class="text-lg font-semibold"
+          data-fr="Notifications"
+          data-ar="الإشعارات"
+        >
+          Notifications
+        </h3>
       </div>
       <div class="max-h-64 overflow-y-auto">
         <template x-for="notification in notifications" :key="notification.id">
           <div
             class="p-4 border-b border-gray-200 last:border-b-0"
             :class="{
-                        'bg-green-50': notification.type === 'success',
-                        'bg-red-50': notification.type === 'error',
-                        'bg-blue-50': notification.type === 'info'
-                    }"
+                'bg-green-50': notification.type === 'success',
+                'bg-red-50': notification.type === 'error',
+                'bg-blue-50': notification.type === 'info'
+              }"
           >
             <div class="flex items-center justify-between">
               <p x-text="notification.message" class="text-sm"></p>
@@ -78,7 +95,11 @@
           </div>
         </template>
         <template x-if="notifications.length === 0">
-          <div class="p-4 text-center text-gray-500">
+          <div
+            class="p-4 text-center text-gray-500"
+            data-fr="Aucune nouvelle notification."
+            data-ar="لا يوجد إشعارات جديدة."
+          >
             Aucune nouvelle notification.
           </div>
         </template>
